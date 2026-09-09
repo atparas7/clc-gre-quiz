@@ -167,6 +167,37 @@ footer.tag{text-align:center;padding:22px;color:var(--muted);font-size:12px;}
 </div>
 
 <script>
+/* ===== CLC reporting hook: captures student name/section, sends score to Google Sheet ===== */
+const REPORT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxeqNLSGf1Wd0AiYWcTkfcyePAc6eMkJYqWV4fwoW8_Q5icDKEFacbkhzjSNswbppk1AQ/exec";
+const TEST_NAME = "Ratios & Rates (Medium)";
+let studentName = "";
+let studentSection = "";
+(function initStudentInfo(){
+  const params = new URLSearchParams(window.location.search);
+  studentName = (params.get('name') || '').trim();
+  studentSection = (params.get('section') || '').trim();
+  if(!studentName){
+    studentName = (prompt("Enter your full name:") || "Unknown").trim();
+    studentSection = (prompt("Enter your class/section (τμήμα):") || "").trim();
+  }
+  const introEl = document.getElementById('introScreen');
+  if(introEl){
+    const tag = document.createElement('div');
+    tag.style.cssText = "font-size:13px;color:#666;margin-bottom:10px;";
+    tag.textContent = "Test taker: " + studentName + (studentSection ? " (" + studentSection + ")" : "");
+    introEl.insertBefore(tag, introEl.firstChild);
+  }
+})();
+function submitResultToSheet(score, maxScore){
+  if(!REPORT_WEBHOOK_URL || REPORT_WEBHOOK_URL.indexOf("PASTE_YOUR") === 0) return;
+  const body = new URLSearchParams({
+    name: studentName, section: studentSection, test: TEST_NAME,
+    score: score, maxScore: maxScore, when: new Date().toISOString()
+  });
+  fetch(REPORT_WEBHOOK_URL, { method: 'POST', mode: 'no-cors', body: body });
+}
+</script>
+<script>
 /* 12 Ερωτήσεις Μέτριας Δυσκολίας για το Section 1 */
 const SEC1_QUESTIONS = [
   { id: "s1_q1", skill: "Percentages", type: "mc", prompt: "A price increases by 20% and then decreases by 20%. What is the net percentage change in the price?", choices: ["0%", "4% decrease", "4% increase", "1% decrease", "No change"], correct: 1, answer: "4% decrease", rule: "1.20 × 0.80 = 0.96 (4% decrease from original).", tip: "Assume an initial value of 100. It becomes 120, then 20% off 120 is 24, resulting in 96.", trap: "Assuming changes cancel out.", fastest: "Multiplier: 1.2 × 0.8 = 0.96." },
@@ -415,6 +446,7 @@ function showResults(){
 
   let totalScore = s1Score + s2Score;
   let maxScore = SEC1_QUESTIONS.length + activeQuestions.length;
+  submitResultToSheet(totalScore, maxScore);
 
   let html = `
     <div class="scorebox">

@@ -129,6 +129,8 @@ footer.credit{
         <div class="rule"></div>
         <h2>Sign in to continue</h2>
         <p>GRE prep program — Verbal Reasoning, Quantitative Reasoning &amp; Analytical Writing.</p>
+        <input type="text" id="login-name" placeholder="Full name" autocomplete="off">
+        <input type="text" id="login-section" placeholder="Class / Τμήμα" autocomplete="off">
         <input type="password" id="login-pass" placeholder="Password" autocomplete="off">
         <div class="error-text" id="login-error"></div>
         <button class="btn primary block" onclick="handleLogin()">Sign In</button>
@@ -219,42 +221,42 @@ footer.credit{
     <div class="note-box">Each test opens in a new tab as its own complete testing environment — your timer and answers stay there until you finish.</div>
     <div class="ledger">
 
-      <a class="ledger-item" href="clc-gre-quantative-test-medium.html" target="_blank" rel="noopener">
+      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-quantative-test-medium.html')">
         <div class="li-left"><div class="li-icon">📐</div><div><div class="li-title">Mixed Quant Adaptive Test</div><div class="li-sub">Number Properties · Combinatorics · Advanced Algebra · Functions · Geometry · 12 + 15 questions</div></div></div>
         <span class="tag-diff">Medium</span>
       </a>
 
-      <a class="ledger-item" href="clc-gre-quantative-test-hard.html" target="_blank" rel="noopener">
+      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-quantative-test-hard.html')">
         <div class="li-left"><div class="li-icon">📐</div><div><div class="li-title">Mixed Quant Adaptive Test</div><div class="li-sub">High-rigor mixed topics · 12 + 15 questions</div></div></div>
         <span class="tag-diff hard">Hard</span>
       </a>
 
-      <a class="ledger-item" href="clc-gre-ratios_rates.html" target="_blank" rel="noopener">
+      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-ratios_rates.html')">
         <div class="li-left"><div class="li-icon">⚖️</div><div><div class="li-title">Ratios &amp; Rates</div><div class="li-sub">Section-adaptive practice · 12 + 15 questions</div></div></div>
         <span class="tag-diff">Medium</span>
       </a>
 
-      <a class="ledger-item" href="clc-gre-functions_-medium-1.html" target="_blank" rel="noopener">
+      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-functions_-medium-1.html')">
         <div class="li-left"><div class="li-icon">📈</div><div><div class="li-title">Functions</div><div class="li-sub">Section-adaptive practice · 12 + 15 questions</div></div></div>
         <span class="tag-diff">Medium</span>
       </a>
 
-      <a class="ledger-item" href="clc-gre-functions-hard-1.html" target="_blank" rel="noopener">
+      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-functions-hard-1.html')">
         <div class="li-left"><div class="li-icon">📈</div><div><div class="li-title">Functions</div><div class="li-sub">Section-adaptive practice · 12 + 15 questions</div></div></div>
         <span class="tag-diff hard">Hard</span>
       </a>
 
-      <a class="ledger-item" href="clc-gre-counting.html" target="_blank" rel="noopener">
+      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-counting.html')">
         <div class="li-left"><div class="li-icon">🎲</div><div><div class="li-title">Counting &amp; Combinatorics</div><div class="li-sub">Section-adaptive practice · 12 + 15 questions</div></div></div>
         <span class="tag-diff hard">Hard</span>
       </a>
 
-      <a class="ledger-item" href="clc-gre-mixed-test-medium-2.html" target="_blank" rel="noopener">
+      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-mixed-test-medium-2.html')">
         <div class="li-left"><div class="li-icon">📊</div><div><div class="li-title">Data Interpretation, Counting &amp; Number Properties</div><div class="li-sub">Section-adaptive practice · 12 + 15 questions</div></div></div>
         <span class="tag-diff">Medium</span>
       </a>
 
-      <a class="ledger-item" href="clc-gre-hard-test.html" target="_blank" rel="noopener">
+      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-hard-test.html')">
         <div class="li-left"><div class="li-icon">📊</div><div><div class="li-title">Data Interpretation, Counting &amp; Coordinate Geometry</div><div class="li-sub">Section-adaptive practice · 12 + 15 questions</div></div></div>
         <span class="tag-diff hard">Hard</span>
       </a>
@@ -272,16 +274,33 @@ function go(id){
   window.scrollTo(0,0);
 }
 const LOGIN_PASSWORD = "gre2026";
+let currentStudentName = "";
+let currentStudentSection = "";
+
 function handleLogin(){
+  const name = document.getElementById('login-name').value.trim();
+  const section = document.getElementById('login-section').value.trim();
   const val = document.getElementById('login-pass').value;
-  if(val === LOGIN_PASSWORD){
-    go('screen-welcome');
-    document.getElementById('login-error').textContent = '';
-  } else {
-    document.getElementById('login-error').textContent = 'Wrong password — check with your teacher.';
+
+  if(!name){
+    document.getElementById('login-error').textContent = 'Please enter your full name.';
+    return;
   }
+  if(val !== LOGIN_PASSWORD){
+    document.getElementById('login-error').textContent = 'Wrong password — check with your teacher.';
+    return;
+  }
+  currentStudentName = name;
+  currentStudentSection = section;
+  document.getElementById('login-error').textContent = '';
+  go('screen-welcome');
 }
 document.getElementById('login-pass').addEventListener('keydown', e=>{ if(e.key==='Enter') handleLogin(); });
+
+function openTest(filename){
+  const url = filename + '?name=' + encodeURIComponent(currentStudentName) + '&section=' + encodeURIComponent(currentStudentSection);
+  window.open(url, '_blank', 'noopener');
+}
 </script>
 </body>
 </html>

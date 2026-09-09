@@ -197,6 +197,37 @@ footer.tag{text-align:center;padding:22px;color:var(--muted);font-size:12px;}
 </div>
 
 <script>
+/* ===== CLC reporting hook: captures student name/section, sends score to Google Sheet ===== */
+const REPORT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxeqNLSGf1Wd0AiYWcTkfcyePAc6eMkJYqWV4fwoW8_Q5icDKEFacbkhzjSNswbppk1AQ/exec";
+const TEST_NAME = "Data Interpretation, Counting & Number Properties (Medium)";
+let studentName = "";
+let studentSection = "";
+(function initStudentInfo(){
+  const params = new URLSearchParams(window.location.search);
+  studentName = (params.get('name') || '').trim();
+  studentSection = (params.get('section') || '').trim();
+  if(!studentName){
+    studentName = (prompt("Enter your full name:") || "Unknown").trim();
+    studentSection = (prompt("Enter your class/section (τμήμα):") || "").trim();
+  }
+  const introEl = document.getElementById('introScreen');
+  if(introEl){
+    const tag = document.createElement('div');
+    tag.style.cssText = "font-size:13px;color:#666;margin-bottom:10px;";
+    tag.textContent = "Test taker: " + studentName + (studentSection ? " (" + studentSection + ")" : "");
+    introEl.insertBefore(tag, introEl.firstChild);
+  }
+})();
+function submitResultToSheet(score, maxScore){
+  if(!REPORT_WEBHOOK_URL || REPORT_WEBHOOK_URL.indexOf("PASTE_YOUR") === 0) return;
+  const body = new URLSearchParams({
+    name: studentName, section: studentSection, test: TEST_NAME,
+    score: score, maxScore: maxScore, when: new Date().toISOString()
+  });
+  fetch(REPORT_WEBHOOK_URL, { method: 'POST', mode: 'no-cors', body: body });
+}
+</script>
+<script>
 /* ============ CHARTS (shared across Data Interpretation questions) ============ */
 const CHART_EV = `<div class="chart-wrap"><svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:Arial,sans-serif;">
 <text x="300" y="14" text-anchor="middle" font-size="13" font-weight="bold" fill="#1c1c1c">EV Efficiency (miles per kWh) by Vehicle Category</text>
@@ -956,6 +987,7 @@ function showFinalResults(){
 
   const s1Raw = calculateScore(SEC1_QUESTIONS, answersSec1);
   const s2Raw = calculateScore(sec2Pool, answersSec2);
+  submitResultToSheet(s1Raw + s2Raw, SEC1_QUESTIONS.length + sec2Pool.length);
 
   let html = `
     <div class="scorebox">
