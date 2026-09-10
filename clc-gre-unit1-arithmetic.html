@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLC GRE Quant Mastery — Unit 1: Arithmetic</title>
+<style>
+  :root {
+    --crimson: #A8002E; --crimson-dark: #7A0022; --gold: #B8882A; --gold-light: #D9B968;
+    --ink: #262019; --muted: #6B655D; --card: #F7F7F5; --tip-bg: #F4EEDD; --trap-bg: #FBE8EA;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Calibri, Arial, sans-serif; color: var(--ink); background:#FAFAF9; }
+  header { background: var(--crimson); color:white; padding: 28px 32px; }
+  header img.logo { height: 46px; float:right; }
+  header h1 { margin:0 0 4px; font-family: Cambria, Georgia, serif; font-size: 27px; }
+  header p { color: var(--gold-light); margin:0; font-size:14px; }
+  main { max-width: 880px; margin:0 auto; padding: 28px 20px 80px; }
+
+  .menu-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(250px,1fr)); gap:16px; margin-top: 10px; }
+  .menu-card { background:white; border-radius:12px; padding:20px 22px; box-shadow:0 1px 4px rgba(0,0,0,0.06); cursor:pointer; border:2px solid transparent; }
+  .menu-card:hover { border-color: var(--gold); }
+  .menu-card h3 { margin:0 0 4px; font-family: Cambria, Georgia, serif; color: var(--crimson); font-size:19px; }
+  .menu-card p.sub { margin:0 0 10px; color: var(--muted); font-size:13px; }
+  .menu-card p.meta { margin:0; color: var(--gold); font-size:12.5px; font-weight:bold; }
+  .menu-card .status { display:inline-block; margin-top:10px; font-size:11.5px; padding:3px 9px; border-radius:20px; background:#eee; color:var(--muted); }
+  .menu-card .status.done { background:#e6f4ea; color:#1e7d34; }
+
+  .meta-bar { display:flex; justify-content:space-between; align-items:center; background:white; padding:12px 32px; border-bottom:1px solid #E4E0D8; position:sticky; top:0; z-index:20; box-shadow:0 2px 6px rgba(0,0,0,0.05); }
+  #timer { font-size:19px; font-weight:bold; color: var(--crimson); font-variant-numeric: tabular-nums; }
+  #timer.warn { color:#c0392b; animation:pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity:.5; } }
+  .progress { font-size:13px; color: var(--muted); }
+  .back-link { font-size:13px; color: var(--crimson); cursor:pointer; text-decoration:underline; }
+
+  .q-card { background:white; border-radius:10px; padding:22px 24px; margin-bottom:18px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+  .q-topic { color: var(--gold); font-weight:bold; font-size:12px; letter-spacing:1px; text-transform:uppercase; }
+  .q-prompt { font-size:16px; margin:8px 0 14px; line-height:1.45; }
+  .q-diagram { display:block; margin: 4px auto 16px; max-width: 240px; }
+  .choice { display:block; margin:8px 0; padding:10px 14px; border:1px solid #E4E0D8; border-radius:8px; cursor:pointer; }
+  .choice:hover { background:#FAF6EE; }
+  .choice input { margin-right:10px; }
+  .numeric-input { padding:10px 12px; border:1px solid #ccc; border-radius:8px; font-size:16px; width:260px; }
+  .btn { background: var(--crimson); color:white; border:none; border-radius:8px; padding:14px 34px; font-size:16px; font-weight:bold; cursor:pointer; }
+  .btn:hover { background: var(--crimson-dark); }
+  .btn:disabled { opacity:.5; }
+  .btn-secondary { background:white; color: var(--crimson); border:2px solid var(--crimson); }
+  .btn-bar { text-align:center; margin:30px 0 10px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .result-banner { background: var(--crimson); color:white; border-radius:10px; padding:20px 26px; margin-bottom:22px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+  .result-banner .score { font-size:28px; font-weight:bold; }
+  .result-banner .label { color: var(--gold-light); font-size:12px; letter-spacing:1px; text-transform:uppercase; }
+  .explain { display:none; margin-top:14px; border-top:1px solid #E4E0D8; padding-top:12px; }
+  .explain.show { display:block; }
+  .verdict { font-weight:bold; padding:4px 10px; border-radius:6px; display:inline-block; margin-bottom:10px; font-size:13px; }
+  .verdict.correct { background:#e6f4ea; color:#1e7d34; }
+  .verdict.incorrect { background: var(--trap-bg); color: var(--crimson); }
+  .box { border-radius:8px; padding:12px 14px; margin-top:8px; font-size:14px; line-height:1.5; }
+  .box.tip { background: var(--tip-bg); }
+  .box.trap { background: var(--trap-bg); }
+  .box .label { font-weight:bold; font-size:11px; letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:4px; }
+  .box.tip .label { color: var(--gold); }
+  .box.trap .label { color: var(--crimson); }
+  .box.explain-full { background: var(--card); }
+  .box.explain-full .label { color: var(--muted); }
+  footer { text-align:center; color: var(--muted); font-size:12px; padding:24px; }
+
+  .menu-card.theory-card { border-color: var(--gold); background: var(--tip-bg); }
+  .menu-card.theory-card h3 { color: var(--gold); }
+
+  .topic-block { background:white; border-radius:12px; padding:24px 26px; margin-bottom:22px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+  .topic-block h2 { font-family: Cambria, Georgia, serif; color: var(--crimson); border-bottom:2px solid var(--gold); padding-bottom:8px; margin-top:0; }
+  .topic-block h4 { font-family: Cambria, Georgia, serif; color: var(--ink); font-size:15px; margin: 18px 0 8px; }
+  .concept-flex { display:flex; gap:22px; flex-wrap:wrap; }
+  .concept-text { flex: 1 1 380px; font-size:14px; line-height:1.6; color: var(--ink); }
+  .concept-text p { margin: 0 0 12px; }
+  .example-box { flex: 0 1 300px; background: var(--tip-bg); border-radius:10px; padding:16px 18px; }
+  .example-box .ex-title { font-weight:bold; color: var(--gold); font-size:11.5px; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; }
+  .example-box pre { white-space:pre-wrap; font-family: Cambria, Georgia, serif; font-size:14px; margin:0; }
+  .inshort-box { background: var(--card); border-radius:10px; padding:14px 18px; margin-top:14px; font-size:13.5px; font-style:italic; color: var(--ink); }
+  .inshort-box .label { font-style:normal; font-weight:bold; color: var(--crimson); font-size:11px; letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:4px; }
+  .qref-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap:14px; margin-top:8px; }
+  .qref-card { background: var(--card); border-radius:9px; padding:13px 16px; }
+  .qref-card .qlabel { font-weight:bold; color: var(--crimson); font-size:13px; margin-bottom:4px; }
+  .qref-card .qformula { font-family: Cambria, Georgia, serif; font-size:14px; color: var(--ink); margin-bottom:6px; }
+  .qref-card .qnote { font-size:11.5px; font-style:italic; color: var(--muted); }
+  .decimal-table { width:100%; border-collapse:collapse; margin-top:8px; }
+  .decimal-table th { background: var(--crimson); color:white; padding:8px; font-size:13px; }
+  .decimal-table td { padding:7px 8px; text-align:center; border-bottom:1px solid #E4E0D8; font-size:13.5px; }
+  .worked-block { border-top:1px solid #E4E0D8; margin-top:18px; padding-top:14px; }
+  .worked-block .wtitle { font-weight:bold; color: var(--ink); font-size:14.5px; margin-bottom:4px; }
+  .worked-block .wproblem { background: var(--card); border-radius:8px; padding:10px 14px; font-size:13.5px; margin:8px 0 10px; }
+  .worked-block .wstep { display:flex; gap:10px; margin-bottom:7px; font-size:13.5px; }
+  .worked-block .wstep .stepnum { flex:0 0 22px; height:22px; border-radius:50%; background: var(--crimson); color:white; font-size:11px; font-weight:bold; display:flex; align-items:center; justify-content:center; }
+  .worked-block .wanswer { background: var(--crimson); color:white; border-radius:8px; padding:8px 14px; font-size:13.5px; font-weight:bold; margin-top:8px; }
+  .worked-block .wbox { border-radius:8px; padding:9px 13px; margin-top:8px; font-size:13px; }
+  .worked-block .wbox.tip { background: var(--tip-bg); }
+  .worked-block .wbox.trap { background: var(--trap-bg); }
+  .worked-block .wbox .wlabel { font-weight:bold; font-size:10.5px; letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:3px; }
+  .worked-block .wbox.tip .wlabel { color: var(--gold); }
+  .worked-block .wbox.trap .wlabel { color: var(--crimson); }
+
+  /* Calculator */
+  .calc-toggle { position:fixed; bottom:22px; right:22px; background: var(--crimson); color:white; width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,0.28); z-index:200; user-select:none; }
+  .calc-toggle:hover { background: var(--crimson-dark); }
+  .calc-panel { position:fixed; bottom:86px; right:22px; width:236px; background:white; border-radius:12px; box-shadow:0 6px 24px rgba(0,0,0,0.22); padding:14px; z-index:200; }
+  .calc-title { font-size:11px; font-weight:bold; color: var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+  .calc-display { background: var(--card); border-radius:8px; padding:10px 12px; text-align:right; font-size:20px; font-family: 'Courier New', monospace; margin-bottom:8px; min-height:26px; overflow-x:auto; white-space:nowrap; }
+  .calc-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:6px; }
+  .calc-btn { padding:11px 0; border:none; border-radius:7px; background:#F0EAD9; cursor:pointer; font-size:15px; color: var(--ink); }
+  .calc-btn:hover { background:#E8DFC5; }
+  .calc-btn.op { background: var(--gold); color:white; }
+  .calc-btn.op:hover { background:#a17a26; }
+  .calc-btn.eq { background: var(--crimson); color:white; grid-column: span 2; }
+  .calc-btn.eq:hover { background: var(--crimson-dark); }
+  .calc-btn.wide { grid-column: span 2; }
+  .calc-btn.mem { font-size:12px; background:#EFEFEF; }
+  .calc-transfer { margin-top:9px; width:100%; padding:9px; border:none; border-radius:7px; background: var(--card); color: var(--crimson); font-weight:bold; cursor:pointer; font-size:11.5px; }
+  .calc-transfer:hover { background:#EFE9E2; }
+
+  /* Print / PDF export */
+  .print-header { display:none; }
+  .pdf-btn { background:white; color: var(--crimson); border:2px solid var(--crimson); border-radius:8px; padding:12px 24px; font-size:14px; font-weight:bold; cursor:pointer; }
+  .pdf-btn:hover { background:#FBEEF1; }
+  @media print {
+    .meta-bar, .calc-toggle, .calc-panel, .btn-bar, header img.logo, .back-link, .menu-grid, #menuScreen h2, #menuScreen p { display:none !important; }
+    header { background:white !important; color: var(--ink) !important; padding:10px 0; }
+    header p { color: var(--muted) !important; }
+    .print-header { display:block !important; margin:14px 0 20px; border-bottom:2px solid var(--crimson); padding-bottom:10px; }
+    .print-header .pf-row { display:flex; gap:30px; margin-top:8px; font-size:13px; }
+    body { background:white; }
+    .q-card, .topic-block, .result-banner { box-shadow:none; border:1px solid #ddd; }
+  }
+
+  /* Formula leaflet */
+  .leaflet-card { border-color: var(--crimson); background:#FBEEF1; }
+  .leaflet-card h3 { color: var(--crimson); }
+  .leaflet-table { width:100%; border-collapse:collapse; margin-top:12px; }
+  .leaflet-table th { background: var(--crimson); color:white; padding:9px 12px; font-size:13px; text-align:left; }
+  .leaflet-table td { padding:9px 12px; border-bottom:1px solid #E4E0D8; font-size:13.5px; }
+  .leaflet-table td:first-child { font-weight:bold; color: var(--ink); width:22%; }
+  .leaflet-table td:nth-child(2) { font-family: Cambria, Georgia, serif; color: var(--crimson); width:38%; }
+  .leaflet-table td:nth-child(3) { color: var(--muted); font-size:12.5px; }
+
+  /* Flashcards */
+  .flashcard-card { border-color: var(--gold); background:#FBF3E3; }
+  .flashcard-card h3 { color: var(--gold); }
+  .flash-wrap { max-width:520px; margin:0 auto; text-align:center; }
+  .flash-progress { color: var(--muted); font-size:13px; margin-bottom:14px; }
+  .flash-card { background:white; border-radius:16px; box-shadow:0 4px 18px rgba(0,0,0,0.12); padding:40px 30px; min-height:220px; display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative; }
+  .flash-topic { position:absolute; top:16px; left:20px; font-size:11px; font-weight:bold; color: var(--gold); letter-spacing:1px; text-transform:uppercase; }
+  .flash-side-label { position:absolute; top:16px; right:20px; font-size:11px; color: var(--muted); }
+  .flash-content { font-size:19px; color: var(--ink); line-height:1.5; }
+  .flash-content.back-content { font-family: Cambria, Georgia, serif; color: var(--crimson); }
+  .flash-note { margin-top:14px; font-size:13px; color: var(--muted); font-style:italic; }
+  .flash-hint { color: var(--muted); font-size:12.5px; margin-top:12px; }
+  .flash-controls { display:flex; justify-content:center; gap:14px; margin-top:20px; }
+  .flash-nav-btn { background: var(--card); border:none; border-radius:8px; padding:12px 22px; font-size:14px; font-weight:bold; color: var(--ink); cursor:pointer; }
+  .flash-nav-btn:hover { background:#EFE9E2; }
+  .flash-nav-btn.primary { background: var(--gold); color:white; }
+  .flash-nav-btn.primary:hover { background:#9a7423; }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="logo" src="data:image/png;base64,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" alt="CLC" />
+  <h1>GRE Quant Mastery — Unit 1: Arithmetic</h1>
+  <p>CLC Educational Institute · 4 online practice tests, increasing difficulty</p>
+</header>
+
+<div class="print-header">
+  <strong>CLC Educational Institute — GRE Quant Mastery, Unit 1: Arithmetic</strong>
+  <div class="pf-row"><span>Name: _______________________</span><span>Date: _______________</span></div>
+</div>
+
+<div id="menuScreen">
+  <main>
+    <h2 style="font-family:Cambria, Georgia, serif; color:#262019;">Choose a test</h2>
+    <p style="color:#6B655D;">Each test is timed and self-contained. Your results for each are saved separately in this browser.</p>
+    <div class="menu-grid" id="menuGrid"></div>
+  </main>
+</div>
+
+<div id="testArea" style="display:none;">
+  <div class="meta-bar">
+    <div><span class="back-link" onclick="backToMenu()">← Back to test menu</span> &nbsp;·&nbsp; <span class="progress" id="progressLabel">0 / 12 answered</span></div>
+    <div id="timer">--:--</div>
+  </div>
+  <main>
+    <div id="resultBanner"></div>
+    <div id="questions"></div>
+    <div class="btn-bar">
+      <button class="btn" id="submitBtn" onclick="submitTest()">Submit Test</button>
+    </div>
+  </main>
+</div>
+
+<div id="theoryArea" style="display:none;">
+  <div class="meta-bar">
+    <div><span class="back-link" onclick="backToMenu()">← Back to test menu</span></div>
+    <div class="progress">Theory &amp; Formulas</div>
+  </div>
+  <main id="theoryMain"></main>
+</div>
+
+<div id="flashArea" style="display:none;">
+  <div class="meta-bar">
+    <div><span class="back-link" onclick="backToMenu()">← Back to test menu</span></div>
+    <div class="progress">Flashcards</div>
+  </div>
+  <main>
+    <div class="flash-wrap">
+      <div class="flash-progress" id="flashProgress">Card 1 of 20</div>
+      <div class="flash-card" id="flashCardEl" onclick="flipCard()">
+        <div class="flash-topic" id="flashTopic"></div>
+        <div class="flash-side-label" id="flashSideLabel">TAP TO FLIP</div>
+        <div>
+          <div class="flash-content" id="flashContent"></div>
+          <div class="flash-note" id="flashNote" style="display:none;"></div>
+        </div>
+      </div>
+      <p class="flash-hint">Click the card to flip it. Use the buttons below to move through the deck.</p>
+      <div class="flash-controls">
+        <button class="flash-nav-btn" onclick="flashPrev()">← Previous</button>
+        <button class="flash-nav-btn primary" onclick="flashShuffle()">🔀 Shuffle</button>
+        <button class="flash-nav-btn" onclick="flashNext()">Next →</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="calcToggle" class="calc-toggle" onclick="toggleCalc()" title="Calculator">🖩</div>
+<div id="calcPanel" class="calc-panel" style="display:none;">
+
+  <div class="calc-title">On-Screen Calculator</div>
+  <div class="calc-display" id="calcDisplay">0</div>
+  <div class="calc-grid">
+    <button class="calc-btn mem" onclick="calcMC()">MC</button>
+    <button class="calc-btn mem" onclick="calcMR()">MR</button>
+    <button class="calc-btn mem" onclick="calcMPlus()">M+</button>
+    <button class="calc-btn mem" onclick="calcMMinus()">M-</button>
+    <button class="calc-btn" onclick="calcClear()">C</button>
+    <button class="calc-btn" onclick="calcSign()">±</button>
+    <button class="calc-btn" onclick="calcSqrt()">√</button>
+    <button class="calc-btn op" onclick="calcOpPress('÷')">÷</button>
+    <button class="calc-btn" onclick="calcDigit('7')">7</button>
+    <button class="calc-btn" onclick="calcDigit('8')">8</button>
+    <button class="calc-btn" onclick="calcDigit('9')">9</button>
+    <button class="calc-btn op" onclick="calcOpPress('×')">×</button>
+    <button class="calc-btn" onclick="calcDigit('4')">4</button>
+    <button class="calc-btn" onclick="calcDigit('5')">5</button>
+    <button class="calc-btn" onclick="calcDigit('6')">6</button>
+    <button class="calc-btn op" onclick="calcOpPress('-')">−</button>
+    <button class="calc-btn" onclick="calcDigit('1')">1</button>
+    <button class="calc-btn" onclick="calcDigit('2')">2</button>
+    <button class="calc-btn" onclick="calcDigit('3')">3</button>
+    <button class="calc-btn op" onclick="calcOpPress('+')">+</button>
+    <button class="calc-btn wide" onclick="calcDigit('0')">0</button>
+    <button class="calc-btn" onclick="calcDot()">.</button>
+    <button class="calc-btn eq" onclick="calcEquals()">=</button>
+  </div>
+  <button class="calc-transfer" onclick="calcTransfer()">Use this value →</button>
+</div>
+
+<footer>CLC Educational Institute · clc.gr · 210 6858406</footer>
+
+
+<script>
+/* ===== CLC reporting hook: captures student name/section, sends score to Google Sheet ===== */
+const REPORT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxeqNLSGf1Wd0AiYWcTkfcyePAc6eMkJYqWV4fwoW8_Q5icDKEFacbkhzjSNswbppk1AQ/exec";
+const TEST_NAME_PREFIX = "Unit 1: Arithmetic";
+let studentName = "";
+let studentSection = "";
+(function initStudentInfo(){
+  const params = new URLSearchParams(window.location.search);
+  studentName = (params.get('name') || '').trim();
+  studentSection = (params.get('section') || '').trim();
+  if(!studentName){
+    studentName = (prompt("Enter your full name:") || "Unknown").trim();
+    studentSection = (prompt("Enter your class/section (τμήμα):") || "").trim();
+  }
+  const menuEl = document.getElementById('menuScreen');
+  if(menuEl){
+    const tag = document.createElement('div');
+    tag.style.cssText = "font-size:13px;color:#6B655D;margin:0 0 10px;";
+    tag.textContent = "Test taker: " + studentName + (studentSection ? " (" + studentSection + ")" : "");
+    menuEl.insertBefore(tag, menuEl.firstChild);
+  }
+})();
+function submitResultToSheet(testTitle, score, maxScore){
+  if(!REPORT_WEBHOOK_URL || REPORT_WEBHOOK_URL.indexOf("PASTE_YOUR") === 0) return;
+  const body = new URLSearchParams({
+    name: studentName, section: studentSection,
+    test: TEST_NAME_PREFIX + " — " + testTitle,
+    score: score, maxScore: maxScore, when: new Date().toISOString()
+  });
+  fetch(REPORT_WEBHOOK_URL, { method: 'POST', mode: 'no-cors', body: body });
+}
+</script>
+<script>
+const TESTS = [{"testIndex":0,"title":"Arithmetic Practice Test 1","subtitle":"Building Fluency","minutes":20,"questions":[{"n":1,"topic":"Fractions","type":"mc","prompt":"Simplify: (5/6 − 1/4) ÷ (1/3 + 1/12)","diagram":null,"choices":["7/5","5/7","7/12","12/7","35/12"],"correct":0,"formula":"Simplify numerator and denominator separately, then divide.","shortcut":"Convert everything to twelfths right away (LCD = 12) so both halves use the same pieces from the start.","trap":"Don't cancel the /12 across the two halves before finishing each one — the top and bottom must each be a single fraction first.","explanation":"5/6 − 1/4 = 10/12 − 3/12 = 7/12. 1/3 + 1/12 = 4/12 + 1/12 = 5/12. Dividing: (7/12) ÷ (5/12) = 7/12 × 12/5 = 7/5."},{"n":2,"topic":"Decimals","type":"numeric","prompt":"Write 0.0625 as a fraction in lowest terms. (Enter as a/b)","diagram":null,"choices":null,"correct":"1/16","formula":"A decimal's place value is its denominator (tenths, hundredths, thousandths, ten-thousandths...).","shortcut":"Recognize 0.0625 as half of 0.125 (which is 1/8), so 0.0625 = 1/16 — no long division needed.","trap":"Writing 625/10000 and stopping there — that's correct but NOT in lowest terms; you must reduce fully.","explanation":"0.0625 = 625/10,000. Dividing top and bottom by 625 gives 1/16."},{"n":3,"topic":"Percents","type":"mc","prompt":"A shirt priced at €40 is marked up 25%, then discounted 20% off the new price. What is the final price?","diagram":null,"choices":["€36","€38","€40","€42","€44"],"correct":2,"formula":"Successive percent changes multiply: final = original × (1 + rate1) × (1 + rate2).","shortcut":"Multiply the multipliers first: 1.25 × 0.80 = 1.00 — so the price returns exactly to where it started.","trap":"Don't just subtract the percents (25% − 20% = 5% up) — percent changes don't combine by addition/subtraction.","explanation":"€40 × 1.25 = €50. €50 × 0.80 = €40. The markup and discount exactly cancel because 1.25 × 0.80 = 1."},{"n":4,"topic":"Ratios","type":"mc","prompt":"The ratio of cats to dogs in a shelter is 3 : 4, and there are 35 animals in total. How many more dogs than cats are there?","diagram":null,"choices":["5","7","10","15","20"],"correct":0,"formula":"Part value = Total ÷ (sum of ratio terms).","shortcut":"Find the value of ONE part first (35 ÷ 7 = 5), then the difference in parts (4 − 3 = 1 part) is just that one part.","trap":"Don't divide 35 by one of the ratio numbers directly — the total represents all 7 parts, not just one side.","explanation":"Total parts = 3 + 4 = 7. One part = 35 ÷ 7 = 5. Cats = 15, dogs = 20. Difference = 5."},{"n":5,"topic":"Fractions","type":"qc","prompt":"Quantity A: 8/15     Quantity B: 11/20","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":1,"formula":"Cross-multiply diagonally to compare fractions without a common denominator.","shortcut":"8 × 20 = 160 (with 8/15); 11 × 15 = 165 (with 11/20). The larger product's fraction is larger.","trap":"Don't multiply straight across (8×11 vs 15×20) — that compares the wrong pairing entirely.","explanation":"160 \u003c 165, so 8/15 \u003c 11/20. Quantity B is greater."},{"n":6,"topic":"Percents","type":"mc","prompt":"If 40% of a number is 68, what is 65% of the same number?","diagram":null,"choices":["102","104.5","110.5","115","119"],"correct":2,"formula":"Reverse percent to find the whole, then take the requested percent of it.","shortcut":"Skip finding the number itself — scale directly: 65/40 × 68 = 110.5.","trap":"Don't compute the percentage-point difference (65% − 40% = 25%) and add that to 68 — percentages of a number don't work that way.","explanation":"The number = 68 ÷ 0.40 = 170. 65% of 170 = 0.65 × 170 = 110.5."},{"n":7,"topic":"Decimals","type":"mc","prompt":"Which is the largest? 0.36,  7/20,  34%,  0.359","diagram":null,"choices":["0.36","7/20","34%","0.359","They are all equal"],"correct":0,"formula":"Convert every value to percent form to compare on one scale.","shortcut":"0.36 = 36%, 7/20 = 35%, 34% stays, 0.359 = 35.9%. Line them up: 34 \u003c 35 \u003c 35.9 \u003c 36.","trap":"Don't compare decimal-looking numbers by counting digits — 0.359 looks bigger than 0.36 at a glance but isn't.","explanation":"36% is the largest of the four values."},{"n":8,"topic":"Proportions","type":"numeric","prompt":"A map scale is 1 cm : 25 km. Two cities are 8.4 cm apart on the map. What is the actual distance, in km?","diagram":null,"choices":null,"correct":"210","formula":"Set up a proportion: map distance / scale = actual distance / scale factor.","shortcut":"Multiply directly: 8.4 × 25 — no need to set up a full proportion equation for a simple scale.","trap":"Don't divide by 25 instead of multiplying — check which direction the scale goes (small unit to large unit means multiply).","explanation":"8.4 cm × 25 km/cm = 210 km."},{"n":9,"topic":"Mixed","type":"qc","prompt":"Quantity A: 30% of 150     Quantity B: 3/8 of 120","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":2,"formula":"Evaluate each quantity independently, then compare.","shortcut":"30% of 150 = 0.3 × 150 = 45. 3/8 of 120 = 45. Recognizing 3/8 = 37.5% helps you estimate quickly before calculating exactly.","trap":"Don't assume different-looking expressions (a percent vs. a fraction) must give different values — always calculate both.","explanation":"Quantity A = 45. Quantity B = 45. The two quantities are equal."},{"n":10,"topic":"Fractions","type":"mc","prompt":"A tank is 3/8 full. After adding 15 liters it becomes 5/8 full. What is the tank's total capacity?","diagram":null,"choices":["45 L","50 L","60 L","75 L","80 L"],"correct":2,"formula":"The added amount corresponds to the DIFFERENCE in fraction-full.","shortcut":"5/8 − 3/8 = 2/8 = 1/4 of the tank = 15 L, so the whole tank = 15 × 4 = 60 L.","trap":"Don't treat 15 L as 5/8 or 3/8 of the tank directly — it's the gap between the two fractions.","explanation":"The 15 L represents 1/4 of the tank's capacity, so capacity = 15 ÷ (1/4) = 60 L."},{"n":11,"topic":"Percents","type":"mc","prompt":"A population increases by 10% in each of two consecutive years. What is the total percent increase over the two years?","diagram":null,"choices":["19%","20%","21%","22%","25%"],"correct":2,"formula":"Multiply the yearly multipliers together: (1 + rate)².","shortcut":"1.10 × 1.10 = 1.21 → a 21% total increase, slightly more than simply doubling the rate.","trap":"Don't just add 10% + 10% = 20% — repeated percent growth compounds, it doesn't add.","explanation":"Starting at 100: after year 1 → 110; after year 2 → 110 × 1.10 = 121. Total increase = 21%."},{"n":12,"topic":"Ratios","type":"numeric","prompt":"A recipe uses flour : sugar : butter in the ratio 4 : 2 : 1. To make a batch requiring 10 cups of flour, how many combined cups of sugar and butter are needed?","diagram":null,"choices":null,"correct":"7.5","formula":"Find k using the known term, then scale the others.","shortcut":"k = 10 ÷ 4 = 2.5. Sugar = 2 × 2.5 = 5, butter = 1 × 2.5 = 2.5, combined = 7.5.","trap":"Don't assume the ratio terms are already in cups — they must be scaled by k first.","explanation":"k = 2.5. Sugar + butter = 5 + 2.5 = 7.5 cups."}]},{"testIndex":1,"title":"Arithmetic Practice Test 2","subtitle":"Applied Practice","minutes":22,"questions":[{"n":1,"topic":"Fractions","type":"numeric","prompt":"Evaluate: 2 − [ (3/4 ÷ 1/6) − (5/2 × 2/5) ]. (Enter as a fraction or decimal)","diagram":null,"choices":null,"correct":"-3/2","formula":"Work inside the brackets first, following order of operations.","shortcut":"Handle the division and multiplication separately before subtracting them from each other.","trap":"Don't apply the outer subtraction before finishing everything inside the brackets.","explanation":"3/4 ÷ 1/6 = 3/4 × 6 = 4.5. 5/2 × 2/5 = 1. Bracket = 4.5 − 1 = 3.5. 2 − 3.5 = −1.5 = −3/2."},{"n":2,"topic":"Percents","type":"numeric","prompt":"A retailer buys an item for €80 and wants a 35% profit margin BASED ON THE SELLING PRICE (not on cost). What selling price should be set? (round to nearest cent)","diagram":null,"choices":null,"correct":"123.08","formula":"If margin is based on selling price: SP − cost = margin% × SP, so SP(1 − margin%) = cost.","shortcut":"Rearrange directly: SP = cost ÷ (1 − margin%) = 80 ÷ 0.65.","trap":"Don't compute 80 × 1.35 = €108 — that's a cost-based markup, which is a different (and smaller) number than a price-based margin.","explanation":"SP = 80 ÷ 0.65 ≈ €123.08."},{"n":3,"topic":"Ratios","type":"numeric","prompt":"Three partners split profit in ratio 5 : 3 : 2. Before splitting, €3,000 of the €48,000 total profit is set aside for reinvestment. How much MORE does the first partner receive than the third?","diagram":null,"choices":null,"correct":"13500","formula":"Split only the remaining amount after any set-asides, using the parts method.","shortcut":"Remaining = 48,000 − 3,000 = 45,000. One part = 45,000 ÷ 10 = 4,500. Difference = (5−2) parts = 3 × 4,500.","trap":"Don't split the original €48,000 — the €3,000 must be removed from the total BEFORE applying the ratio.","explanation":"Remainder = 45,000. One part = 4,500. Partner 1 = 22,500, Partner 3 = 9,000. Difference = 13,500."},{"n":4,"topic":"Decimals","type":"qc","prompt":"Quantity A: 0.125 × 240     Quantity B: 12.5% of 250","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":1,"formula":"Evaluate each side; recall 0.125 = 12.5% = 1/8.","shortcut":"1/8 of 240 = 30. 1/8 of 250 = 31.25. Same fraction, different base — so compare the bases directly.","trap":"Don't assume equal-looking percents/decimals give equal results — they're applied to different numbers here.","explanation":"Quantity A = 30. Quantity B = 31.25. Quantity B is greater."},{"n":5,"topic":"Mixed","type":"numeric","prompt":"An alloy is 60% copper and 40% zinc by weight. If 15 kg of pure copper is added to 25 kg of the alloy, what percent of the new mixture is copper?","diagram":null,"choices":null,"correct":"75","formula":"Track total copper weight and total mixture weight separately, then divide.","shortcut":"Original copper = 25 × 0.6 = 15 kg. New copper = 15 + 15 = 30 kg. New total = 25 + 15 = 40 kg. Percent = 30/40.","trap":"Don't add the percentages directly (60% + something) — you must recompute the weighted percent using actual weights.","explanation":"New copper = 30 kg out of 40 kg total = 75%."},{"n":6,"topic":"Fractions","type":"qc","prompt":"Quantity A: (2/3)²     Quantity B: 2/3²","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":0,"formula":"Order of operations: an exponent applies only to what it's directly attached to.","shortcut":"(2/3)² means square the whole fraction: 4/9. 2/3² means only the 3 is squared: 2/9.","trap":"Don't read 2/3² as (2/3)² — without parentheses, the exponent binds to the denominator only.","explanation":"Quantity A = 4/9 ≈ 0.444. Quantity B = 2/9 ≈ 0.222. Quantity A is greater."},{"n":7,"topic":"Percents","type":"numeric","prompt":"A €200 item is discounted 10%, then an additional 15% off the new price, then 8% sales tax is added to the final price. What does a customer pay? (round to nearest cent)","diagram":null,"choices":null,"correct":"165.24","formula":"Apply each percent change as a multiplier, in sequence, on the running total.","shortcut":"Multiply all three multipliers together: 200 × 0.90 × 0.85 × 1.08.","trap":"Don't add/subtract the percentages together (10+15−8) — each applies to a different running amount.","explanation":"200 × 0.90 = 180. 180 × 0.85 = 153. 153 × 1.08 = 165.24."},{"n":8,"topic":"Ratios","type":"mc","prompt":"y varies directly with x. When x = 4, y = 18. What is y when x = 10?","diagram":null,"choices":["7.2","22.5","36","45","72"],"correct":3,"formula":"Direct variation: y = kx, so k = y/x stays constant.","shortcut":"k = 18/4 = 4.5. y = 4.5 × 10 = 45.","trap":"Don't treat this as inverse variation (which would give 18×4/10 = 7.2) — check the word 'directly' in the problem.","explanation":"k = 4.5. y at x=10 is 4.5 × 10 = 45."},{"n":9,"topic":"Proportions","type":"numeric","prompt":"Speed and time are inversely related for a fixed distance. A car covers a route in 5 hours at 60 km/h. How long would the same route take at 75 km/h?","diagram":null,"choices":null,"correct":"4","formula":"Inverse variation: speed × time = constant (the distance).","shortcut":"Distance = 60 × 5 = 300 km. Time at 75 km/h = 300 ÷ 75.","trap":"Don't set up this as a direct proportion (75/60 × 5) — speed and time move in OPPOSITE directions for a fixed distance.","explanation":"Distance = 300 km. New time = 300 ÷ 75 = 4 hours."},{"n":10,"topic":"Mixed","type":"mc","prompt":"A student answers 5/8 of 40 questions correctly, then is awarded bonus points equal to 1 more correct answer. What percent of the questions does the student's final score represent?","diagram":null,"choices":["60%","62.5%","65%","67.5%","70%"],"correct":2,"formula":"Find the fractional amount first, then add the bonus, then convert to percent.","shortcut":"5/8 × 40 = 25 correct. +1 bonus = 26. 26/40 = 65%.","trap":"Don't convert 5/8 to percent (62.5%) and simply add 1% for the bonus — the bonus is 1 QUESTION, not 1 percentage point.","explanation":"25 + 1 = 26 out of 40 = 65%."},{"n":11,"topic":"Ratios","type":"numeric","prompt":"If a : b = 2 : 5 and b : c = 3 : 4, express a : b : c using whole numbers. (Enter as a:b:c)","diagram":null,"choices":null,"correct":"6:15:20","formula":"Scale both ratios so the shared term (b) matches in both.","shortcut":"a:b = 2:5 → ×3 → 6:15. b:c = 3:4 → ×5 → 15:20. Now b = 15 in both, so merge directly.","trap":"Don't merge the ratios without matching the shared term first — writing 2:5:4 directly is incorrect.","explanation":"Scaling to match b = 15 in both ratios gives a:b:c = 6:15:20."},{"n":12,"topic":"Percents","type":"qc","prompt":"Quantity A: the percent increase from 80 to 100     Quantity B: the percent decrease from 100 to 80","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":0,"formula":"Percent change always divides by the ORIGINAL (starting) value, which differs between A and B here.","shortcut":"A: (100−80)/80 = 25%. B: (100−80)/100 = 20%. Same numeric gap, different base — different percentages.","trap":"Don't assume a percent increase and its 'reverse' percent decrease are equal — the base of comparison changes.","explanation":"Quantity A = 25%. Quantity B = 20%. Quantity A is greater."}]},{"testIndex":2,"title":"Arithmetic Practice Test 3","subtitle":"Advanced Traps","minutes":25,"questions":[{"n":1,"topic":"Fractions","type":"mc","prompt":"Simplify: [ (1/2 + 1/3) ÷ (1/2 − 1/3) ] × (2/5)","diagram":null,"choices":["1","2","5/2","3","5"],"correct":1,"formula":"Simplify the bracket first (a fraction divided by a fraction), then multiply by the outer factor.","shortcut":"1/2+1/3 = 5/6. 1/2−1/3 = 1/6. (5/6)÷(1/6) = 5. Then 5 × 2/5 = 2.","trap":"Don't multiply the 2/5 into only one part of the bracket — finish the bracket completely first.","explanation":"Bracket = 5. 5 × 2/5 = 2."},{"n":2,"topic":"Percents","type":"numeric","prompt":"Revenue grew from €2.4 million to €3.0 million; expenses grew from €1.8 million to €2.1 million, over the same period. By how many PERCENTAGE POINTS more did revenue grow, compared to expenses? (round to one decimal)","diagram":null,"choices":null,"correct":"8.3","formula":"Compute each percent change separately (against its own original value), then subtract.","shortcut":"Revenue: (3.0−2.4)/2.4 = 25%. Expenses: (2.1−1.8)/1.8 ≈ 16.7%. Difference: 25 − 16.7.","trap":"Don't compare the euro amounts of growth (€0.6M vs €0.3M) directly — the question asks about PERCENT growth, which depends on each item's own starting value.","explanation":"Revenue grew 25%. Expenses grew about 16.7%. Difference ≈ 8.3 percentage points."},{"n":3,"topic":"Ratios","type":"numeric","prompt":"A solution is mixed from liquid X and liquid Y in ratio 3 : 7 (20 liters total). How many liters of pure liquid X must be added to make the solution 50% liquid X?","diagram":null,"choices":null,"correct":"8","formula":"Set up an equation: (original X + added X) / (original total + added X) = target fraction.","shortcut":"Original X = 6 L, Y = 14 L. Solve (6+a)/(20+a) = 0.5 → 6+a = 10+0.5a → a = 8.","trap":"Don't forget that adding pure X also increases the TOTAL volume — the denominator changes too, not just the numerator.","explanation":"6 + a = 0.5(20 + a) → 6 + a = 10 + 0.5a → 0.5a = 4 → a = 8 liters."},{"n":4,"topic":"Fractions","type":"qc","prompt":"Quantity A: 3/7 of 91     Quantity B: 5/13 of 91","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":0,"formula":"Both quantities share the same base (91) — compare the fractions directly, or just compute both.","shortcut":"91 is divisible by both 7 and 13, so both come out as whole numbers: 91/7 = 13, 91/13 = 7.","trap":"Don't assume 5/13 > 3/7 just because 5 > 3 — the denominators are different, so you must actually compute or cross-multiply.","explanation":"3/7 of 91 = 3 × 13 = 39. 5/13 of 91 = 5 × 7 = 35. Quantity A is greater."},{"n":5,"topic":"Percents","type":"numeric","prompt":"After a 12% pay cut, an employee's salary is €39,600. They later receive a 12% raise on this REDUCED salary. What is the new salary, and is it back to the original? (enter the new salary in euros, rounded to nearest cent)","diagram":null,"choices":null,"correct":"44352","formula":"A percent cut followed by the SAME percent raise does not return to the original, because the raise applies to a smaller base.","shortcut":"Multiply directly: 39,600 × 1.12 — don't try to 'undo' the cut by simply reversing 12%.","trap":"Don't assume −12% then +12% cancels out — this is the classic asymmetric percent-change trap. It does not fully restore the original.","explanation":"New salary = 39,600 × 1.12 = 44,352. Original before the cut was 39,600 ÷ 0.88 = 45,000, so 44,352 is still about 1.4% below the original."},{"n":6,"topic":"Percents","type":"numeric","prompt":"A store's inventory value decreased 15% in January, then increased 40% in February, ending at €11,900. What was the inventory value at the start of January?","diagram":null,"choices":null,"correct":"10000","formula":"Combine successive percent changes into one multiplier, then divide the final value by it.","shortcut":"Multiply the multipliers first: 0.85 × 1.40 = 1.19. Then divide the ending value by 1.19 in a single step.","trap":"Don't try to undo each percent change separately in reverse — combine them into one multiplier first, then divide once.","explanation":"0.85 × 1.40 = 1.19. Original value = 11,900 ÷ 1.19 = 10,000."},{"n":7,"topic":"Decimals","type":"qc","prompt":"Quantity A: 7/9     Quantity B: 0.778","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":1,"formula":"Convert the fraction to a decimal and compare digit by digit.","shortcut":"7 ÷ 9 = 0.7777... Compare to 0.778 carefully — don't round 7/9 too early.","trap":"Don't assume they're equal just because they look extremely close — 0.778 is very slightly larger than 0.777....","explanation":"7/9 = 0.777... \u003c 0.778, so Quantity B is greater."},{"n":8,"topic":"Ratios","type":"numeric","prompt":"In a class, the ratio of students who passed to failed is 7 : 2. If 4 failing students had instead passed (same total class size), the ratio would become 8 : 1. How many students are in the class?","diagram":null,"choices":null,"correct":"36","formula":"Set up the ratio as an equation using a common multiplier k for the original groups.","shortcut":"Let pass = 7k, fail = 2k. New pass = 7k+4, new fail = 2k−4. Set (7k+4)/(2k−4) = 8/1 and solve for k.","trap":"Don't assume the total changes — the same 4 students move from 'fail' to 'pass'; the class size stays fixed.","explanation":"7k+4 = 8(2k−4) → 7k+4 = 16k−32 → 36 = 9k → k = 4. Total = 9k = 36 students."},{"n":9,"topic":"Percents","type":"qc","prompt":"Quantity A: value after two successive 10% increases on 100     Quantity B: value after one 21% increase on 100","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":2,"formula":"Multiply successive percent multipliers together to compare against a single equivalent change.","shortcut":"1.10 × 1.10 = 1.21 exactly — so two 10% increases equal one 21% increase, not one 20% increase.","trap":"Don't assume two 10% increases equal a 20% increase (that would ignore compounding) — but also don't assume they're never exactly matchable to a single rate.","explanation":"Both quantities equal 121. The two quantities are equal."},{"n":10,"topic":"Fractions","type":"mc","prompt":"Two-thirds of a class are girls. Of the girls, 3/8 play a sport; of the boys, 1/4 play a sport. What fraction of the WHOLE class plays a sport?","diagram":null,"choices":["1/4","3/8","1/3","5/12","1/2"],"correct":2,"formula":"Work with a convenient total (a common multiple of the denominators involved), not with abstract fractions alone.","shortcut":"Pick a class size of 24 (divisible by 3, 8, 4). Girls = 16, boys = 8. Sport-playing girls = 6, boys = 2. Total = 8 out of 24.","trap":"Don't just average 3/8 and 1/4 — the two groups (girls and boys) are different SIZES, so a weighted total is required.","explanation":"8 out of 24 students play a sport = 1/3 of the class."},{"n":11,"topic":"Ratios","type":"numeric","prompt":"Alloy 1 contains metal A and metal B in ratio 1 : 3. Alloy 2 contains the same two metals in ratio 3 : 1. How many kg of Alloy 1 must be mixed with Alloy 2 to produce 80 kg of a new alloy with an even 1 : 1 ratio of A to B? (Enter kg of Alloy 1)","diagram":null,"choices":null,"correct":"40","formula":"Set up an equation for the total amount of metal A using each alloy's fraction of A, then solve.","shortcut":"Alloy 1 is 1/4 A, Alloy 2 is 3/4 A — the target (1/2 A) is exactly the midpoint of these two fractions, so equal weights of each alloy will average out to it.","trap":"Don't assume equal weights work for every mixture target — here it happens because 1/2 is the exact midpoint of 1/4 and 3/4; a different target ratio would need the full weighted equation.","explanation":"Let x = kg of Alloy 1, so (80−x) = kg of Alloy 2. A content: (1/4)x + (3/4)(80−x) = 40 (half of 80). Solving: x + 3(80−x) = 160 → x + 240 − 3x = 160 → −2x = −80 → x = 40."},{"n":12,"topic":"Percents","type":"qc","prompt":"A price P is increased by x%, then decreased by the same x%. Quantity A: the resulting price     Quantity B: P  (assume x is any nonzero number)","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":1,"formula":"Resulting price = P × (1 + x/100) × (1 − x/100) = P × (1 − (x/100)²).","shortcut":"Since (x/100)² is always positive for nonzero x, the multiplier (1 − (x/100)²) is always less than 1 — so the result is always less than P.","trap":"Don't assume a percent increase followed by the same percent decrease returns to the original value — it never does, for any nonzero x.","explanation":"The resulting price is always strictly less than P (for any nonzero x), so Quantity B is greater."}]},{"testIndex":3,"title":"Arithmetic Practice Test 4","subtitle":"Mixed Mastery (Timed)","minutes":25,"questions":[{"n":1,"topic":"Percents","type":"numeric","prompt":"A jacket is discounted 30%, then the sale price is discounted an additional 10% for loyalty members. A loyalty member pays €94.50. What was the original price?","diagram":null,"choices":null,"correct":"150","formula":"Combine both discounts as multipliers, then divide the final price by the combined multiplier.","shortcut":"0.70 × 0.90 = 0.63. Original = 94.50 ÷ 0.63.","trap":"Don't add the two discounts together (30%+10%=40% off) and divide by 0.60 — successive discounts must be multiplied, not added.","explanation":"94.50 ÷ 0.63 = 150. Original price = €150."},{"n":2,"topic":"Mixed","type":"numeric","prompt":"In a school, boys : girls = 5 : 6. 60% of boys and 50% of girls participate in a program. What percent of the total student body participates? (round to one decimal)","diagram":null,"choices":null,"correct":"54.5","formula":"Use a multiplier k for the ratio, express participants of each group, then divide by the total.","shortcut":"Boys = 5k, girls = 6k. Participants = 0.6(5k) + 0.5(6k) = 3k + 3k = 6k. Percent = 6k / 11k.","trap":"Don't just average 60% and 50% to get 55% — the two groups are different sizes (5k vs 6k), so a simple average is not exact.","explanation":"Participants = 6k out of 11k total = 6/11 ≈ 54.5%."},{"n":3,"topic":"Fractions","type":"qc","prompt":"Quantity A: 1/2 + 1/3 + 1/6     Quantity B: 1","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":2,"formula":"Find a common denominator and add all three fractions.","shortcut":"LCD of 2, 3, 6 is 6: 3/6 + 2/6 + 1/6 = 6/6.","trap":"Don't assume adding three 'small' fractions must give something less than 1 — check the actual sum.","explanation":"3/6 + 2/6 + 1/6 = 6/6 = 1. The two quantities are equal."},{"n":4,"topic":"Arithmetic","type":"numeric","prompt":"A jar contains only nickels (€0.05) and dimes (€0.10), totaling 45 coins worth €3.75. How many dimes are in the jar?","diagram":null,"choices":null,"correct":"30","formula":"Set up two equations: one for the total COUNT of coins, one for the total VALUE.","shortcut":"Simplify the value equation to n + 2d = 75, then subtract the count equation (n + d = 45) to isolate d directly.","trap":"Don't mix units — convert everything to the same scale (e.g. cents, or consistent decimals) before setting up the value equation.","explanation":"n + d = 45. 0.05n + 0.10d = 3.75 → n + 2d = 75. Subtracting: (n+2d) − (n+d) = 75 − 45 → d = 30."},{"n":5,"topic":"Ratios","type":"numeric","prompt":"A photo measuring 4 in by 6 in is enlarged so its longer side becomes 15 in. What is the new area of the photo, in square inches?","diagram":null,"choices":null,"correct":"150","formula":"Find the scale factor from the known side, then apply it to BOTH dimensions before finding area.","shortcut":"Scale factor = 15 ÷ 6 = 2.5. New short side = 4 × 2.5 = 10. New area = 15 × 10.","trap":"Don't scale the area directly by the same factor as one side (2.5×) — area scales by the SQUARE of the linear scale factor only when both dimensions are unknown; here, compute both new sides explicitly instead.","explanation":"New dimensions: 10 in × 15 in. Area = 150 sq in."},{"n":6,"topic":"Percents","type":"qc","prompt":"Quantity A: value after +50% then −50% on 200     Quantity B: value after −50% then +50% on 200","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":2,"formula":"Multiply the two multipliers in either order — multiplication is commutative.","shortcut":"1.5 × 0.5 = 0.75 either way, so order doesn't matter for pure successive multiplicative changes (unlike additive traps).","trap":"Don't assume order always matters for percent changes — for two PURE multiplicative changes with no other steps in between, the order doesn't affect the final result.","explanation":"Both orders give 200 × 0.75 = 150. The two quantities are equal."},{"n":7,"topic":"Fractions","type":"numeric","prompt":"Pipe A fills a tank in 6 hours alone. Pipe B drains a full tank in 10 hours alone. If both pipes are opened together on an empty tank, how many hours to fill it?","diagram":null,"choices":null,"correct":"15","formula":"Combine rates (as fractions of the tank per hour), not times directly.","shortcut":"Rate = 1/6 − 1/10 = 5/30 − 3/30 = 2/30 = 1/15 of the tank per hour, so filling time = 15 hours.","trap":"Don't average or subtract the two TIMES (6 and 10) directly — you must combine their RATES, then invert.","explanation":"Combined rate = 1/15 tank/hour. Time to fill = 15 hours."},{"n":8,"topic":"Ratios","type":"numeric","prompt":"A school has 50 students split in the ratio 2 : 3 between Grade A and Grade B. 25% of Grade A students and 40% of Grade B students take music. How many students total take music?","diagram":null,"choices":null,"correct":"17","formula":"Split the total using the ratio's parts, then apply each group's percent separately.","shortcut":"Parts = 5, one part = 10. Grade A = 20, Grade B = 30. Music = 0.25×20 + 0.40×30 = 5 + 12.","trap":"Don't apply one blended percent to the whole 50 students — the two grades have different sizes AND different participation rates.","explanation":"Grade A = 20 students, Grade B = 30 students. Music students = 5 + 12 = 17."},{"n":9,"topic":"Fractions","type":"numeric","prompt":"A jug is 5/6 full of water. After pouring out 2/5 of the water that was in the jug, 12 liters remain. What is the jug's total capacity, in liters?","diagram":null,"choices":null,"correct":"24","formula":"Apply the fractions in sequence to find what fraction of the CAPACITY remains, then solve.","shortcut":"Multiply the two fractions directly: 5/6 × 3/5 (the fraction of water remaining after pouring) = 1/2 of capacity — skip intermediate liter math.","trap":"Don't treat '2/5 poured out' as 2/5 of the jug's CAPACITY — it's 2/5 of the WATER currently in the jug, a smaller amount.","explanation":"After pouring, 3/5 of the original water remains: (3/5)(5/6) = 1/2 of capacity. So 1/2 of capacity = 12 L → capacity = 24 L."},{"n":10,"topic":"Percents","type":"numeric","prompt":"€5,000 grows 8% in year 1 and 8% again in year 2, but a 2% fee is deducted from the balance at the END of each year (after that year's growth). What is the balance after 2 years? (round to nearest cent)","diagram":null,"choices":null,"correct":"5601.05","formula":"Apply each year's steps in order: growth first, then the fee, on the running balance.","shortcut":"Multiply through in sequence: 5000 × 1.08 × 0.98 × 1.08 × 0.98.","trap":"Don't apply both years' growth first and then both fees at the end — the fee is deducted EACH year, compounding the reduction.","explanation":"Year 1: 5000×1.08=5400, fee 2%→5400×0.98=5292. Year 2: 5292×1.08=5715.36, fee 2%→5715.36×0.98≈5601.05."},{"n":11,"topic":"Ratios","type":"numeric","prompt":"Two numbers are in the ratio 5 : 9. If 3 is subtracted from each, the new ratio is 1 : 2. Find the two numbers. (Enter smaller,larger)","diagram":null,"choices":null,"correct":"15,27","formula":"Set up the ratio equation with a multiplier k, subtract the same amount from each side, and solve.","shortcut":"(5k−3)/(9k−3) = 1/2. Cross-multiply: 2(5k−3) = 9k−3 → k = 3. Numbers = 15 and 27.","trap":"Don't subtract 3 from the RATIO terms (5 and 9) directly — the subtraction applies to the actual numbers, not to k.","explanation":"k = 3. Original numbers: 5(3) = 15 and 9(3) = 27. Check: (15−3)/(27−3) = 12/24 = 1/2. ✓"},{"n":12,"topic":"Percents","type":"qc","prompt":"A merchant marks up cost by 40%, then offers a 30% discount off the marked price during a sale. Quantity A: sale price as a percent of original cost     Quantity B: 100%","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":1,"formula":"Apply the markup and discount as successive multipliers on the cost.","shortcut":"1.40 × 0.70 = 0.98 → the sale price is 98% of the original cost — a net loss versus cost, despite the markup.","trap":"Don't assume 40% markup minus 30% discount leaves a 10% net gain — multiply the multipliers, don't subtract the percentages.","explanation":"Sale price = cost × 1.40 × 0.70 = cost × 0.98 = 98% of cost. Quantity B (100%) is greater."}]}];
+const THEORY = [{"name":"Fractions","concept":{"kicker":"Fractions · Foundations","title":"What a fraction actually represents","badgeKey":"frac_concept","paragraphs":["A fraction a/b describes a whole that has been cut into b equal-sized pieces, of which you have a of them. The denominator (bottom) sets the SIZE of each piece; the numerator (top) counts how many pieces you have.","This is exactly why you cannot add 1/3 + 1/4 directly: thirds and quarters are different-sized pieces of the same whole, like trying to add euros and dollars without converting them to the same currency first.","To add or subtract, you first resize both fractions to the SAME piece-size — the lowest common denominator (LCD) — and only then combine the numerators.","Multiplying is different: a/b × c/d means “a fraction OF a fraction,” so there's no need to resize pieces first — you're not combining amounts of the same size, you're scaling one quantity by another."],"exampleTitle":"Why we need the LCD","exampleLines":"1/3 + 1/4\n\nResize both to twelfths\n(the LCD of 3 and 4):\n1/3 = 4/12\n1/4 = 3/12\n\nNow the pieces match:\n4/12 + 3/12 = 7/12","inShort":"Denominator = piece size. Numerator = how many pieces. Match piece sizes before adding or subtracting."},"quickref":[{"label":"Add / Subtract","formula":"a/b ± c/d  →  find the LCD, convert both fractions, then add/subtract numerators only.","note":"Never add the denominators."},{"label":"Multiply","formula":"a/b × c/d = (a×c) / (b×d)","note":"Cancel common factors diagonally BEFORE multiplying — saves time."},{"label":"Divide","formula":"a/b ÷ c/d = a/b × d/c","note":"“Keep, change, flip” — keep first fraction, change ÷ to ×, flip second."},{"label":"Simplify","formula":"Divide numerator and denominator by their GCF (greatest common factor).","note":"Always reduce fully before comparing answers or bubbling in a QC choice."}],"worked":[{"kicker":"Fractions · Worked Problem 1","title":"Comparing fractions without a common denominator","problem":"Quantity A: 7/12          Quantity B: 5/9    —   Which is greater?","steps":["Cross-multiply diagonally: 7 × 9 = 63 (goes with 7/12) and 5 × 12 = 60 (goes with 5/9).","Compare the two cross-products directly: 63 vs. 60.","The larger cross-product belongs to the larger fraction: 63 > 60, so 7/12 is bigger."],"shortcut":"The “bowtie” cross-multiplication trick compares two fractions in one line — no LCD needed. Multiply numerator × opposite denominator, and place each product next to the fraction it came from.","trap":"Don't cross-multiply straight across (7×5 vs 12×9) — that compares the wrong pairs and gives a meaningless result. Always multiply diagonally.","answer":"Answer: Quantity A is greater (7/12 > 5/9)"},{"kicker":"Fractions · Worked Problem 2","title":"Simplifying a complex (stacked) fraction","problem":"Simplify:   (2/3 + 1/6) / (5/6 − 1/3)","steps":["Simplify the top only: 2/3 + 1/6 = 4/6 + 1/6 = 5/6.","Simplify the bottom only: 5/6 − 1/3 = 5/6 − 2/6 = 3/6 = 1/2.","Divide top by bottom: (5/6) ÷ (1/2) = 5/6 × 2/1 = 10/6 = 5/3."],"shortcut":"Treat numerator and denominator as two separate mini-problems first. Never touch across the main fraction bar until both halves are single fractions.","trap":"Don't try to cancel terms across the main fraction bar before combining each half (e.g. cancelling the 6's) — the bar only divides once both halves are fully simplified.","answer":"Answer: 5/3"}]},{"name":"Decimals","concept":{"kicker":"Decimals · Foundations","title":"Place value: how decimals connect to fractions and percents","badgeKey":"dec_concept","paragraphs":["Every digit after the decimal point is a fraction with a power of 10 on the bottom: the first place is tenths (/10), the second is hundredths (/100), the third is thousandths (/1000), and so on.","This is why 0.47 literally means 47/100 — you can read any two-decimal-place number directly as “out of a hundred,” which is also exactly what a percent is (percent = “per hundred”).","To turn any fraction into a decimal, just divide the numerator by the denominator. To turn a fraction directly into a percent, do the same division, then move the decimal point two places to the right.","Some fractions (like 1/3 = 0.333...) never terminate — on the GRE, round to the precision the question asks for (typically one or two decimal places, or the nearest 0.1%)."],"exampleTitle":"Fraction → decimal → percent","exampleLines":"3/8\n\n3 ÷ 8 = 0.375\n\nMove the decimal point\ntwo places right:\n\n0.375 → 37.5%","inShort":"Decimal places ARE fractions of 10, 100, 1000... Percent is just the hundredths place read aloud."},"quickref":[],"worked":[{"kicker":"Decimals · Worked Problem","title":"Ordering fractions, decimals & percents together","problem":"Order from least to greatest:   3/8,   0.4,   38%,   5/12","steps":["Convert everything to the same form — percents are usually fastest: 3/8 = 37.5%, 0.4 = 40%, 38% stays, 5/12 ≈ 41.7%.","Line up the percents: 37.5%, 38%, 40%, 41.7%.","Translate back to the original labels in that order."],"shortcut":"When a list mixes fractions, decimals and percents, convert ALL of them to percent — it's the easiest common format to compare mentally, since you just move a decimal point.","trap":"Don't compare 3/8 and 5/12 by “eyeballing” the fractions — different denominators make size hard to judge at a glance. Convert first, then compare.","answer":"Answer: 3/8, 38%, 0.4, 5/12"}],"table":[["1/2","0.5","50%"],["1/3","0.333...","33.3%"],["2/3","0.667...","66.7%"],["1/4","0.25","25%"],["3/4","0.75","75%"],["1/5","0.2","20%"],["1/8","0.125","12.5%"],["1/6","0.1667","16.7%"]],"tableNote":"The GRE never gives you a calculator that saves real time on these conversions. Recognizing 1/8 = 12.5% instantly — instead of dividing by hand — is often the difference between finishing on time and running out of time. Rule of thumb: to convert any fraction to a percent, divide top by bottom, then move the decimal point two places right."},{"name":"Percents","concept":{"kicker":"Percents · Foundations","title":"What 'percent' really means — and why the formulas work","badgeKey":"pct_concept","paragraphs":["The word “percent” comes from the Latin per centum, meaning “per hundred.” So 35% simply means 35 out of every 100 — exactly the fraction 35/100, or the decimal 0.35.","In everyday language, the word “of” between two quantities always signals multiplication — “half OF ten” is 5, and “20% OF 60” works the same way: (20/100) × 60.","Percent CHANGE measures how big the change is relative to where you started — not where you ended up. That's why the original (starting) value always goes on the bottom of the percent-change fraction.","Reverse percent problems give you the END result and ask for the START. Since finding the end value means multiplying by a percent, finding the start value means doing the opposite: dividing."],"exampleTitle":"“Of” means multiply","exampleLines":"15% of 200\n\n15% = 15/100 = 0.15\n\n0.15 × 200 = 30\n\nSo 15% of 200 is 30.","inShort":"Percent = per hundred. “Of” = multiply. Percent change is always measured against the ORIGINAL value."},"quickref":[{"label":"Percent of a number","formula":"“x% of y”  =  (x/100) × y","note":"“Of” always means multiply."},{"label":"“What percent”","formula":"x is what % of y?   →   (x/y) × 100","note":"The number after “of” goes on the bottom."},{"label":"Percent change","formula":"% change = (New − Old) / Old × 100","note":"Always divide by the ORIGINAL (old) value — never the new one."},{"label":"Reverse percent","formula":"If y is x% of an unknown N:   N = y ÷ (x/100)","note":"Used to find the “before” value when given the “after” value."}],"worked":[{"kicker":"Percents · Worked Problem 1","title":"Percent increase, the fast way","problem":"A laptop's price rises from €480 to €600. What is the percent increase?","steps":["Find the change: 600 − 480 = 120.","Divide by the ORIGINAL value: 120 / 480 = 0.25.","Convert to a percent: 0.25 × 100 = 25%."],"shortcut":"Multiplier shortcut: New = Old × (1 + rate). Here 600/480 = 1.25, so the increase is 25% — no subtraction step needed if you spot the ratio directly.","trap":"Don't divide the change by the NEW value (120/600 = 20%) — that's a common wrong-answer trap choice on the GRE. Percent change always uses the original value as the base.","answer":"Answer: 25% increase"},{"kicker":"Percents · Worked Problem 2","title":"Successive percent changes don't add up","problem":"A price increases by 20%, then decreases by 20%. What is the net percent change?","steps":["Pick an easy starting value: €100.","After +20%: 100 × 1.20 = €120.","After −20% of the NEW value: 120 × 0.80 = €96.","Net change: from €100 to €96 → a 4% decrease."],"shortcut":"Use multipliers and a starting value of 100 for any successive-change problem: multiply the multipliers together (1.20 × 0.80 = 0.96 → 4% decrease). This avoids re-deriving the base each time.","trap":"Don't assume +20% then −20% cancels to 0% — this is one of the GRE's favorite traps. The second percentage applies to a different (larger or smaller) base than the first.","answer":"Answer: net 4% decrease (not 0%)"},{"kicker":"Percents · Worked Problem 3","title":"Reverse percent — finding the original value","problem":"After a 15% discount, a jacket costs €102. What was the original price?","steps":["A 15% discount means the sale price is 85% of the original: 0.85 × N = 102.","Solve for N: N = 102 / 0.85.","N = 120."],"shortcut":"Set up “sale price = (100% − discount%) × original” as one equation and divide — never try to “add back” 15% to €102, since 15% of the sale price ≠ 15% of the original.","trap":"Don't compute 102 × 1.15 = €117.30 — that incorrectly adds 15% of the DISCOUNTED price back on, which is a different (smaller) 15% than what was removed.","answer":"Answer: €120"}]},{"name":"Ratios","concept":{"kicker":"Ratios · Foundations","title":"Ratios, fractions & 'parts' — how they connect","badgeKey":"ratio_concept","paragraphs":["A ratio a : b describes how two quantities relate in SIZE — it does not tell you the actual amounts. A ratio of 2:3 could mean 2 and 3 apples, or 200 and 300 apples; the relationship is what stays fixed.","Think of a ratio like a recipe: 2 cups flour to 3 cups sugar. You can double or triple the whole recipe, and it will still taste right, because both ingredients scale together in the same proportion.","This is why we introduce a multiplier “k”: if a ratio is 2:3, the real quantities are 2k and 3k for some number k. Once one piece of real information is given, you can solve for k and unlock every other quantity.","A ratio a:b can always be written as the fraction a/b, but a ratio compares PART to PART, while a fraction more often compares PART to WHOLE — the GRE tests this distinction deliberately."],"exampleTitle":"Same ratio, different sizes","exampleLines":"Ratio 2 : 3\n\ncould be:\n2 and 3\n(k = 1)\n\nor 20 and 30\n(k = 10)\n\nThe relationship\n(2:3) never changes.","inShort":"A ratio is a relationship, not an amount. Use a multiplier k to turn the relationship into real numbers."},"quickref":[{"label":"Ratio as parts","formula":"A ratio a : b splits a total into (a+b) equal “parts.” Each part = Total ÷ (a+b).","note":"Always find the value of ONE part first."},{"label":"Part-to-part vs. part-to-whole","formula":"a : b (part-to-part)  →  a/(a+b) is part-to-whole","note":"Read GRE questions carefully — they switch between these on purpose."},{"label":"Scaling a ratio","formula":"If a : b = 3 : 5, then the actual numbers are 3k and 5k for some k.","note":"Use “k” as a multiplier variable to turn ratios into equations."},{"label":"Combining ratios","formula":"To combine a:b and b:c, scale both so the “b” terms match, then merge into a:b:c.","note":"Find the LCM of the shared term."}],"worked":[{"kicker":"Ratios · Worked Problem 1","title":"Splitting a total using the “parts” method","problem":"€360 is split between Maria and Nikos in the ratio 4 : 5. How much does Nikos get?","steps":["Total parts: 4 + 5 = 9 parts.","Value of one part: €360 ÷ 9 = €40.","Nikos's share: 5 parts × €40 = €200."],"shortcut":"Always convert a ratio problem into “value of one part,” then multiply by however many parts you need. This works for any number of people or categories in the ratio.","trap":"Don't divide €360 by 5 directly (giving €72) — that ignores that the total represents ALL 9 parts, not just Nikos's 5.","answer":"Answer: €200"},{"kicker":"Ratios · Worked Problem 2","title":"Three-part ratio with a changing total","problem":"Red, blue and green marbles are in the ratio 2 : 3 : 5. If there are 25 green marbles, how many marbles are there in total?","steps":["Set up the multiplier: green = 5k = 25, so k = 5.","Find each color: red = 2k = 10, blue = 3k = 15, green = 5k = 25.","Total = 10 + 15 + 25 = 50 (or total parts 2+3+5=10, ×k=5 → 50)."],"shortcut":"With a three-term ratio, use the single value you're given to solve for k first — then every other quantity (including the total) is a quick multiplication.","trap":"Don't assume “25 green” means the ratio total is 25 — the total is (2+3+5)×k, not the value tied to just one term.","answer":"Answer: 50 marbles total"}]},{"name":"Proportions","concept":{"kicker":"Proportions · Foundations","title":"Direct vs. inverse variation — telling them apart","badgeKey":"prop_concept","paragraphs":["A proportion is simply a statement that two ratios are equal: a/b = c/d. Because both sides describe the same relationship, you can cross-multiply to turn it into a normal equation: a×d = b×c.","DIRECT variation means two quantities grow together in lockstep: y = kx. Real example — hours worked and total pay at a fixed hourly rate: work more hours, earn proportionally more.","INVERSE variation means one quantity grows while the other shrinks, so their product stays constant: y = k/x. Real example — speed and travel time for a FIXED distance: drive faster, and the trip takes proportionally less time.","Before setting up any proportion, ask: “if one quantity doubles, does the other double too (direct), or does it halve (inverse)?” This single question prevents most proportion setup errors."],"exampleTitle":"Direct vs. inverse, side by side","exampleLines":"DIRECT:\npay = rate × hours\nmore hours → more pay\n\nINVERSE:\ntime = distance / speed\nmore speed → less time","inShort":"Direct: both grow together (y = kx). Inverse: one grows, the other shrinks (y = k/x)."},"quickref":[{"label":"Cross-multiplication","formula":"If a/b = c/d, then a×d = b×c.","note":"The universal tool for solving any proportion equation."},{"label":"Direct variation","formula":"y = kx  —  as x increases, y increases at the same rate.","note":"“More of one means more of the other,” proportionally."},{"label":"Inverse variation","formula":"y = k/x  —  as x increases, y decreases.","note":"“More of one means less of the other” (e.g. speed vs. time for a fixed distance)."},{"label":"Rate problems","formula":"Set up matching units on top and bottom of each ratio before cross-multiplying.","note":"Keep the same unit in the same position in both fractions."}],"worked":[{"kicker":"Proportions · Worked Problem","title":"A rate problem set up as a clean proportion","problem":"A recipe uses 3 cups of flour for 8 servings. How many cups of flour are needed for 20 servings?","steps":["Set up matching units: (cups / servings) = 3/8 = x/20.","Cross-multiply: 3 × 20 = 8 × x  →  60 = 8x.","Solve: x = 60/8 = 7.5."],"shortcut":"Always write both ratios with the SAME unit on top and the SAME unit on bottom (cups over servings, both times) — this prevents flipping an answer upside down under time pressure.","trap":"Don't set up 3/8 = 20/x (units swapped on one side) — mismatched unit placement is the single most common proportion error on timed tests.","answer":"Answer: 7.5 cups"}]}];
+const DIAGRAMS = {};
+const LEAFLET = [["Compare fractions","Cross-multiply diagonally","Larger cross-product = larger fraction"],["Percent of","(x/100) × y","“Of” = multiply"],["Percent change","(New − Old)/Old × 100","Base is always the OLD value"],["Successive % change","Multiply the multipliers (e.g. 1.2 × 0.8)","Never just add/subtract the percents"],["Reverse percent","N = given ÷ (percent/100)","Set up an equation, don't “add back”"],["Ratio split","Part value = Total ÷ (sum of ratio terms)","Find ONE part first, then scale"],["Proportion","Cross-multiply: a×d = b×c","Match units top/bottom on both sides"]];
+const FLASHCARDS = [{"topic":"Fractions","front":"Add / Subtract","back":"a/b ± c/d  →  find the LCD, convert both fractions, then add/subtract numerators only.","note":"Never add the denominators."},{"topic":"Fractions","front":"Multiply","back":"a/b × c/d = (a×c) / (b×d)","note":"Cancel common factors diagonally BEFORE multiplying — saves time."},{"topic":"Fractions","front":"Divide","back":"a/b ÷ c/d = a/b × d/c","note":"“Keep, change, flip” — keep first fraction, change ÷ to ×, flip second."},{"topic":"Fractions","front":"Simplify","back":"Divide numerator and denominator by their GCF (greatest common factor).","note":"Always reduce fully before comparing answers or bubbling in a QC choice."},{"topic":"Fractions","front":"Trap: Comparing fractions without a common denominator","back":"Don't cross-multiply straight across (7×5 vs 12×9) — that compares the wrong pairs and gives a meaningless result. Always multiply diagonally.","note":"Fastest method: The “bowtie” cross-multiplication trick compares two fractions in one line — no LCD needed. Multiply numerator × opposite denominator, and place each product next to the fraction it came from."},{"topic":"Fractions","front":"Trap: Simplifying a complex (stacked) fraction","back":"Don't try to cancel terms across the main fraction bar before combining each half (e.g. cancelling the 6's) — the bar only divides once both halves are fully simplified.","note":"Fastest method: Treat numerator and denominator as two separate mini-problems first. Never touch across the main fraction bar until both halves are single fractions."},{"topic":"Decimals","front":"Trap: Ordering fractions, decimals & percents together","back":"Don't compare 3/8 and 5/12 by “eyeballing” the fractions — different denominators make size hard to judge at a glance. Convert first, then compare.","note":"Fastest method: When a list mixes fractions, decimals and percents, convert ALL of them to percent — it's the easiest common format to compare mentally, since you just move a decimal point."},{"topic":"Percents","front":"Percent of a number","back":"“x% of y”  =  (x/100) × y","note":"“Of” always means multiply."},{"topic":"Percents","front":"“What percent”","back":"x is what % of y?   →   (x/y) × 100","note":"The number after “of” goes on the bottom."},{"topic":"Percents","front":"Percent change","back":"% change = (New − Old) / Old × 100","note":"Always divide by the ORIGINAL (old) value — never the new one."},{"topic":"Percents","front":"Reverse percent","back":"If y is x% of an unknown N:   N = y ÷ (x/100)","note":"Used to find the “before” value when given the “after” value."},{"topic":"Percents","front":"Trap: Percent increase, the fast way","back":"Don't divide the change by the NEW value (120/600 = 20%) — that's a common wrong-answer trap choice on the GRE. Percent change always uses the original value as the base.","note":"Fastest method: Multiplier shortcut: New = Old × (1 + rate). Here 600/480 = 1.25, so the increase is 25% — no subtraction step needed if you spot the ratio directly."},{"topic":"Percents","front":"Trap: Successive percent changes don't add up","back":"Don't assume +20% then −20% cancels to 0% — this is one of the GRE's favorite traps. The second percentage applies to a different (larger or smaller) base than the first.","note":"Fastest method: Use multipliers and a starting value of 100 for any successive-change problem: multiply the multipliers together (1.20 × 0.80 = 0.96 → 4% decrease). This avoids re-deriving the base each time."},{"topic":"Percents","front":"Trap: Reverse percent — finding the original value","back":"Don't compute 102 × 1.15 = €117.30 — that incorrectly adds 15% of the DISCOUNTED price back on, which is a different (smaller) 15% than what was removed.","note":"Fastest method: Set up “sale price = (100% − discount%) × original” as one equation and divide — never try to “add back” 15% to €102, since 15% of the sale price ≠ 15% of the original."},{"topic":"Ratios","front":"Ratio as parts","back":"A ratio a : b splits a total into (a+b) equal “parts.” Each part = Total ÷ (a+b).","note":"Always find the value of ONE part first."},{"topic":"Ratios","front":"Part-to-part vs. part-to-whole","back":"a : b (part-to-part)  →  a/(a+b) is part-to-whole","note":"Read GRE questions carefully — they switch between these on purpose."},{"topic":"Ratios","front":"Scaling a ratio","back":"If a : b = 3 : 5, then the actual numbers are 3k and 5k for some k.","note":"Use “k” as a multiplier variable to turn ratios into equations."},{"topic":"Ratios","front":"Combining ratios","back":"To combine a:b and b:c, scale both so the “b” terms match, then merge into a:b:c.","note":"Find the LCM of the shared term."},{"topic":"Ratios","front":"Trap: Splitting a total using the “parts” method","back":"Don't divide €360 by 5 directly (giving €72) — that ignores that the total represents ALL 9 parts, not just Nikos's 5.","note":"Fastest method: Always convert a ratio problem into “value of one part,” then multiply by however many parts you need. This works for any number of people or categories in the ratio."},{"topic":"Ratios","front":"Trap: Three-part ratio with a changing total","back":"Don't assume “25 green” means the ratio total is 25 — the total is (2+3+5)×k, not the value tied to just one term.","note":"Fastest method: With a three-term ratio, use the single value you're given to solve for k first — then every other quantity (including the total) is a quick multiplication."},{"topic":"Proportions","front":"Cross-multiplication","back":"If a/b = c/d, then a×d = b×c.","note":"The universal tool for solving any proportion equation."},{"topic":"Proportions","front":"Direct variation","back":"y = kx  —  as x increases, y increases at the same rate.","note":"“More of one means more of the other,” proportionally."},{"topic":"Proportions","front":"Inverse variation","back":"y = k/x  —  as x increases, y decreases.","note":"“More of one means less of the other” (e.g. speed vs. time for a fixed distance)."},{"topic":"Proportions","front":"Rate problems","back":"Set up matching units on top and bottom of each ratio before cross-multiplying.","note":"Keep the same unit in the same position in both fractions."},{"topic":"Proportions","front":"Trap: A rate problem set up as a clean proportion","back":"Don't set up 3/8 = 20/x (units swapped on one side) — mismatched unit placement is the single most common proportion error on timed tests.","note":"Fastest method: Always write both ratios with the SAME unit on top and the SAME unit on bottom (cups over servings, both times) — this prevents flipping an answer upside down under time pressure."}];
+const STORAGE_PREFIX = "clc_gre_arithmetic_test_";
+
+let activeTest = null;
+let submitted = false;
+let timeLeft = 0;
+let timerHandle = null;
+let answers = {};
+
+function testStorageKey(idx) { return STORAGE_PREFIX + idx; }
+
+function loadTestState(idx) {
+  try {
+    const raw = localStorage.getItem(testStorageKey(idx));
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function saveTestState(idx) {
+  try {
+    localStorage.setItem(testStorageKey(idx), JSON.stringify({ answers, submitted, timeLeft }));
+  } catch (e) {}
+}
+
+// ---------------- Calculator ----------------
+let calcCur = "0", calcPrev = null, calcOp = null, calcMemory = 0, calcResetNext = false;
+function calcUpdateDisplay() { document.getElementById('calcDisplay').textContent = calcCur; }
+function toggleCalc() {
+  const p = document.getElementById('calcPanel');
+  p.style.display = (p.style.display === 'none') ? 'block' : 'none';
+}
+function calcDigit(d) {
+  if (calcResetNext) { calcCur = d; calcResetNext = false; }
+  else { calcCur = (calcCur === '0') ? d : calcCur + d; }
+  calcUpdateDisplay();
+}
+function calcDot() {
+  if (calcResetNext) { calcCur = '0.'; calcResetNext = false; }
+  else if (calcCur.indexOf('.') === -1) { calcCur += '.'; }
+  calcUpdateDisplay();
+}
+function calcOpPress(op) {
+  if (calcOp && !calcResetNext) calcEquals();
+  calcPrev = parseFloat(calcCur);
+  calcOp = op;
+  calcResetNext = true;
+}
+function calcEquals() {
+  if (calcOp === null || calcPrev === null) return;
+  const cur = parseFloat(calcCur);
+  let res = cur;
+  if (calcOp === '+') res = calcPrev + cur;
+  else if (calcOp === '-') res = calcPrev - cur;
+  else if (calcOp === '×') res = calcPrev * cur;
+  else if (calcOp === '÷') res = (cur === 0) ? NaN : calcPrev / cur;
+  calcCur = isNaN(res) ? 'Error' : String(Math.round(res * 1e10) / 1e10);
+  calcOp = null; calcPrev = null; calcResetNext = true;
+  calcUpdateDisplay();
+}
+function calcClear() { calcCur = '0'; calcPrev = null; calcOp = null; calcResetNext = false; calcUpdateDisplay(); }
+function calcSign() { calcCur = calcCur.charAt(0) === '-' ? calcCur.slice(1) : '-' + calcCur; calcUpdateDisplay(); }
+function calcSqrt() {
+  const v = parseFloat(calcCur);
+  calcCur = (isNaN(v) || v < 0) ? 'Error' : String(Math.round(Math.sqrt(v) * 1e10) / 1e10);
+  calcResetNext = true; calcUpdateDisplay();
+}
+function calcMPlus() { calcMemory += parseFloat(calcCur) || 0; }
+function calcMMinus() { calcMemory -= parseFloat(calcCur) || 0; }
+function calcMR() { calcCur = String(calcMemory); calcResetNext = true; calcUpdateDisplay(); }
+function calcMC() { calcMemory = 0; }
+function calcTransfer() {
+  const active = document.activeElement;
+  if (active && active.classList && active.classList.contains('numeric-input')) {
+    active.value = calcCur;
+    active.dispatchEvent(new Event('input'));
+  } else {
+    const inputs = document.querySelectorAll('.numeric-input');
+    if (inputs.length) { inputs[0].value = calcCur; inputs[0].dispatchEvent(new Event('input')); }
+  }
+}
+
+// ---------------- Formula Leaflet ----------------
+// ---------------- Flashcards ----------------
+let flashDeck = FLASHCARDS.slice();
+let flashIdx = 0;
+let flashFlipped = false;
+
+function openFlashcards() {
+  document.getElementById('menuScreen').style.display = 'none';
+  document.getElementById('flashArea').style.display = 'block';
+  flashDeck = FLASHCARDS.slice();
+  flashIdx = 0;
+  flashFlipped = false;
+  renderFlashcard();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderFlashcard() {
+  if (!flashDeck.length) return;
+  const card = flashDeck[flashIdx];
+  document.getElementById('flashProgress').textContent = 'Card ' + (flashIdx + 1) + ' of ' + flashDeck.length;
+  document.getElementById('flashTopic').textContent = card.topic;
+  document.getElementById('flashSideLabel').textContent = flashFlipped ? 'ANSWER' : 'TAP TO FLIP';
+  const contentEl = document.getElementById('flashContent');
+  const noteEl = document.getElementById('flashNote');
+  if (flashFlipped) {
+    contentEl.className = 'flash-content back-content';
+    contentEl.textContent = card.back;
+    if (card.note) { noteEl.style.display = 'block'; noteEl.textContent = card.note; }
+    else { noteEl.style.display = 'none'; }
+  } else {
+    contentEl.className = 'flash-content';
+    contentEl.textContent = card.front;
+    noteEl.style.display = 'none';
+  }
+}
+
+function flipCard() {
+  flashFlipped = !flashFlipped;
+  renderFlashcard();
+}
+
+function flashNext() {
+  flashIdx = (flashIdx + 1) % flashDeck.length;
+  flashFlipped = false;
+  renderFlashcard();
+}
+
+function flashPrev() {
+  flashIdx = (flashIdx - 1 + flashDeck.length) % flashDeck.length;
+  flashFlipped = false;
+  renderFlashcard();
+}
+
+function flashShuffle() {
+  for (let i = flashDeck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [flashDeck[i], flashDeck[j]] = [flashDeck[j], flashDeck[i]];
+  }
+  flashIdx = 0;
+  flashFlipped = false;
+  renderFlashcard();
+}
+
+function openLeaflet() {
+  document.getElementById('menuScreen').style.display = 'none';
+  document.getElementById('flashArea').style.display = 'none';
+  document.getElementById('theoryArea').style.display = 'block';
+  const main = document.getElementById('theoryMain');
+  let rows = LEAFLET.map(r => '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td></tr>').join('');
+  main.innerHTML =
+    '<div class="topic-block">' +
+      '<h2>Formula Leaflet — Unit 1: Arithmetic</h2>' +
+      '<p style="color:#6B655D; font-size:13.5px;">A one-page reference of every core formula in this unit. Print or save this page for quick review before a test.</p>' +
+      '<table class="leaflet-table"><tr><th>Topic</th><th>Formula</th><th>Speed Tip</th></tr>' + rows + '</table>' +
+    '</div>' +
+    '<div class="btn-bar"><button class="pdf-btn" onclick="window.print()">🖨️ Print / Save as PDF</button></div>';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderMenu() {
+  const grid = document.getElementById('menuGrid');
+  let html = '';
+  if (THEORY && THEORY.length) {
+    html += '<div class="menu-card theory-card" onclick="openTheory()">' +
+      '<h3>📘 Theory &amp; Formulas</h3>' +
+      '<p class="sub">Concepts, quick-reference formulas &amp; worked examples</p>' +
+      '<p class="meta">' + THEORY.length + ' topics · read at your own pace</p>' +
+    '</div>';
+  }
+  if (LEAFLET && LEAFLET.length) {
+    html += '<div class="menu-card leaflet-card" onclick="openLeaflet()">' +
+      '<h3>📄 Formula Leaflet</h3>' +
+      '<p class="sub">One printable page — every formula in this unit</p>' +
+      '<p class="meta">' + LEAFLET.length + ' formulas · print or save as PDF</p>' +
+    '</div>';
+  }
+  if (FLASHCARDS && FLASHCARDS.length) {
+    html += '<div class="menu-card flashcard-card" onclick="openFlashcards()">' +
+      '<h3>🗂️ Flashcards</h3>' +
+      '<p class="sub">Flip through every formula &amp; trap, one at a time</p>' +
+      '<p class="meta">' + FLASHCARDS.length + ' cards · shuffle for review</p>' +
+    '</div>';
+  }
+  html += TESTS.map((t, idx) => {
+    const saved = loadTestState(idx);
+    const statusHtml = saved && saved.submitted
+      ? '<span class="status done">✓ Completed</span>'
+      : (saved && saved.answers && Object.keys(saved.answers).length ? '<span class="status">In progress</span>' : '');
+    return (
+      '<div class="menu-card" onclick="openTest(' + idx + ')">' +
+        '<h3>' + t.title + '</h3>' +
+        '<p class="sub">' + t.subtitle + '</p>' +
+        '<p class="meta">' + t.questions.length + ' questions · ' + t.minutes + ' min</p>' +
+        statusHtml +
+      '</div>'
+    );
+  }).join('');
+  grid.innerHTML = html;
+}
+
+function openTheory() {
+  document.getElementById('menuScreen').style.display = 'none';
+  document.getElementById('testArea').style.display = 'none';
+  document.getElementById('flashArea').style.display = 'none';
+  document.getElementById('theoryArea').style.display = 'block';
+  const main = document.getElementById('theoryMain');
+  main.innerHTML = THEORY.map(t => {
+    let tableHtml = '';
+    if (t.table) {
+      tableHtml = '<h4>Benchmark Conversions</h4><table class="decimal-table"><tr><th>Fraction</th><th>Decimal</th><th>Percent</th></tr>' +
+        t.table.map(row => '<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td></tr>').join('') +
+        '</table><div class="inshort-box" style="margin-top:12px;"><span class="label">Why it matters</span>' + (t.tableNote||'') + '</div>';
+    }
+    const c = t.concept;
+    const conceptHtml = c ? (
+      '<div class="concept-flex">' +
+        '<div class="concept-text">' + c.paragraphs.map(p => '<p>' + p + '</p>').join('') + '</div>' +
+        (c.exampleTitle ? '<div class="example-box"><div class="ex-title">' + c.exampleTitle + '</div><pre>' + c.exampleLines + '</pre></div>' : '') +
+      '</div>' +
+      (c.inShort ? '<div class="inshort-box"><span class="label">In short</span>' + c.inShort + '</div>' : '')
+    ) : '';
+    const qrefHtml = t.quickref && t.quickref.length ? (
+      '<h4>Quick Reference</h4><div class="qref-grid">' +
+      t.quickref.map(q => '<div class="qref-card"><div class="qlabel">' + q.label + '</div><div class="qformula">' + q.formula + '</div>' + (q.note ? '<div class="qnote">' + q.note + '</div>' : '') + '</div>').join('') +
+      '</div>'
+    ) : '';
+    const workedHtml = (t.worked && t.worked.length) ? t.worked.map(w => (
+      '<div class="worked-block">' +
+        '<div class="wtitle">' + w.title + '</div>' +
+        '<div class="wproblem">' + w.problem + '</div>' +
+        w.steps.map((s,i) => '<div class="wstep"><div class="stepnum">' + (i+1) + '</div><div>' + s + '</div></div>').join('') +
+        (w.answer ? '<div class="wanswer">' + w.answer + '</div>' : '') +
+        '<div class="wbox tip"><span class="wlabel">Fastest method</span>' + w.shortcut + '</div>' +
+        '<div class="wbox trap"><span class="wlabel">⚠ Trap to avoid</span>' + w.trap + '</div>' +
+      '</div>'
+    )).join('') : '';
+    return '<div class="topic-block"><h2>' + t.name + '</h2>' + conceptHtml + tableHtml + qrefHtml + workedHtml + '</div>';
+  }).join('');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function openTest(idx) {
+  activeTest = idx;
+  const saved = loadTestState(idx);
+  answers = (saved && saved.answers) ? saved.answers : {};
+  submitted = (saved && saved.submitted) ? true : false;
+  timeLeft = (saved && typeof saved.timeLeft === 'number' && !submitted) ? saved.timeLeft : TESTS[idx].minutes * 60;
+
+  document.getElementById('menuScreen').style.display = 'none';
+  document.getElementById('flashArea').style.display = 'none';
+  document.getElementById('testArea').style.display = 'block';
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('submitBtn').style.display = submitted ? 'none' : 'inline-block';
+
+  if (submitted) {
+    renderResults();
+  } else {
+    renderQuestions();
+    clearInterval(timerHandle);
+    timerHandle = setInterval(tick, 1000);
+    updateTimerDisplay();
+  }
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function backToMenu() {
+  clearInterval(timerHandle);
+  document.getElementById('testArea').style.display = 'none';
+  document.getElementById('theoryArea').style.display = 'none';
+  document.getElementById('flashArea').style.display = 'none';
+  document.getElementById('menuScreen').style.display = 'block';
+  document.getElementById('resultBanner').innerHTML = '';
+  renderMenu();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function tick() {
+  if (submitted) return;
+  timeLeft -= 1;
+  if (timeLeft <= 0) { timeLeft = 0; updateTimerDisplay(); submitTest(); return; }
+  updateTimerDisplay();
+  if (timeLeft % 5 === 0) saveTestState(activeTest);
+}
+function updateTimerDisplay() {
+  const t = Math.max(0, Math.round(timeLeft));
+  const m = Math.floor(t/60), s = t%60;
+  const el = document.getElementById('timer');
+  el.textContent = m + ':' + String(s).padStart(2,'0');
+  el.classList.toggle('warn', t <= 60);
+}
+
+function renderQuestions() {
+  const test = TESTS[activeTest];
+  const container = document.getElementById('questions');
+  container.innerHTML = test.questions.map(q => {
+    let inputHtml = '';
+    if (q.type === 'numeric') {
+      const val = answers[q.n] || '';
+      inputHtml = '<input type="text" class="numeric-input" id="ans_' + q.n + '" value="' + String(val).replace(/"/g,'&quot;') + '" placeholder="Your answer" oninput="onAnswer(' + q.n + ', this.value)">';
+    } else {
+      inputHtml = q.choices.map((c,i) => {
+        const checked = answers[q.n] === String(i) ? 'checked' : '';
+        return '<label class="choice"><input type="radio" name="q' + q.n + '" value="' + i + '" ' + checked + ' onchange="onAnswer(' + q.n + ', this.value)"> ' + String.fromCharCode(65+i) + '.&nbsp; ' + c + '</label>';
+      }).join('');
+    }
+    return (
+      '<div class="q-card" id="card_' + q.n + '">' +
+        '<div class="q-topic">Question ' + q.n + ' · ' + q.topic + '</div>' +
+        '<div class="q-prompt">' + q.prompt + '</div>' +
+        (q.diagram && DIAGRAMS[q.diagram] ? '<img class="q-diagram" src="data:image/png;base64,' + DIAGRAMS[q.diagram] + '" alt="diagram" />' : '') +
+        inputHtml +
+        '<div class="explain" id="explain_' + q.n + '"></div>' +
+      '</div>'
+    );
+  }).join('');
+  updateProgress();
+}
+
+function onAnswer(n, value) {
+  answers[n] = value;
+  updateProgress();
+  saveTestState(activeTest);
+}
+
+function updateProgress() {
+  const test = TESTS[activeTest];
+  let answered = 0;
+  test.questions.forEach(q => { if (answers[q.n] !== undefined && answers[q.n] !== '') answered++; });
+  document.getElementById('progressLabel').textContent = answered + ' / ' + test.questions.length + ' answered';
+}
+
+function normalizeNumeric(s) { return String(s).trim().toLowerCase().replace(/\s+/g,'').replace(/€|\$/g,''); }
+function checkNumeric(userVal, correctVal) {
+  const u = normalizeNumeric(userVal), c = normalizeNumeric(correctVal);
+  if (u === c) return true;
+  const uf = parseFloat(u), cf = parseFloat(c);
+  if (!isNaN(uf) && !isNaN(cf) && u.indexOf('/') === -1 && u.indexOf(',') === -1) return Math.abs(uf-cf) < 0.02;
+  return false;
+}
+
+function submitTest() {
+  if (submitted) return;
+  submitted = true;
+  clearInterval(timerHandle);
+  document.getElementById('submitBtn').style.display = 'none';
+  saveTestState(activeTest);
+  renderResults();
+}
+
+function renderResults() {
+  const test = TESTS[activeTest];
+  let correctCount = 0;
+
+  const container = document.getElementById('questions');
+  container.innerHTML = test.questions.map(q => (
+    '<div class="q-card" id="card_' + q.n + '">' +
+      '<div class="q-topic">Question ' + q.n + ' · ' + q.topic + '</div>' +
+      '<div class="q-prompt">' + q.prompt + '</div>' +
+      (q.diagram && DIAGRAMS[q.diagram] ? '<img class="q-diagram" src="data:image/png;base64,' + DIAGRAMS[q.diagram] + '" alt="diagram" />' : '') +
+      '<div class="explain show" id="explain_' + q.n + '"></div>' +
+    '</div>'
+  )).join('');
+
+  test.questions.forEach(q => {
+    const val = answers[q.n];
+    let isCorrect = false, userAnswerText = '(no answer)';
+    if (q.type === 'numeric') {
+      userAnswerText = (val === undefined || val === '') ? '(no answer)' : val;
+      isCorrect = val !== undefined && val !== '' && checkNumeric(val, q.correct);
+    } else {
+      if (val !== undefined) {
+        const idx = parseInt(val, 10);
+        userAnswerText = String.fromCharCode(65+idx) + '. ' + q.choices[idx];
+        isCorrect = idx === q.correct;
+      }
+    }
+    if (isCorrect) correctCount++;
+    const correctText = q.type === 'numeric' ? q.correct : String.fromCharCode(65+q.correct) + '. ' + q.choices[q.correct];
+    const el = document.getElementById('explain_' + q.n);
+    el.innerHTML =
+      '<div class="verdict ' + (isCorrect?'correct':'incorrect') + '">' + (isCorrect?'✓ Correct':'✗ Incorrect') + ' — your answer: ' + userAnswerText + '</div>' +
+      '<div class="box explain-full"><span class="label">Correct answer</span>' + correctText + '</div>' +
+      '<div class="box explain-full"><span class="label">Formula</span>' + q.formula + '</div>' +
+      '<div class="box tip"><span class="label">Fastest method</span>' + q.shortcut + '</div>' +
+      '<div class="box trap"><span class="label">⚠ Trap to avoid</span>' + q.trap + '</div>' +
+      '<div class="box explain-full"><span class="label">Full explanation</span>' + q.explanation + '</div>';
+  });
+
+  const pct = Math.round((correctCount/test.questions.length)*100);
+  submitResultToSheet(test.title, correctCount, test.questions.length);
+  document.getElementById('resultBanner').innerHTML =
+    '<div class="result-banner">' +
+      '<div><div class="label">Your Score</div><div class="score">' + correctCount + ' / ' + test.questions.length + ' (' + pct + '%)</div></div>' +
+    '</div>' +
+    '<div class="btn-bar"><button class="btn btn-secondary" onclick="retakeTest()">Retake This Test</button><button class="pdf-btn" onclick="window.print()">🖨️ Save Results as PDF</button><button class="btn" onclick="backToMenu()">Back to Menu</button></div>';
+  document.getElementById('progressLabel').textContent = 'Test complete';
+  updateTimerDisplay0();
+}
+function updateTimerDisplay0() { document.getElementById('timer').textContent = '--:--'; }
+
+function retakeTest() {
+  try { localStorage.removeItem(testStorageKey(activeTest)); } catch (e) {}
+  openTest(activeTest);
+}
+
+renderMenu();
+</script>
+</body>
+</html>

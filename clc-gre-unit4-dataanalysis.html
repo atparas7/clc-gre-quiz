@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLC GRE Quant Mastery — Unit 4: Data Analysis</title>
+<style>
+  :root {
+    --crimson: #A8002E; --crimson-dark: #7A0022; --gold: #B8882A; --gold-light: #D9B968;
+    --ink: #262019; --muted: #6B655D; --card: #F7F7F5; --tip-bg: #F4EEDD; --trap-bg: #FBE8EA;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Calibri, Arial, sans-serif; color: var(--ink); background:#FAFAF9; }
+  header { background: var(--crimson); color:white; padding: 28px 32px; }
+  header img.logo { height: 46px; float:right; }
+  header h1 { margin:0 0 4px; font-family: Cambria, Georgia, serif; font-size: 27px; }
+  header p { color: var(--gold-light); margin:0; font-size:14px; }
+  main { max-width: 880px; margin:0 auto; padding: 28px 20px 80px; }
+
+  .menu-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(250px,1fr)); gap:16px; margin-top: 10px; }
+  .menu-card { background:white; border-radius:12px; padding:20px 22px; box-shadow:0 1px 4px rgba(0,0,0,0.06); cursor:pointer; border:2px solid transparent; }
+  .menu-card:hover { border-color: var(--gold); }
+  .menu-card h3 { margin:0 0 4px; font-family: Cambria, Georgia, serif; color: var(--crimson); font-size:19px; }
+  .menu-card p.sub { margin:0 0 10px; color: var(--muted); font-size:13px; }
+  .menu-card p.meta { margin:0; color: var(--gold); font-size:12.5px; font-weight:bold; }
+  .menu-card .status { display:inline-block; margin-top:10px; font-size:11.5px; padding:3px 9px; border-radius:20px; background:#eee; color:var(--muted); }
+  .menu-card .status.done { background:#e6f4ea; color:#1e7d34; }
+
+  .meta-bar { display:flex; justify-content:space-between; align-items:center; background:white; padding:12px 32px; border-bottom:1px solid #E4E0D8; position:sticky; top:0; z-index:20; box-shadow:0 2px 6px rgba(0,0,0,0.05); }
+  #timer { font-size:19px; font-weight:bold; color: var(--crimson); font-variant-numeric: tabular-nums; }
+  #timer.warn { color:#c0392b; animation:pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity:.5; } }
+  .progress { font-size:13px; color: var(--muted); }
+  .back-link { font-size:13px; color: var(--crimson); cursor:pointer; text-decoration:underline; }
+
+  .q-card { background:white; border-radius:10px; padding:22px 24px; margin-bottom:18px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+  .q-topic { color: var(--gold); font-weight:bold; font-size:12px; letter-spacing:1px; text-transform:uppercase; }
+  .q-prompt { font-size:16px; margin:8px 0 14px; line-height:1.45; }
+  .q-diagram { display:block; margin: 4px auto 16px; max-width: 240px; }
+  .choice { display:block; margin:8px 0; padding:10px 14px; border:1px solid #E4E0D8; border-radius:8px; cursor:pointer; }
+  .choice:hover { background:#FAF6EE; }
+  .choice input { margin-right:10px; }
+  .numeric-input { padding:10px 12px; border:1px solid #ccc; border-radius:8px; font-size:16px; width:260px; }
+  .btn { background: var(--crimson); color:white; border:none; border-radius:8px; padding:14px 34px; font-size:16px; font-weight:bold; cursor:pointer; }
+  .btn:hover { background: var(--crimson-dark); }
+  .btn:disabled { opacity:.5; }
+  .btn-secondary { background:white; color: var(--crimson); border:2px solid var(--crimson); }
+  .btn-bar { text-align:center; margin:30px 0 10px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .result-banner { background: var(--crimson); color:white; border-radius:10px; padding:20px 26px; margin-bottom:22px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+  .result-banner .score { font-size:28px; font-weight:bold; }
+  .result-banner .label { color: var(--gold-light); font-size:12px; letter-spacing:1px; text-transform:uppercase; }
+  .explain { display:none; margin-top:14px; border-top:1px solid #E4E0D8; padding-top:12px; }
+  .explain.show { display:block; }
+  .verdict { font-weight:bold; padding:4px 10px; border-radius:6px; display:inline-block; margin-bottom:10px; font-size:13px; }
+  .verdict.correct { background:#e6f4ea; color:#1e7d34; }
+  .verdict.incorrect { background: var(--trap-bg); color: var(--crimson); }
+  .box { border-radius:8px; padding:12px 14px; margin-top:8px; font-size:14px; line-height:1.5; }
+  .box.tip { background: var(--tip-bg); }
+  .box.trap { background: var(--trap-bg); }
+  .box .label { font-weight:bold; font-size:11px; letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:4px; }
+  .box.tip .label { color: var(--gold); }
+  .box.trap .label { color: var(--crimson); }
+  .box.explain-full { background: var(--card); }
+  .box.explain-full .label { color: var(--muted); }
+  footer { text-align:center; color: var(--muted); font-size:12px; padding:24px; }
+
+  .menu-card.theory-card { border-color: var(--gold); background: var(--tip-bg); }
+  .menu-card.theory-card h3 { color: var(--gold); }
+
+  .topic-block { background:white; border-radius:12px; padding:24px 26px; margin-bottom:22px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+  .topic-block h2 { font-family: Cambria, Georgia, serif; color: var(--crimson); border-bottom:2px solid var(--gold); padding-bottom:8px; margin-top:0; }
+  .topic-block h4 { font-family: Cambria, Georgia, serif; color: var(--ink); font-size:15px; margin: 18px 0 8px; }
+  .concept-flex { display:flex; gap:22px; flex-wrap:wrap; }
+  .concept-text { flex: 1 1 380px; font-size:14px; line-height:1.6; color: var(--ink); }
+  .concept-text p { margin: 0 0 12px; }
+  .example-box { flex: 0 1 300px; background: var(--tip-bg); border-radius:10px; padding:16px 18px; }
+  .example-box .ex-title { font-weight:bold; color: var(--gold); font-size:11.5px; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; }
+  .example-box pre { white-space:pre-wrap; font-family: Cambria, Georgia, serif; font-size:14px; margin:0; }
+  .inshort-box { background: var(--card); border-radius:10px; padding:14px 18px; margin-top:14px; font-size:13.5px; font-style:italic; color: var(--ink); }
+  .inshort-box .label { font-style:normal; font-weight:bold; color: var(--crimson); font-size:11px; letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:4px; }
+  .qref-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap:14px; margin-top:8px; }
+  .qref-card { background: var(--card); border-radius:9px; padding:13px 16px; }
+  .qref-card .qlabel { font-weight:bold; color: var(--crimson); font-size:13px; margin-bottom:4px; }
+  .qref-card .qformula { font-family: Cambria, Georgia, serif; font-size:14px; color: var(--ink); margin-bottom:6px; }
+  .qref-card .qnote { font-size:11.5px; font-style:italic; color: var(--muted); }
+  .decimal-table { width:100%; border-collapse:collapse; margin-top:8px; }
+  .decimal-table th { background: var(--crimson); color:white; padding:8px; font-size:13px; }
+  .decimal-table td { padding:7px 8px; text-align:center; border-bottom:1px solid #E4E0D8; font-size:13.5px; }
+  .worked-block { border-top:1px solid #E4E0D8; margin-top:18px; padding-top:14px; }
+  .worked-block .wtitle { font-weight:bold; color: var(--ink); font-size:14.5px; margin-bottom:4px; }
+  .worked-block .wproblem { background: var(--card); border-radius:8px; padding:10px 14px; font-size:13.5px; margin:8px 0 10px; }
+  .worked-block .wstep { display:flex; gap:10px; margin-bottom:7px; font-size:13.5px; }
+  .worked-block .wstep .stepnum { flex:0 0 22px; height:22px; border-radius:50%; background: var(--crimson); color:white; font-size:11px; font-weight:bold; display:flex; align-items:center; justify-content:center; }
+  .worked-block .wanswer { background: var(--crimson); color:white; border-radius:8px; padding:8px 14px; font-size:13.5px; font-weight:bold; margin-top:8px; }
+  .worked-block .wbox { border-radius:8px; padding:9px 13px; margin-top:8px; font-size:13px; }
+  .worked-block .wbox.tip { background: var(--tip-bg); }
+  .worked-block .wbox.trap { background: var(--trap-bg); }
+  .worked-block .wbox .wlabel { font-weight:bold; font-size:10.5px; letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:3px; }
+  .worked-block .wbox.tip .wlabel { color: var(--gold); }
+  .worked-block .wbox.trap .wlabel { color: var(--crimson); }
+
+  /* Calculator */
+  .calc-toggle { position:fixed; bottom:22px; right:22px; background: var(--crimson); color:white; width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,0.28); z-index:200; user-select:none; }
+  .calc-toggle:hover { background: var(--crimson-dark); }
+  .calc-panel { position:fixed; bottom:86px; right:22px; width:236px; background:white; border-radius:12px; box-shadow:0 6px 24px rgba(0,0,0,0.22); padding:14px; z-index:200; }
+  .calc-title { font-size:11px; font-weight:bold; color: var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+  .calc-display { background: var(--card); border-radius:8px; padding:10px 12px; text-align:right; font-size:20px; font-family: 'Courier New', monospace; margin-bottom:8px; min-height:26px; overflow-x:auto; white-space:nowrap; }
+  .calc-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:6px; }
+  .calc-btn { padding:11px 0; border:none; border-radius:7px; background:#F0EAD9; cursor:pointer; font-size:15px; color: var(--ink); }
+  .calc-btn:hover { background:#E8DFC5; }
+  .calc-btn.op { background: var(--gold); color:white; }
+  .calc-btn.op:hover { background:#a17a26; }
+  .calc-btn.eq { background: var(--crimson); color:white; grid-column: span 2; }
+  .calc-btn.eq:hover { background: var(--crimson-dark); }
+  .calc-btn.wide { grid-column: span 2; }
+  .calc-btn.mem { font-size:12px; background:#EFEFEF; }
+  .calc-transfer { margin-top:9px; width:100%; padding:9px; border:none; border-radius:7px; background: var(--card); color: var(--crimson); font-weight:bold; cursor:pointer; font-size:11.5px; }
+  .calc-transfer:hover { background:#EFE9E2; }
+
+  /* Print / PDF export */
+  .print-header { display:none; }
+  .pdf-btn { background:white; color: var(--crimson); border:2px solid var(--crimson); border-radius:8px; padding:12px 24px; font-size:14px; font-weight:bold; cursor:pointer; }
+  .pdf-btn:hover { background:#FBEEF1; }
+  @media print {
+    .meta-bar, .calc-toggle, .calc-panel, .btn-bar, header img.logo, .back-link, .menu-grid, #menuScreen h2, #menuScreen p { display:none !important; }
+    header { background:white !important; color: var(--ink) !important; padding:10px 0; }
+    header p { color: var(--muted) !important; }
+    .print-header { display:block !important; margin:14px 0 20px; border-bottom:2px solid var(--crimson); padding-bottom:10px; }
+    .print-header .pf-row { display:flex; gap:30px; margin-top:8px; font-size:13px; }
+    body { background:white; }
+    .q-card, .topic-block, .result-banner { box-shadow:none; border:1px solid #ddd; }
+  }
+
+  /* Formula leaflet */
+  .leaflet-card { border-color: var(--crimson); background:#FBEEF1; }
+  .leaflet-card h3 { color: var(--crimson); }
+  .leaflet-table { width:100%; border-collapse:collapse; margin-top:12px; }
+  .leaflet-table th { background: var(--crimson); color:white; padding:9px 12px; font-size:13px; text-align:left; }
+  .leaflet-table td { padding:9px 12px; border-bottom:1px solid #E4E0D8; font-size:13.5px; }
+  .leaflet-table td:first-child { font-weight:bold; color: var(--ink); width:22%; }
+  .leaflet-table td:nth-child(2) { font-family: Cambria, Georgia, serif; color: var(--crimson); width:38%; }
+  .leaflet-table td:nth-child(3) { color: var(--muted); font-size:12.5px; }
+
+  /* Flashcards */
+  .flashcard-card { border-color: var(--gold); background:#FBF3E3; }
+  .flashcard-card h3 { color: var(--gold); }
+  .flash-wrap { max-width:520px; margin:0 auto; text-align:center; }
+  .flash-progress { color: var(--muted); font-size:13px; margin-bottom:14px; }
+  .flash-card { background:white; border-radius:16px; box-shadow:0 4px 18px rgba(0,0,0,0.12); padding:40px 30px; min-height:220px; display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative; }
+  .flash-topic { position:absolute; top:16px; left:20px; font-size:11px; font-weight:bold; color: var(--gold); letter-spacing:1px; text-transform:uppercase; }
+  .flash-side-label { position:absolute; top:16px; right:20px; font-size:11px; color: var(--muted); }
+  .flash-content { font-size:19px; color: var(--ink); line-height:1.5; }
+  .flash-content.back-content { font-family: Cambria, Georgia, serif; color: var(--crimson); }
+  .flash-note { margin-top:14px; font-size:13px; color: var(--muted); font-style:italic; }
+  .flash-hint { color: var(--muted); font-size:12.5px; margin-top:12px; }
+  .flash-controls { display:flex; justify-content:center; gap:14px; margin-top:20px; }
+  .flash-nav-btn { background: var(--card); border:none; border-radius:8px; padding:12px 22px; font-size:14px; font-weight:bold; color: var(--ink); cursor:pointer; }
+  .flash-nav-btn:hover { background:#EFE9E2; }
+  .flash-nav-btn.primary { background: var(--gold); color:white; }
+  .flash-nav-btn.primary:hover { background:#9a7423; }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="logo" src="data:image/png;base64,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" alt="CLC" />
+  <h1>GRE Quant Mastery — Unit 4: Data Analysis</h1>
+  <p>CLC Educational Institute · 4 online practice tests, increasing difficulty</p>
+</header>
+
+<div class="print-header">
+  <strong>CLC Educational Institute — GRE Quant Mastery, Unit 4: Data Analysis</strong>
+  <div class="pf-row"><span>Name: _______________________</span><span>Date: _______________</span></div>
+</div>
+
+<div id="menuScreen">
+  <main>
+    <h2 style="font-family:Cambria, Georgia, serif; color:#262019;">Choose a test</h2>
+    <p style="color:#6B655D;">Each test is timed and self-contained. Your results for each are saved separately in this browser.</p>
+    <div class="menu-grid" id="menuGrid"></div>
+  </main>
+</div>
+
+<div id="testArea" style="display:none;">
+  <div class="meta-bar">
+    <div><span class="back-link" onclick="backToMenu()">← Back to test menu</span> &nbsp;·&nbsp; <span class="progress" id="progressLabel">0 / 12 answered</span></div>
+    <div id="timer">--:--</div>
+  </div>
+  <main>
+    <div id="resultBanner"></div>
+    <div id="questions"></div>
+    <div class="btn-bar">
+      <button class="btn" id="submitBtn" onclick="submitTest()">Submit Test</button>
+    </div>
+  </main>
+</div>
+
+<div id="theoryArea" style="display:none;">
+  <div class="meta-bar">
+    <div><span class="back-link" onclick="backToMenu()">← Back to test menu</span></div>
+    <div class="progress">Theory &amp; Formulas</div>
+  </div>
+  <main id="theoryMain"></main>
+</div>
+
+<div id="flashArea" style="display:none;">
+  <div class="meta-bar">
+    <div><span class="back-link" onclick="backToMenu()">← Back to test menu</span></div>
+    <div class="progress">Flashcards</div>
+  </div>
+  <main>
+    <div class="flash-wrap">
+      <div class="flash-progress" id="flashProgress">Card 1 of 20</div>
+      <div class="flash-card" id="flashCardEl" onclick="flipCard()">
+        <div class="flash-topic" id="flashTopic"></div>
+        <div class="flash-side-label" id="flashSideLabel">TAP TO FLIP</div>
+        <div>
+          <div class="flash-content" id="flashContent"></div>
+          <div class="flash-note" id="flashNote" style="display:none;"></div>
+        </div>
+      </div>
+      <p class="flash-hint">Click the card to flip it. Use the buttons below to move through the deck.</p>
+      <div class="flash-controls">
+        <button class="flash-nav-btn" onclick="flashPrev()">← Previous</button>
+        <button class="flash-nav-btn primary" onclick="flashShuffle()">🔀 Shuffle</button>
+        <button class="flash-nav-btn" onclick="flashNext()">Next →</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="calcToggle" class="calc-toggle" onclick="toggleCalc()" title="Calculator">🖩</div>
+<div id="calcPanel" class="calc-panel" style="display:none;">
+
+  <div class="calc-title">On-Screen Calculator</div>
+  <div class="calc-display" id="calcDisplay">0</div>
+  <div class="calc-grid">
+    <button class="calc-btn mem" onclick="calcMC()">MC</button>
+    <button class="calc-btn mem" onclick="calcMR()">MR</button>
+    <button class="calc-btn mem" onclick="calcMPlus()">M+</button>
+    <button class="calc-btn mem" onclick="calcMMinus()">M-</button>
+    <button class="calc-btn" onclick="calcClear()">C</button>
+    <button class="calc-btn" onclick="calcSign()">±</button>
+    <button class="calc-btn" onclick="calcSqrt()">√</button>
+    <button class="calc-btn op" onclick="calcOpPress('÷')">÷</button>
+    <button class="calc-btn" onclick="calcDigit('7')">7</button>
+    <button class="calc-btn" onclick="calcDigit('8')">8</button>
+    <button class="calc-btn" onclick="calcDigit('9')">9</button>
+    <button class="calc-btn op" onclick="calcOpPress('×')">×</button>
+    <button class="calc-btn" onclick="calcDigit('4')">4</button>
+    <button class="calc-btn" onclick="calcDigit('5')">5</button>
+    <button class="calc-btn" onclick="calcDigit('6')">6</button>
+    <button class="calc-btn op" onclick="calcOpPress('-')">−</button>
+    <button class="calc-btn" onclick="calcDigit('1')">1</button>
+    <button class="calc-btn" onclick="calcDigit('2')">2</button>
+    <button class="calc-btn" onclick="calcDigit('3')">3</button>
+    <button class="calc-btn op" onclick="calcOpPress('+')">+</button>
+    <button class="calc-btn wide" onclick="calcDigit('0')">0</button>
+    <button class="calc-btn" onclick="calcDot()">.</button>
+    <button class="calc-btn eq" onclick="calcEquals()">=</button>
+  </div>
+  <button class="calc-transfer" onclick="calcTransfer()">Use this value →</button>
+</div>
+
+<footer>CLC Educational Institute · clc.gr · 210 6858406</footer>
+
+
+<script>
+/* ===== CLC reporting hook: captures student name/section, sends score to Google Sheet ===== */
+const REPORT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxeqNLSGf1Wd0AiYWcTkfcyePAc6eMkJYqWV4fwoW8_Q5icDKEFacbkhzjSNswbppk1AQ/exec";
+const TEST_NAME_PREFIX = "Unit 4: Data Analysis";
+let studentName = "";
+let studentSection = "";
+(function initStudentInfo(){
+  const params = new URLSearchParams(window.location.search);
+  studentName = (params.get('name') || '').trim();
+  studentSection = (params.get('section') || '').trim();
+  if(!studentName){
+    studentName = (prompt("Enter your full name:") || "Unknown").trim();
+    studentSection = (prompt("Enter your class/section (τμήμα):") || "").trim();
+  }
+  const menuEl = document.getElementById('menuScreen');
+  if(menuEl){
+    const tag = document.createElement('div');
+    tag.style.cssText = "font-size:13px;color:#6B655D;margin:0 0 10px;";
+    tag.textContent = "Test taker: " + studentName + (studentSection ? " (" + studentSection + ")" : "");
+    menuEl.insertBefore(tag, menuEl.firstChild);
+  }
+})();
+function submitResultToSheet(testTitle, score, maxScore){
+  if(!REPORT_WEBHOOK_URL || REPORT_WEBHOOK_URL.indexOf("PASTE_YOUR") === 0) return;
+  const body = new URLSearchParams({
+    name: studentName, section: studentSection,
+    test: TEST_NAME_PREFIX + " — " + testTitle,
+    score: score, maxScore: maxScore, when: new Date().toISOString()
+  });
+  fetch(REPORT_WEBHOOK_URL, { method: 'POST', mode: 'no-cors', body: body });
+}
+</script>
+<script>
+const TESTS = [{"testIndex":0,"title":"Data Analysis Practice Test 1","subtitle":"Building Fluency","minutes":20,"questions":[{"n":1,"topic":"Mean, Median & Mode","type":"numeric","prompt":"Find the mean of: 4, 8, 6, 10, 12.","diagram":null,"choices":null,"correct":"8","formula":"Mean = sum of values ÷ count of values.","shortcut":"Add all five values (40), then divide by 5.","trap":"Don't divide by the wrong count — double check you're dividing by the number of VALUES, not by the largest value or another number in the set.","explanation":"4+8+6+10+12 = 40. 40 ÷ 5 = 8."},{"n":2,"topic":"Mean, Median & Mode","type":"numeric","prompt":"Find the median of: 7, 2, 9, 4, 11.","diagram":null,"choices":null,"correct":"7","formula":"Median = the middle value once the data is sorted.","shortcut":"Sort first (2, 4, 7, 9, 11), then pick the middle (3rd) value directly.","trap":"Don't pick the middle of the ORIGINAL, unsorted list — always sort first.","explanation":"Sorted: 2, 4, 7, 9, 11. Middle value = 7."},{"n":3,"topic":"Range & Standard Deviation","type":"numeric","prompt":"Find the range of: 15, 3, 22, 8, 11.","diagram":null,"choices":null,"correct":"19","formula":"Range = maximum value − minimum value.","shortcut":"Scan quickly for the largest (22) and smallest (3) values only — ignore the rest.","trap":"Don't average the values or use all of them — range only needs the max and min.","explanation":"22 − 3 = 19."},{"n":4,"topic":"Data Interpretation","type":"numeric","prompt":"A pie chart shows Category A at 25% of a total of 200. Find Category A's value.","diagram":null,"choices":null,"correct":"50","formula":"Value = percent × total.","shortcut":"Convert 25% to 0.25 and multiply directly by 200.","trap":"Don't divide 200 by 25 — that's not how converting a percent of a total works.","explanation":"0.25 × 200 = 50."},{"n":5,"topic":"Probability","type":"numeric","prompt":"A single die is rolled. Find P(rolling an even number). (Enter as a fraction)","diagram":null,"choices":null,"correct":"1/2","formula":"P(event) = favorable outcomes / total outcomes.","shortcut":"Even numbers on a die: {2,4,6} — 3 out of 6 total.","trap":"Don't forget that a standard die has 6 faces total, not some other number.","explanation":"3 favorable (2,4,6) out of 6 total = 3/6 = 1/2."},{"n":6,"topic":"Probability","type":"numeric","prompt":"A bag has 6 red and 4 blue marbles. Find P(drawing blue). (Enter as a fraction)","diagram":null,"choices":null,"correct":"2/5","formula":"P(event) = favorable outcomes / total outcomes.","shortcut":"Total = 6+4 = 10. Blue = 4. Simplify 4/10 to 2/5.","trap":"Don't use only the blue count as the denominator — the total must include ALL marbles.","explanation":"4/10 = 2/5."},{"n":7,"topic":"Counting Methods","type":"numeric","prompt":"A restaurant has 3 appetizers and 4 main courses. How many appetizer + main course combinations are possible?","diagram":null,"choices":null,"correct":"12","formula":"Fundamental counting principle: m ways × n ways = m×n total ways.","shortcut":"Multiply the two choice counts directly: 3 × 4.","trap":"Don't add the counts (3+4=7) — combining independent choices means multiplying, not adding.","explanation":"3 × 4 = 12."},{"n":8,"topic":"Mean, Median & Mode","type":"qc","prompt":"Quantity A: the mean of {5, 5, 5, 5}     Quantity B: the median of {5, 5, 5, 5}","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":2,"formula":"Compute each measure independently.","shortcut":"All values are identical, so both the mean and median equal 5 automatically.","trap":"Don't assume mean and median are always different — for a set of identical values, they're always equal.","explanation":"Both Quantity A and Quantity B equal 5. The two quantities are equal."},{"n":9,"topic":"Range & Standard Deviation","type":"mc","prompt":"Which data set has the larger range? Set X: {2, 4, 6, 8, 10}. Set Y: {1, 5, 9}.","diagram":null,"choices":["X is larger","Y is larger","They are equal","Cannot be determined"],"correct":2,"formula":"Range = maximum value − minimum value.","shortcut":"X: 10−2=8. Y: 9−1=8.","trap":"Don't assume the set with MORE values automatically has a larger range — range only depends on the max and min, not the count.","explanation":"Both ranges equal 8. They are equal."},{"n":10,"topic":"Counting Methods","type":"numeric","prompt":"In how many ways can 3 distinct books be arranged in a row on a shelf?","diagram":null,"choices":null,"correct":"6","formula":"Arrangements of n distinct items = n!.","shortcut":"3! = 3×2×1.","trap":"Don't use a combinations approach here — arranging IN A ROW means order matters, so this is a permutation (factorial).","explanation":"3! = 6."},{"n":11,"topic":"Probability","type":"numeric","prompt":"A spinner has 8 equal sections numbered 1–8. Find P(spinning a number greater than 5). (Enter as a fraction)","diagram":null,"choices":null,"correct":"3/8","formula":"P(event) = favorable outcomes / total outcomes.","shortcut":"Numbers greater than 5 on this spinner: {6,7,8} — count them directly.","trap":"Don't include 5 itself — 'greater than 5' is strict and excludes 5.","explanation":"3 favorable (6,7,8) out of 8 total = 3/8."},{"n":12,"topic":"Mean, Median & Mode","type":"numeric","prompt":"The mean of 5 numbers is 12. What is their sum?","diagram":null,"choices":null,"correct":"60","formula":"Sum = mean × count.","shortcut":"Multiply directly: 12 × 5.","trap":"Don't divide instead of multiply — reversing the mean formula requires multiplication, since mean = sum ÷ count.","explanation":"12 × 5 = 60."}]},{"testIndex":1,"title":"Data Analysis Practice Test 2","subtitle":"Applied Practice","minutes":22,"questions":[{"n":1,"topic":"Mean, Median & Mode","type":"numeric","prompt":"The mean of 6 numbers is 15. If one number is removed, the mean of the remaining 5 becomes 14. What was the removed number?","diagram":null,"choices":null,"correct":"20","formula":"Use sum = mean × count for both the original and the reduced set.","shortcut":"Original sum = 6×15=90. Reduced sum = 5×14=70. Removed = 90−70.","trap":"Don't just subtract the two means (15−14=1) — you must work with the actual SUMS, not the means directly.","explanation":"Original sum = 90. Reduced sum = 70. Removed number = 90−70 = 20."},{"n":2,"topic":"Range & Standard Deviation","type":"mc","prompt":"Set X: {3,3,3,3,3} has standard deviation A. Set Y: {1,3,3,3,5} has standard deviation B (same mean, 3). Which is true?","diagram":null,"choices":["A > B","A \u003c B","A = B","Cannot be determined"],"correct":1,"formula":"Standard deviation measures spread from the mean.","shortcut":"Set X has zero spread (all identical values); Set Y has values on both sides of the mean, so it has more spread.","trap":"Don't assume identical means imply identical spread — compare how far the values sit from the mean in each set separately.","explanation":"Set X's SD = 0 (no spread). Set Y's SD > 0 (has spread). So A \u003c B."},{"n":3,"topic":"Data Interpretation","type":"numeric","prompt":"A bar graph shows monthly sales: January = €40,000, February = €55,000. Find the percent increase from January to February.","diagram":null,"choices":null,"correct":"37.5","formula":"% change = (New − Old)/Old × 100.","shortcut":"(55,000−40,000)/40,000 = 15,000/40,000 = 0.375.","trap":"Don't divide by the NEW value (55,000) — percent increase always uses the ORIGINAL value as the base.","explanation":"(55,000−40,000)/40,000 = 0.375 = 37.5%."},{"n":4,"topic":"Probability","type":"numeric","prompt":"Two dice are rolled. Find the probability that both show the same number. (Enter as a fraction)","diagram":null,"choices":null,"correct":"1/6","formula":"Count the matching-pair outcomes out of all possible outcomes.","shortcut":"There are 6 matching pairs (1,1) through (6,6), out of 36 total outcomes.","trap":"Don't forget the total sample space for two dice is 36 (6×6), not 12 or 6.","explanation":"6 matching pairs / 36 total = 1/6."},{"n":5,"topic":"Probability","type":"numeric","prompt":"A card is drawn from a standard 52-card deck. Find P(drawing a King OR a Queen). (Enter as a fraction)","diagram":null,"choices":null,"correct":"2/13","formula":"Mutually exclusive events: P(A or B) = P(A) + P(B).","shortcut":"4 Kings + 4 Queens = 8 favorable cards out of 52; simplify 8/52 to 2/13.","trap":"Don't multiply the two probabilities — a single card can't be BOTH a King and a Queen, so this is an OR (add), not an AND (multiply) situation.","explanation":"P(King) + P(Queen) = 4/52 + 4/52 = 8/52 = 2/13."},{"n":6,"topic":"Counting Methods","type":"numeric","prompt":"A password has 2 letters (A–Z) followed by 3 digits (0–9), with repetition allowed. How many different passwords are possible?","diagram":null,"choices":null,"correct":"676000","formula":"Fundamental counting principle: multiply the number of choices at each position.","shortcut":"26 × 26 × 10 × 10 × 10 — compute the letters and digits separately, then multiply the two results.","trap":"Don't forget that repetition being ALLOWED means each position has the full 26 (or 10) choices, not one fewer each time.","explanation":"26² × 10³ = 676 × 1,000 = 676,000."},{"n":7,"topic":"Counting Methods","type":"numeric","prompt":"In how many ways can a president and a vice president be chosen from a club of 10 members (no one holds both roles)?","diagram":null,"choices":null,"correct":"90","formula":"This is a permutation, since the two roles are distinct: nPr = n!/(n−r)!.","shortcut":"10 choices for president, then 9 remaining choices for vice president: 10×9.","trap":"Don't use combinations here — president and vice president are DISTINCT roles, so order/role matters.","explanation":"10 × 9 = 90."},{"n":8,"topic":"Mean, Median & Mode","type":"qc","prompt":"Data set: 4, 6, 6, 8, 100.     Quantity A: the mean     Quantity B: the median","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":0,"formula":"Mean = sum ÷ count. Median = middle value (sorted).","shortcut":"Mean = 124/5 = 24.8. Median (already sorted, middle value) = 6.","trap":"Don't assume mean and median are close together — a single large outlier (100) can pull the mean far above the median.","explanation":"Mean = 24.8. Median = 6. Quantity A is greater."},{"n":9,"topic":"Range & Standard Deviation","type":"numeric","prompt":"A data set has a minimum of 12. Adding 5 to every value in the set would make the new maximum 40. Find the ORIGINAL range.","diagram":null,"choices":null,"correct":"23","formula":"Find the original maximum by reversing the shift, then apply range = max − min.","shortcut":"New max 40 came from original max + 5, so original max = 35.","trap":"Don't use 40 as the original maximum — that value already includes the +5 shift described in the problem.","explanation":"Original max = 40−5 = 35. Range = 35−12 = 23."},{"n":10,"topic":"Probability","type":"numeric","prompt":"A jar has 3 red, 4 blue, and 5 green marbles (12 total). Two are drawn without replacement. Find P(both are red). (Enter as a fraction)","diagram":null,"choices":null,"correct":"1/22","formula":"For dependent events, recalculate the sample space after the first draw.","shortcut":"First draw: 3/12. Second draw (one red removed): 2/11. Multiply.","trap":"Don't use 3/12 twice — without replacement means both the favorable count AND total shrink after the first draw.","explanation":"3/12 × 2/11 = 6/132 = 1/22."},{"n":11,"topic":"Data Interpretation","type":"numeric","prompt":"A pie chart shows a budget: Housing 30%, Food 20%, Transportation 15%, Other 35%. If Transportation is €300, find the total budget.","diagram":null,"choices":null,"correct":"2000","formula":"Total = value ÷ percent (as a decimal).","shortcut":"Set up 300 = 0.15 × Total and solve directly for Total.","trap":"Don't multiply 300 by 15% — you need to REVERSE the percent calculation (divide), since 300 is the part, not the whole.","explanation":"300 ÷ 0.15 = 2,000."},{"n":12,"topic":"Mixed","type":"qc","prompt":"Quantity A: the number of ways to CHOOSE 2 items from 5 (combination)     Quantity B: the number of ways to ARRANGE 2 items from 5 (permutation)","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":1,"formula":"Combinations ignore order; permutations count order as distinct.","shortcut":"5C2 = 10. 5P2 = 20 — permutations are always ≥ combinations for the same n and r.","trap":"Don't assume choosing and arranging give the same count — permutations always count MORE outcomes than combinations, since order creates extra distinct arrangements.","explanation":"5C2 = 10. 5P2 = 20. Quantity B is greater."}]},{"testIndex":2,"title":"Data Analysis Practice Test 3","subtitle":"Advanced Traps","minutes":25,"questions":[{"n":1,"topic":"Mean, Median & Mode","type":"qc","prompt":"A data set of 9 values has a median of 20. The LARGEST value is then increased by 10.     Quantity A: the new median     Quantity B: 20","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":2,"formula":"The median depends only on the POSITION of the middle value, not the size of values elsewhere in the set.","shortcut":"Since the largest value stays the largest after increasing, its position in the sorted order doesn't change, so the median (a different, middle position) is unaffected.","trap":"Don't assume changing ANY value in a data set changes the median — only changes that affect the MIDDLE position's value matter.","explanation":"Increasing the largest value doesn't shift which value sits in the middle position. The median stays 20. The two quantities are equal."},{"n":2,"topic":"Range & Standard Deviation","type":"numeric","prompt":"A data set {10,10,10,10,10} is transformed by multiplying each value by 3, then adding 5. Find the new standard deviation.","diagram":null,"choices":null,"correct":"0","formula":"Scaling and shifting a zero-spread data set leaves it with zero spread.","shortcut":"The original set has SD=0 (identical values) — no transformation of identical values can create spread among them.","trap":"Don't assume multiplying or adding automatically increases standard deviation — a set with NO spread to begin with stays at SD=0 regardless of scaling or shifting.","explanation":"All five values remain identical after the transformation (10×3+5=35 for every value), so the standard deviation is still 0."},{"n":3,"topic":"Probability","type":"numeric","prompt":"A survey of 200 people found 60% prefer tea (the rest prefer coffee). Of the tea drinkers, 25% also like coffee. If one person is selected at random, find P(prefers tea AND also likes coffee). (Enter as a fraction)","diagram":null,"choices":null,"correct":"3/20","formula":"Find the actual COUNT for the overlapping group, then divide by the total.","shortcut":"Find the tea-drinker count first (0.6×200=120), then take 25% of THAT subgroup (not the whole survey) for the overlap count.","trap":"Don't compute 25% of the total 200 (=50) instead of 25% of just the tea drinkers (120) — the second percentage is conditional on the first subgroup.","explanation":"Tea drinkers = 0.6×200 = 120. Overlap = 0.25×120 = 30. P = 30/200 = 3/20."},{"n":4,"topic":"Probability","type":"numeric","prompt":"A committee of 4 is chosen from 6 men and 5 women (11 total). Find the probability the committee is all men. (Enter as a fraction)","diagram":null,"choices":null,"correct":"1/22","formula":"P(all men) = (ways to choose 4 men) / (ways to choose any 4 people).","shortcut":"6C4 = 15. 11C4 = 330. Simplify 15/330.","trap":"Don't use permutations here — committee selection has no distinct roles, so combinations apply to both the numerator and denominator.","explanation":"6C4=15. 11C4=330. 15/330 = 1/22."},{"n":5,"topic":"Counting Methods","type":"numeric","prompt":"How many distinct ways can the letters of the word “LEVEL” be arranged?","diagram":null,"choices":null,"correct":"30","formula":"Arrangements with repeated letters: n! / (repeats!).","shortcut":"5 letters total, with L repeating twice and E repeating twice: 5!/(2!×2!).","trap":"Don't use plain 5! (120) — repeated letters create duplicate arrangements that must be divided out.","explanation":"5!/(2!·2!) = 120/4 = 30."},{"n":6,"topic":"Probability","type":"qc","prompt":"Quantity A: P(at least one head in 3 coin flips)     Quantity B: 7/8","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":2,"formula":"Use the complement rule: P(at least one) = 1 − P(none).","shortcut":"P(no heads in 3 flips) = 1/2×1/2×1/2 = 1/8, so P(at least one) = 1 − 1/8.","trap":"Don't try to add up P(exactly 1 head) + P(exactly 2 heads) + P(exactly 3 heads) separately — the complement rule is far faster.","explanation":"P(no heads) = 1/8. P(at least one head) = 7/8. The two quantities are equal."},{"n":7,"topic":"Mean, Median & Mode","type":"numeric","prompt":"A class has 12 boys with an average score of 78 and 8 girls with an average score of 85. Find the average score of the entire class.","diagram":null,"choices":null,"correct":"80.8","formula":"Weighted average = (sum of all values) / (total count), NOT a simple average of the two group averages.","shortcut":"Find each group's total first (count × average), add them, then divide by the combined count.","trap":"Don't average 78 and 85 directly to get 81.5 — the groups have different SIZES (12 vs 8), so a simple average of the two averages is incorrect.","explanation":"Total = 12(78) + 8(85) = 936 + 680 = 1616. Count = 20. Average = 1616/20 = 80.8."},{"n":8,"topic":"Range & Standard Deviation","type":"numeric","prompt":"A set of 5 numbers has a range of 24 and a minimum value of 8. The mean of the set is 20, and four of the numbers are 8, 15, 20, 32. Find the fifth number.","diagram":null,"choices":null,"correct":"25","formula":"Sum = mean × count; use the given four numbers to isolate the fifth.","shortcut":"Total sum = 5×20=100. Known sum = 8+15+20+32=75. Fifth = 100−75.","trap":"Don't assume the range information is needed to solve for the fifth number directly — here it's confirmatory (max−min=32−8=24 ✓), not a required step.","explanation":"100 − 75 = 25."},{"n":9,"topic":"Counting Methods","type":"numeric","prompt":"A 5-digit code is formed using digits 0–9 without repetition. How many such codes are possible if the first digit cannot be 0?","diagram":null,"choices":null,"correct":"27216","formula":"Fill each position in order, adjusting the available choices as digits are used.","shortcut":"First digit: 9 choices (1–9). Then remaining digits (including 0 now): 9, 8, 7, 6.","trap":"Don't use 10 choices for the first digit — the restriction 'cannot be 0' removes one option specifically from the FIRST position only.","explanation":"9 × 9 × 8 × 7 × 6 = 27,216."},{"n":10,"topic":"Data Interpretation","type":"qc","prompt":"A company's revenue increased from €500,000 to €650,000.     Quantity A: the percent increase     Quantity B: 30%","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":2,"formula":"% increase = (New − Old)/Old × 100.","shortcut":"(650,000−500,000)/500,000 = 150,000/500,000.","trap":"Don't divide by the NEW value — percent increase always uses the ORIGINAL (starting) value as the base.","explanation":"150,000/500,000 = 0.30 = 30%. The two quantities are equal."},{"n":11,"topic":"Probability","type":"numeric","prompt":"A box contains 4 defective and 16 working items (20 total). Two items are selected without replacement. Find P(at least one is defective). (Enter as a fraction)","diagram":null,"choices":null,"correct":"7/19","formula":"Use the complement rule: P(at least one defective) = 1 − P(no defectives).","shortcut":"P(no defective) = 16/20 × 15/19, then subtract from 1.","trap":"Don't try to directly add P(exactly 1 defective) + P(exactly 2 defective) — the complement approach avoids two separate calculations.","explanation":"P(no defective) = 16/20×15/19 = 240/380 = 12/19. P(at least one) = 1−12/19 = 7/19."},{"n":12,"topic":"Mixed","type":"qc","prompt":"Quantity A: the number of ways to arrange 4 distinct books on a shelf     Quantity B: the number of ways to choose 4 books (in any order) from 6, then arrange those 4","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":1,"formula":"Quantity A is a direct permutation of 4 items. Quantity B combines a selection step with an arrangement step.","shortcut":"A = 4! = 24. B = 6C4 × 4! = 15 × 24 = 360.","trap":"Don't assume 'arranging 4 books' always gives the same count regardless of context — Quantity B involves an EXTRA selection step (choosing which 4 of the 6) before arranging.","explanation":"Quantity A = 24. Quantity B = 15 × 24 = 360. Quantity B is greater."}]},{"testIndex":3,"title":"Data Analysis Practice Test 4","subtitle":"Mixed Mastery (Timed)","minutes":25,"questions":[{"n":1,"topic":"Mean, Median & Mode","type":"numeric","prompt":"A data set of 6 numbers has a mean of 18. Two new numbers, 24 and 30, are added to the set. Find the new mean.","diagram":null,"choices":null,"correct":"20.25","formula":"New mean = (original sum + new values) / (new count).","shortcut":"Original sum = 6×18=108. Add 24+30=54. New sum=162. New count=8.","trap":"Don't average the original mean with the two new numbers directly — you must work with actual sums and the new total count.","explanation":"New sum = 108+54 = 162. New mean = 162/8 = 20.25."},{"n":2,"topic":"Range & Standard Deviation","type":"qc","prompt":"Quantity A: standard deviation of {5,5,5,5,5,5}     Quantity B: standard deviation of {0,0,0,0,0,30}","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":1,"formula":"Standard deviation measures how far values typically sit from the mean.","shortcut":"Set A has zero spread (SD=0). Set B has five values far below its mean and one far above — clearly a much larger spread.","trap":"Don't assume a set with 'small' numbers (all 0s and one 30) has a small spread just because most values are the same — the outlier creates substantial spread.","explanation":"Quantity A = 0. Quantity B is much greater than 0. Quantity B is greater."},{"n":3,"topic":"Data Interpretation","type":"numeric","prompt":"A company's €500,000 budget is split among 4 departments. Marketing gets 20% more than Operations. Operations gets €90,000. R&D gets half of what Marketing gets. HR gets the remainder. Find HR's budget.","diagram":null,"choices":null,"correct":"248000","formula":"Work through each department's budget sequentially using the given relationships, then find the remainder.","shortcut":"Compute each department's value in the order given (each depends on the previous), then subtract the running total from the overall budget.","trap":"Don't compute R&D as half of the TOTAL budget — it's specifically half of what MARKETING gets, a much smaller reference value.","explanation":"Operations = 90,000. Marketing = 90,000×1.2 = 108,000. R&D = 108,000/2 = 54,000. Sum = 90,000+108,000+54,000 = 252,000. HR = 500,000−252,000 = 248,000."},{"n":4,"topic":"Probability","type":"numeric","prompt":"A fair coin is flipped 4 times. Find the probability of getting exactly 2 heads. (Enter as a fraction)","diagram":null,"choices":null,"correct":"3/8","formula":"P(exactly k successes) = (ways to arrange k successes) / (total outcomes).","shortcut":"4C2 = 6 ways to place 2 heads among 4 flips, out of 2⁴=16 total outcomes.","trap":"Don't just compute P(heads)² = 1/4 — that ignores the number of DIFFERENT ORDERS in which 2 heads and 2 tails can occur.","explanation":"4C2 = 6. Total outcomes = 16. P = 6/16 = 3/8."},{"n":5,"topic":"Counting Methods","type":"numeric","prompt":"A school has 12 students trying out for a debate team of 5 (no distinct roles). How many different teams are possible?","diagram":null,"choices":null,"correct":"792","formula":"This is a combination, since team membership has no ranking: nCr = n!/[r!(n−r)!].","shortcut":"12C5 = (12×11×10×9×8)/(5×4×3×2×1).","trap":"Don't use permutations here — a 'team' has no distinct positions, so order doesn't matter.","explanation":"12C5 = 95,040/120 = 792."},{"n":6,"topic":"Mean, Median & Mode","type":"numeric","prompt":"A data set of 9 numbers has a sum of 414. If the mean of the set equals its median, find the median.","diagram":null,"choices":null,"correct":"46","formula":"Mean = sum ÷ count; use the given condition (mean = median) to find the median directly.","shortcut":"Compute the mean first (sum ÷ count) since the problem tells you it equals the median — no additional data needed.","trap":"Don't assume you need the full sorted list to find the median — the condition 'mean equals median' lets you shortcut straight to the answer via the mean formula.","explanation":"Mean = 414/9 = 46. Since mean = median, the median is 46."},{"n":7,"topic":"Probability","type":"numeric","prompt":"A bag has 5 red and 7 blue marbles (12 total). Three are drawn without replacement. Find P(all three are blue). (Enter as a fraction)","diagram":null,"choices":null,"correct":"7/44","formula":"Multiply the probability of each successive draw, adjusting the sample space each time.","shortcut":"7/12 × 6/11 × 5/10, then simplify.","trap":"Don't keep the denominator at 12 for all three draws — each draw without replacement shrinks both the favorable count and the total.","explanation":"7/12 × 6/11 × 5/10 = 210/1320 = 7/44."},{"n":8,"topic":"Counting Methods","type":"qc","prompt":"Quantity A: 6! (6 factorial)     Quantity B: 7! ÷ 7","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":2,"formula":"n! = n × (n−1)!, so (n+1)!/(n+1) simplifies to n!.","shortcut":"Recognize that 7!/7 = 6! directly, without computing the full factorials.","trap":"Don't compute 7! (5,040) and then divide by 7 the long way if you can recognize the algebraic simplification first — though either method gives the same answer.","explanation":"6! = 720. 7!/7 = 5,040/7 = 720. The two quantities are equal."},{"n":9,"topic":"Data Interpretation","type":"qc","prompt":"Company A's profit grew from €2 million to €2.6 million. Company B's profit grew from €5 million to €6 million.     Quantity A: Company A's percent growth     Quantity B: Company B's percent growth","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":0,"formula":"% growth = (New − Old)/Old × 100, computed separately for each company.","shortcut":"A: 0.6/2 = 30%. B: 1/5 = 20%.","trap":"Don't compare the RAW euro growth (€0.6M vs €1M) — percent growth depends on each company's own starting size, not the absolute change.","explanation":"Company A: 30%. Company B: 20%. Quantity A is greater."},{"n":10,"topic":"Normal Distribution","type":"numeric","prompt":"Scores are normally distributed with mean 100 and standard deviation 15. Approximately what percent of scores fall ABOVE 130?","diagram":null,"choices":null,"correct":"2.5","formula":"Use the 68-95-99.7 rule together with the normal distribution's symmetry.","shortcut":"130 is exactly 2 SD above the mean (100+30). 95% falls within 2 SD, leaving 5% split evenly between both tails.","trap":"Don't report the full 5% outside 2 SD as the answer for ONE tail — that 5% is split evenly between the two tails (above and below), giving 2.5% for each side.","explanation":"Outside 2 SD = 5% total, split evenly: 2.5% above 130 (and 2.5% below 70)."},{"n":11,"topic":"Probability","type":"numeric","prompt":"A jar has 60 marbles total, in red:blue:green ratio 2:3:5. Two marbles are drawn without replacement. Find P(both are green). (Enter as a fraction)","diagram":null,"choices":null,"correct":"29/118","formula":"First find the actual count of green marbles from the ratio, then apply dependent-event probability.","shortcut":"Green = 5/10 × 60 = 30. P = 30/60 × 29/59, then simplify.","trap":"Don't use the ratio number (5) directly as the marble count — convert the ratio to an actual count using the total (60) first.","explanation":"Green count = 30. P = 30/60 × 29/59 = 870/3540 = 29/118."},{"n":12,"topic":"Normal Distribution","type":"numeric","prompt":"A set of 10 numbers has a mean of 50 and a standard deviation of 5, and is normally distributed. Approximately how many of the 10 numbers would you expect to fall between 45 and 55?","diagram":null,"choices":null,"correct":"7","formula":"45 to 55 spans exactly 1 standard deviation on each side of the mean (50±5), so apply the 68% benchmark.","shortcut":"68% of 10 = 6.8, which rounds to about 7 numbers.","trap":"Don't forget to round to a whole number of people/items at the end — you can't have a fractional count of numbers in the data set.","explanation":"68% of 10 ≈ 6.8, which rounds to approximately 7."}]}];
+const THEORY = [{"name":"Mean, Median & Mode","concept":{"kicker":"Mean, Median & Mode · Foundations","title":"Three ways to measure the 'center' of data","badgeKey":"mmm_concept","paragraphs":["The MEAN (average) is the sum of all values divided by the count of values — it's sensitive to extreme values, which can pull it noticeably up or down.","The MEDIAN is the middle value once data is sorted (or the average of the two middle values, for an even count) — it only cares about POSITION, so extreme values barely affect it.","The MODE is the value that appears most often — a data set can have no mode, one mode, or several (bimodal, multimodal).","This is why median is often reported instead of mean for things like household income: a few extremely high values would pull the mean far above what's 'typical', while the median stays representative."],"exampleTitle":"An outlier's effect","exampleLines":"Data: 2, 3, 3, 5, 50\n\nMean:\n(2+3+3+5+50)/5\n= 12.6\n\nMedian: 3\n(the outlier barely\nmoves the median)","inShort":"Mean = sum ÷ count (sensitive to outliers). Median = middle, sorted (resistant). Mode = most frequent."},"quickref":[{"label":"Mean","formula":"sum of values ÷ count of values","note":"Sensitive to outliers — one extreme value shifts it a lot."},{"label":"Median","formula":"middle value (sorted); average the two middles if even count","note":"Resistant to outliers — only position matters."},{"label":"Mode","formula":"the most frequently occurring value","note":"Can be none, one, or several (multimodal)."},{"label":"Sort first","formula":"Always order the data before finding the median","note":"Median needs sorted order — mean and mode do not."}],"worked":[{"kicker":"Mean, Median & Mode · Worked Problem","title":"Finding all three measures from one data set","problem":"Seven test scores: 62, 74, 74, 81, 88, 91, 95. Find the mean, median, and mode.","steps":["Mean: add all values (62+74+74+81+88+91+95 = 565), then divide by 7: 565/7 ≈ 80.71.","Median: the data is already sorted with 7 (odd) values, so the median is simply the 4th value: 81.","Mode: 74 appears twice, more than any other value, so the mode is 74."],"shortcut":"For an odd-sized, already-sorted data set, the median is just the middle position — no averaging needed. Here, (7+1)/2 = 4th position.","trap":"Don't forget to SORT the data first before identifying the median — picking the middle of the ORIGINAL (unsorted) list gives the wrong answer.","answer":"Answer: Mean ≈ 80.71, Median = 81, Mode = 74"}]},{"name":"Range & Standard Deviation","concept":{"kicker":"Range & Standard Deviation · Foundations","title":"Measuring how spread out data is","badgeKey":"spread_concept","paragraphs":["The RANGE is the simplest measure of spread: maximum value minus minimum value — quick to compute, but it only uses two data points and ignores everything in between.","STANDARD DEVIATION measures how far, on average, each data point is from the mean — a small standard deviation means data is tightly clustered; a large one means it's spread out.","On the GRE, you're never asked to calculate standard deviation by hand from raw data — instead, you compare RELATIVE spread between data sets, or reason about how changes affect it.","Adding the same constant to every value shifts the mean but leaves the standard deviation UNCHANGED (the gaps between values don't change); multiplying every value by a constant scales the standard deviation by that same constant."],"exampleTitle":"Same mean, different spread","exampleLines":"Set A: 10,10,10,10\n(SD = 0, no spread)\n\nSet B: 1,10,10,19\n(same mean, but\nmuch more spread out)","inShort":"Range = max − min (quick, crude). Standard deviation = typical distance from the mean (more informative)."},"quickref":[{"label":"Range","formula":"maximum value − minimum value","note":"The simplest measure of spread — but only uses 2 values."},{"label":"Standard deviation","formula":"average distance of each point from the mean","note":"Larger SD = more spread out; smaller SD = more tightly clustered."},{"label":"Shifting all values (+c)","formula":"Mean shifts by c; standard deviation UNCHANGED","note":"The gaps between values don't change if you shift everything equally."},{"label":"Scaling all values (×c)","formula":"Mean AND standard deviation both scale by c","note":"Stretching all values apart increases the spread too."}],"worked":[{"kicker":"Range & Standard Deviation · Worked Problem","title":"Comparing spread without calculating exact values","problem":"Set A: {4, 4, 4, 4, 4}. Set B: {2, 3, 4, 5, 6}. Both have the same mean (4). Which set has the larger standard deviation?","steps":["Set A has every value identical to the mean — there is no spread at all, so its standard deviation is 0.","Set B has values spread out on both sides of the mean (2 and 3 below, 5 and 6 above), so its standard deviation is greater than 0.","Comparing the two: Set B has the larger standard deviation."],"shortcut":"You don't need to calculate exact standard deviation values — just compare how far, overall, the data points sit from their shared mean.","trap":"Don't assume equal means imply equal spread — two data sets can share the exact same mean while having very different standard deviations.","answer":"Answer: Set B has the larger standard deviation"}]},{"name":"Data Interpretation","concept":{"kicker":"Data Interpretation · Foundations","title":"Reading charts and tables carefully","badgeKey":"data_concept","paragraphs":["Data interpretation questions test careful READING more than calculation — always check the title, axis labels, and units before answering, since misreading a scale is the most common error.","Bar graphs and pie charts represent parts of a whole or comparisons between categories; a pie chart's slices should sum to 100% (or 360° in angle terms).","When comparing two data points, compute the ACTUAL difference or percent change — don't just eyeball bar heights, since axis scales can be misleading (a truncated y-axis exaggerates differences).","Multi-part data interpretation questions often reuse the SAME chart for several questions — invest a little extra time understanding the chart fully upfront, since it pays off across all the related questions."],"exampleTitle":"Comparing two bars precisely","exampleLines":"Product A: 120 units\nProduct B: 90 units\n\nPercent A exceeds B:\n(120−90)/90\n\n= 33.3%","inShort":"Read titles, labels, and units first. Compute real differences — don't eyeball bar heights or trust a truncated axis."},"quickref":[{"label":"Read carefully first","formula":"Check the title, axis labels, and units","note":"Misreading the scale is the most common data-interpretation error."},{"label":"Pie charts","formula":"Slices sum to 100% (or 360°)","note":"Angle = percent × 3.6°, or fraction × 360°."},{"label":"Comparing two values","formula":"Compute the actual difference or percent change","note":"Don't eyeball bar heights — axis scales can be misleading."},{"label":"Multi-part questions","formula":"Understand the whole chart upfront","note":"The same chart often supports several related questions."}],"worked":[{"kicker":"Data Interpretation · Worked Problem","title":"Converting a pie chart slice to an amount","problem":"A pie chart shows a company's expenses: Salaries 45%, Rent 20%, Marketing 15%, Other 20%. If total expenses are €80,000, how much is spent on Marketing?","steps":["Identify the relevant slice: Marketing = 15% of total expenses.","Convert the percent to a decimal: 15% = 0.15.","Multiply by the total: 0.15 × €80,000."],"shortcut":"Convert the percent directly to a decimal and multiply by the total — no need to find the angle-in-degrees version unless the question specifically asks for it.","trap":"Don't confuse the slice's PERCENTAGE with its ANGLE in degrees — if a question gives an angle instead, first convert (angle/360°) to a percent or fraction before applying it to the total.","answer":"Answer: €12,000"}]},{"name":"Probability","concept":{"kicker":"Probability · Foundations","title":"What probability measures, and the complement rule","badgeKey":"prob_concept","paragraphs":["Probability of an event = (number of favorable outcomes) / (total number of possible outcomes) — always a value between 0 (impossible) and 1 (certain).","The COMPLEMENT rule: the probability an event does NOT happen is 1 minus the probability that it does: P(not A) = 1 − P(A) — often much faster than a direct calculation, especially for 'at least one' problems.","For any probability problem, count outcomes carefully — make sure your 'total possible outcomes' reflects the true sample space (a deck of cards has 52 total, not 13 or 4).","Probabilities can be expressed as fractions, decimals, or percents interchangeably — use whichever form is easiest for the specific problem at hand."],"exampleTitle":"Basic probability","exampleLines":"Rolling one die:\n\nP(rolling a 4)\n= 1/6\n\nP(NOT rolling a 4)\n= 1 − 1/6 = 5/6","inShort":"P(event) = favorable ÷ total. Complement: P(not A) = 1 − P(A) — a fast shortcut for 'at least one' problems."},"quickref":[{"label":"Basic probability","formula":"P(event) = favorable outcomes / total outcomes","note":"Always between 0 and 1."},{"label":"Complement rule","formula":"P(not A) = 1 − P(A)","note":"Often faster than direct calculation, especially for 'at least one' problems."},{"label":"Sample space","formula":"Count the TOTAL possible outcomes carefully","note":"Make sure you're using the right total (e.g. 52 cards, not 13 or 4)."},{"label":"Equivalent forms","formula":"Fractions, decimals, and percents are interchangeable","note":"Use whichever form is easiest for the problem."}],"worked":[{"kicker":"Probability · Worked Problem","title":"Using the complement rule","problem":"A bag contains 5 red, 3 blue, and 2 green marbles. If one marble is drawn at random, what is the probability it is NOT blue?","steps":["Find the total number of marbles: 5 + 3 + 2 = 10.","Find P(blue): 3 blue out of 10 total = 3/10.","Apply the complement rule: P(not blue) = 1 − 3/10 = 7/10."],"shortcut":"Use the complement rule (1 − P(blue)) instead of separately counting red+green — especially efficient when there are multiple 'not this' categories to add up.","trap":"Don't forget to include ALL marbles (10 total) in the denominator, not just the non-blue ones, when setting up the probability.","answer":"Answer: 7/10"}]},{"name":"Combined Probability","concept":{"kicker":"Combined Probability · Foundations","title":"Multiplying for 'AND', adding for 'OR'","badgeKey":"combo_concept","paragraphs":["For INDEPENDENT events (one doesn't affect the other), the probability that BOTH happen is found by MULTIPLYING their individual probabilities: P(A and B) = P(A) × P(B).","For DEPENDENT events (like drawing cards without replacement), the probability of the second event changes based on what happened in the first — you must recalculate the sample space after each draw.","For MUTUALLY EXCLUSIVE events (they can't both happen), the probability that EITHER happens is found by ADDING: P(A or B) = P(A) + P(B). If they're NOT mutually exclusive, subtract the overlap: P(A or B) = P(A) + P(B) − P(A and B).","The key words to watch for: 'AND' generally signals multiplication; 'OR' generally signals addition (with a possible overlap subtraction)."],"exampleTitle":"Independent AND","exampleLines":"Rolling two dice:\n\nP(both show 6)\n\n= 1/6 × 1/6\n\n= 1/36","inShort":"Independent AND: multiply. Mutually exclusive OR: add. Dependent events: recalculate the sample space each step."},"quickref":[{"label":"Independent events (AND)","formula":"P(A and B) = P(A) × P(B)","note":"One event doesn't affect the other's probability."},{"label":"Dependent events","formula":"Recalculate the sample space after each draw","note":"'Without replacement' changes the total each time."},{"label":"Mutually exclusive (OR)","formula":"P(A or B) = P(A) + P(B)","note":"Can't both happen at once — no overlap to subtract."},{"label":"Non-mutually exclusive (OR)","formula":"P(A or B) = P(A) + P(B) − P(A and B)","note":"Subtract the overlap so it isn't double-counted."}],"worked":[{"kicker":"Combined Probability · Worked Problem 1","title":"Independent events — multiplying probabilities","problem":"A fair coin is flipped twice. What is the probability of getting heads both times?","steps":["Recognize the two flips as independent events (one flip doesn't affect the other).","Find each individual probability: P(heads) = 1/2 for each flip.","Multiply: P(both heads) = 1/2 × 1/2 = 1/4."],"shortcut":"Multiply the individual probabilities directly, since the two flips are independent — no need for a longer outcome-listing approach.","trap":"Don't add the probabilities (1/2+1/2=1) — 'AND' for independent events means multiply, not add.","answer":"Answer: 1/4"},{"kicker":"Combined Probability · Worked Problem 2","title":"Dependent events — drawing without replacement","problem":"A bag has 4 red and 6 blue marbles (10 total). Two marbles are drawn without replacement. What is the probability both are red?","steps":["Find the probability the first marble is red: 4/10.","After removing one red marble, recalculate: 3 red remain out of 9 total marbles: 3/9.","Multiply the two probabilities: 4/10 × 3/9 = 12/90 = 2/15."],"shortcut":"Recalculate BOTH the favorable count and the total after the first draw, since the marble is not replaced — treat each draw as a fresh, smaller sample space.","trap":"Don't use 4/10 twice (that would assume replacement) — 'without replacement' means the second fraction must reflect one fewer red AND one fewer total marble.","answer":"Answer: 2/15"}]},{"name":"Counting Methods","concept":{"kicker":"Counting Methods · Foundations","title":"Permutations vs. combinations — does order matter?","badgeKey":"count_concept","paragraphs":["Use PERMUTATIONS when ORDER matters (e.g. assigning 1st/2nd/3rd place); use COMBINATIONS when order does NOT matter (e.g. choosing a committee of equals).","The fundamental counting principle: if one event can happen in m ways and a second (independent) event can happen in n ways, both together can happen in m × n ways — this underlies both permutations and combinations.","Permutations formula: nPr = n! / (n−r)! — the number of ways to arrange r items chosen from n total, where order matters.","Combinations formula: nCr = n! / [r!(n−r)!] — the number of ways to choose r items from n total, where order does NOT matter; this is the permutations formula divided by r! to remove duplicate orderings."],"exampleTitle":"The fundamental counting principle","exampleLines":"A 3-digit PIN, digits\n0-9, repetition allowed:\n\n10 × 10 × 10\n\n= 1,000 possible PINs","inShort":"Order matters → permutations (nPr). Order doesn't matter → combinations (nCr). Ask: does swapping create a new outcome?"},"quickref":[{"label":"Fundamental counting principle","formula":"m ways × n ways = m×n total ways","note":"Multiply the number of choices at each independent step."},{"label":"Permutations (order matters)","formula":"nPr = n! / (n−r)!","note":"Use for rankings, arrangements, or assigning distinct roles."},{"label":"Combinations (order doesn't matter)","formula":"nCr = n! / [r!(n−r)!]","note":"Use for selecting a group or subset with no ranking."},{"label":"Telling them apart","formula":"Ask: does swapping two selected items create a NEW outcome?","note":"Yes → permutation. No → combination."}],"worked":[{"kicker":"Counting Methods · Worked Problem 1","title":"A permutation — distinct finishing positions","problem":"In how many ways can 4 runners finish 1st, 2nd, 3rd, and 4th place, out of a race of 8 runners?","steps":["Recognize that finishing positions are DISTINCT roles — order matters, so this is a permutation.","Apply the permutations formula: 8P4 = 8! / (8−4)! = 8! / 4!.","Simplify by multiplying the first 4 descending numbers from 8: 8 × 7 × 6 × 5 = 1,680."],"shortcut":"Multiply the first 4 descending numbers starting at 8 (8×7×6×5) instead of computing full factorials and dividing — much faster.","trap":"Don't use the combinations formula here — since 1st/2nd/3rd/4th place are DISTINCT positions, order matters, so permutations apply.","answer":"Answer: 1,680 ways"},{"kicker":"Counting Methods · Worked Problem 2","title":"A combination — selecting a group with no ranking","problem":"A committee of 3 people is to be chosen from a group of 8. How many different committees are possible?","steps":["Recognize that committee members have no distinct roles — order doesn't matter, so this is a combination.","Apply the combinations formula: 8C3 = 8! / (3!·5!).","Simplify using the shortcut: (8×7×6) / (3×2×1) = 336/6 = 56."],"shortcut":"Use the 'top n numbers descending, divided by r!' shortcut — (8×7×6)/(3×2×1) — skipping the full factorial expansion entirely.","trap":"Don't use the permutations formula here — since committee members have no distinct order or role, this is a combination, not a permutation.","answer":"Answer: 56 committees"}]},{"name":"Normal Distribution","concept":{"kicker":"Normal Distribution · Foundations","title":"The bell curve and the 68-95-99.7 rule","badgeKey":"normal_concept","paragraphs":["A normal distribution is a symmetric, bell-shaped curve where the mean, median, and mode are all equal, located at the exact center.","The 68-95-99.7 rule (the empirical rule): about 68% of data falls within 1 standard deviation of the mean, 95% within 2 standard deviations, and 99.7% within 3 standard deviations.","A PERCENTILE tells you what percent of the data falls BELOW a given value — being in the 90th percentile means 90% of the data is below your value (NOT that you scored 90% of questions correctly).","A z-score measures how many standard deviations a value is from the mean; combined with the empirical rule, it lets you estimate what fraction of data lies above, below, or between given values."],"exampleTitle":"Applying the empirical rule","exampleLines":"Mean = 500, SD = 100\n\nRange 400 to 600 is\nexactly 1 SD on\neach side of the mean\n\nSo about 68% of\nscores fall in this range","inShort":"Bell-shaped, symmetric: mean=median=mode. 68% within 1 SD, 95% within 2 SD, 99.7% within 3 SD."},"quickref":[{"label":"Normal distribution shape","formula":"Symmetric, bell-shaped; mean = median = mode at the center","note":"The classic bell curve."},{"label":"The 68-95-99.7 rule","formula":"68% within 1 SD, 95% within 2 SD, 99.7% within 3 SD","note":"Memorize these three benchmark percentages."},{"label":"Percentile","formula":"Percent of data falling BELOW a given value","note":"90th percentile = 90% of data is below you, not that you scored 90%."},{"label":"Z-score","formula":"(value − mean) / standard deviation","note":"Measures how many SDs a value is from the mean."}],"worked":[{"kicker":"Normal Distribution · Worked Problem","title":"Applying the 68-95-99.7 rule directly","problem":"Test scores are normally distributed with a mean of 70 and a standard deviation of 8. What percent of scores fall between 62 and 78?","steps":["Find how many standard deviations 62 and 78 are from the mean: 70−8=62 (1 SD below), 70+8=78 (1 SD above).","Recognize that 62 to 78 spans exactly 1 standard deviation below and above the mean.","Apply the empirical rule: about 68% of data falls within 1 standard deviation of the mean."],"shortcut":"Check whether the given range corresponds exactly to a whole number of standard deviations from the mean — if so, apply the 68-95-99.7 rule directly instead of calculating an exact area.","trap":"Don't assume you need to calculate an exact area under the curve — GRE problems almost always align with the 68-95-99.7 benchmarks; check for that pattern first.","answer":"Answer: about 68%"}]}];
+const DIAGRAMS = {};
+const LEAFLET = [["Mean","sum ÷ count","Sensitive to outliers"],["Median","middle value (sorted)","Sort first! Average the two middles if even count"],["Complement rule","P(not A) = 1 − P(A)","Faster for “at least one” problems"],["Independent events (AND)","P(A and B) = P(A) × P(B)","“AND” usually means multiply"],["Permutations","nPr = n! / (n−r)!","Order matters — rankings, distinct roles"],["Combinations","nCr = n! / [r!(n−r)!]","Order doesn't matter — selecting a group"],["68-95-99.7 rule","68% / 95% / 99.7% within 1 / 2 / 3 SD","Check if the range matches a whole number of SDs"]];
+const FLASHCARDS = [{"topic":"Mean, Median & Mode","front":"Mean","back":"sum of values ÷ count of values","note":"Sensitive to outliers — one extreme value shifts it a lot."},{"topic":"Mean, Median & Mode","front":"Median","back":"middle value (sorted); average the two middles if even count","note":"Resistant to outliers — only position matters."},{"topic":"Mean, Median & Mode","front":"Mode","back":"the most frequently occurring value","note":"Can be none, one, or several (multimodal)."},{"topic":"Mean, Median & Mode","front":"Sort first","back":"Always order the data before finding the median","note":"Median needs sorted order — mean and mode do not."},{"topic":"Mean, Median & Mode","front":"Trap: Finding all three measures from one data set","back":"Don't forget to SORT the data first before identifying the median — picking the middle of the ORIGINAL (unsorted) list gives the wrong answer.","note":"Fastest method: For an odd-sized, already-sorted data set, the median is just the middle position — no averaging needed. Here, (7+1)/2 = 4th position."},{"topic":"Range & Standard Deviation","front":"Range","back":"maximum value − minimum value","note":"The simplest measure of spread — but only uses 2 values."},{"topic":"Range & Standard Deviation","front":"Standard deviation","back":"average distance of each point from the mean","note":"Larger SD = more spread out; smaller SD = more tightly clustered."},{"topic":"Range & Standard Deviation","front":"Shifting all values (+c)","back":"Mean shifts by c; standard deviation UNCHANGED","note":"The gaps between values don't change if you shift everything equally."},{"topic":"Range & Standard Deviation","front":"Scaling all values (×c)","back":"Mean AND standard deviation both scale by c","note":"Stretching all values apart increases the spread too."},{"topic":"Range & Standard Deviation","front":"Trap: Comparing spread without calculating exact values","back":"Don't assume equal means imply equal spread — two data sets can share the exact same mean while having very different standard deviations.","note":"Fastest method: You don't need to calculate exact standard deviation values — just compare how far, overall, the data points sit from their shared mean."},{"topic":"Data Interpretation","front":"Read carefully first","back":"Check the title, axis labels, and units","note":"Misreading the scale is the most common data-interpretation error."},{"topic":"Data Interpretation","front":"Pie charts","back":"Slices sum to 100% (or 360°)","note":"Angle = percent × 3.6°, or fraction × 360°."},{"topic":"Data Interpretation","front":"Comparing two values","back":"Compute the actual difference or percent change","note":"Don't eyeball bar heights — axis scales can be misleading."},{"topic":"Data Interpretation","front":"Multi-part questions","back":"Understand the whole chart upfront","note":"The same chart often supports several related questions."},{"topic":"Data Interpretation","front":"Trap: Converting a pie chart slice to an amount","back":"Don't confuse the slice's PERCENTAGE with its ANGLE in degrees — if a question gives an angle instead, first convert (angle/360°) to a percent or fraction before applying it to the total.","note":"Fastest method: Convert the percent directly to a decimal and multiply by the total — no need to find the angle-in-degrees version unless the question specifically asks for it."},{"topic":"Probability","front":"Basic probability","back":"P(event) = favorable outcomes / total outcomes","note":"Always between 0 and 1."},{"topic":"Probability","front":"Complement rule","back":"P(not A) = 1 − P(A)","note":"Often faster than direct calculation, especially for 'at least one' problems."},{"topic":"Probability","front":"Sample space","back":"Count the TOTAL possible outcomes carefully","note":"Make sure you're using the right total (e.g. 52 cards, not 13 or 4)."},{"topic":"Probability","front":"Equivalent forms","back":"Fractions, decimals, and percents are interchangeable","note":"Use whichever form is easiest for the problem."},{"topic":"Probability","front":"Trap: Using the complement rule","back":"Don't forget to include ALL marbles (10 total) in the denominator, not just the non-blue ones, when setting up the probability.","note":"Fastest method: Use the complement rule (1 − P(blue)) instead of separately counting red+green — especially efficient when there are multiple 'not this' categories to add up."},{"topic":"Combined Probability","front":"Independent events (AND)","back":"P(A and B) = P(A) × P(B)","note":"One event doesn't affect the other's probability."},{"topic":"Combined Probability","front":"Dependent events","back":"Recalculate the sample space after each draw","note":"'Without replacement' changes the total each time."},{"topic":"Combined Probability","front":"Mutually exclusive (OR)","back":"P(A or B) = P(A) + P(B)","note":"Can't both happen at once — no overlap to subtract."},{"topic":"Combined Probability","front":"Non-mutually exclusive (OR)","back":"P(A or B) = P(A) + P(B) − P(A and B)","note":"Subtract the overlap so it isn't double-counted."},{"topic":"Combined Probability","front":"Trap: Independent events — multiplying probabilities","back":"Don't add the probabilities (1/2+1/2=1) — 'AND' for independent events means multiply, not add.","note":"Fastest method: Multiply the individual probabilities directly, since the two flips are independent — no need for a longer outcome-listing approach."},{"topic":"Combined Probability","front":"Trap: Dependent events — drawing without replacement","back":"Don't use 4/10 twice (that would assume replacement) — 'without replacement' means the second fraction must reflect one fewer red AND one fewer total marble.","note":"Fastest method: Recalculate BOTH the favorable count and the total after the first draw, since the marble is not replaced — treat each draw as a fresh, smaller sample space."},{"topic":"Counting Methods","front":"Fundamental counting principle","back":"m ways × n ways = m×n total ways","note":"Multiply the number of choices at each independent step."},{"topic":"Counting Methods","front":"Permutations (order matters)","back":"nPr = n! / (n−r)!","note":"Use for rankings, arrangements, or assigning distinct roles."},{"topic":"Counting Methods","front":"Combinations (order doesn't matter)","back":"nCr = n! / [r!(n−r)!]","note":"Use for selecting a group or subset with no ranking."},{"topic":"Counting Methods","front":"Telling them apart","back":"Ask: does swapping two selected items create a NEW outcome?","note":"Yes → permutation. No → combination."},{"topic":"Counting Methods","front":"Trap: A permutation — distinct finishing positions","back":"Don't use the combinations formula here — since 1st/2nd/3rd/4th place are DISTINCT positions, order matters, so permutations apply.","note":"Fastest method: Multiply the first 4 descending numbers starting at 8 (8×7×6×5) instead of computing full factorials and dividing — much faster."},{"topic":"Counting Methods","front":"Trap: A combination — selecting a group with no ranking","back":"Don't use the permutations formula here — since committee members have no distinct order or role, this is a combination, not a permutation.","note":"Fastest method: Use the 'top n numbers descending, divided by r!' shortcut — (8×7×6)/(3×2×1) — skipping the full factorial expansion entirely."},{"topic":"Normal Distribution","front":"Normal distribution shape","back":"Symmetric, bell-shaped; mean = median = mode at the center","note":"The classic bell curve."},{"topic":"Normal Distribution","front":"The 68-95-99.7 rule","back":"68% within 1 SD, 95% within 2 SD, 99.7% within 3 SD","note":"Memorize these three benchmark percentages."},{"topic":"Normal Distribution","front":"Percentile","back":"Percent of data falling BELOW a given value","note":"90th percentile = 90% of data is below you, not that you scored 90%."},{"topic":"Normal Distribution","front":"Z-score","back":"(value − mean) / standard deviation","note":"Measures how many SDs a value is from the mean."},{"topic":"Normal Distribution","front":"Trap: Applying the 68-95-99.7 rule directly","back":"Don't assume you need to calculate an exact area under the curve — GRE problems almost always align with the 68-95-99.7 benchmarks; check for that pattern first.","note":"Fastest method: Check whether the given range corresponds exactly to a whole number of standard deviations from the mean — if so, apply the 68-95-99.7 rule directly instead of calculating an exact area."}];
+const STORAGE_PREFIX = "clc_gre_data_analysis_test_";
+
+let activeTest = null;
+let submitted = false;
+let timeLeft = 0;
+let timerHandle = null;
+let answers = {};
+
+function testStorageKey(idx) { return STORAGE_PREFIX + idx; }
+
+function loadTestState(idx) {
+  try {
+    const raw = localStorage.getItem(testStorageKey(idx));
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function saveTestState(idx) {
+  try {
+    localStorage.setItem(testStorageKey(idx), JSON.stringify({ answers, submitted, timeLeft }));
+  } catch (e) {}
+}
+
+// ---------------- Calculator ----------------
+let calcCur = "0", calcPrev = null, calcOp = null, calcMemory = 0, calcResetNext = false;
+function calcUpdateDisplay() { document.getElementById('calcDisplay').textContent = calcCur; }
+function toggleCalc() {
+  const p = document.getElementById('calcPanel');
+  p.style.display = (p.style.display === 'none') ? 'block' : 'none';
+}
+function calcDigit(d) {
+  if (calcResetNext) { calcCur = d; calcResetNext = false; }
+  else { calcCur = (calcCur === '0') ? d : calcCur + d; }
+  calcUpdateDisplay();
+}
+function calcDot() {
+  if (calcResetNext) { calcCur = '0.'; calcResetNext = false; }
+  else if (calcCur.indexOf('.') === -1) { calcCur += '.'; }
+  calcUpdateDisplay();
+}
+function calcOpPress(op) {
+  if (calcOp && !calcResetNext) calcEquals();
+  calcPrev = parseFloat(calcCur);
+  calcOp = op;
+  calcResetNext = true;
+}
+function calcEquals() {
+  if (calcOp === null || calcPrev === null) return;
+  const cur = parseFloat(calcCur);
+  let res = cur;
+  if (calcOp === '+') res = calcPrev + cur;
+  else if (calcOp === '-') res = calcPrev - cur;
+  else if (calcOp === '×') res = calcPrev * cur;
+  else if (calcOp === '÷') res = (cur === 0) ? NaN : calcPrev / cur;
+  calcCur = isNaN(res) ? 'Error' : String(Math.round(res * 1e10) / 1e10);
+  calcOp = null; calcPrev = null; calcResetNext = true;
+  calcUpdateDisplay();
+}
+function calcClear() { calcCur = '0'; calcPrev = null; calcOp = null; calcResetNext = false; calcUpdateDisplay(); }
+function calcSign() { calcCur = calcCur.charAt(0) === '-' ? calcCur.slice(1) : '-' + calcCur; calcUpdateDisplay(); }
+function calcSqrt() {
+  const v = parseFloat(calcCur);
+  calcCur = (isNaN(v) || v < 0) ? 'Error' : String(Math.round(Math.sqrt(v) * 1e10) / 1e10);
+  calcResetNext = true; calcUpdateDisplay();
+}
+function calcMPlus() { calcMemory += parseFloat(calcCur) || 0; }
+function calcMMinus() { calcMemory -= parseFloat(calcCur) || 0; }
+function calcMR() { calcCur = String(calcMemory); calcResetNext = true; calcUpdateDisplay(); }
+function calcMC() { calcMemory = 0; }
+function calcTransfer() {
+  const active = document.activeElement;
+  if (active && active.classList && active.classList.contains('numeric-input')) {
+    active.value = calcCur;
+    active.dispatchEvent(new Event('input'));
+  } else {
+    const inputs = document.querySelectorAll('.numeric-input');
+    if (inputs.length) { inputs[0].value = calcCur; inputs[0].dispatchEvent(new Event('input')); }
+  }
+}
+
+// ---------------- Formula Leaflet ----------------
+// ---------------- Flashcards ----------------
+let flashDeck = FLASHCARDS.slice();
+let flashIdx = 0;
+let flashFlipped = false;
+
+function openFlashcards() {
+  document.getElementById('menuScreen').style.display = 'none';
+  document.getElementById('flashArea').style.display = 'block';
+  flashDeck = FLASHCARDS.slice();
+  flashIdx = 0;
+  flashFlipped = false;
+  renderFlashcard();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderFlashcard() {
+  if (!flashDeck.length) return;
+  const card = flashDeck[flashIdx];
+  document.getElementById('flashProgress').textContent = 'Card ' + (flashIdx + 1) + ' of ' + flashDeck.length;
+  document.getElementById('flashTopic').textContent = card.topic;
+  document.getElementById('flashSideLabel').textContent = flashFlipped ? 'ANSWER' : 'TAP TO FLIP';
+  const contentEl = document.getElementById('flashContent');
+  const noteEl = document.getElementById('flashNote');
+  if (flashFlipped) {
+    contentEl.className = 'flash-content back-content';
+    contentEl.textContent = card.back;
+    if (card.note) { noteEl.style.display = 'block'; noteEl.textContent = card.note; }
+    else { noteEl.style.display = 'none'; }
+  } else {
+    contentEl.className = 'flash-content';
+    contentEl.textContent = card.front;
+    noteEl.style.display = 'none';
+  }
+}
+
+function flipCard() {
+  flashFlipped = !flashFlipped;
+  renderFlashcard();
+}
+
+function flashNext() {
+  flashIdx = (flashIdx + 1) % flashDeck.length;
+  flashFlipped = false;
+  renderFlashcard();
+}
+
+function flashPrev() {
+  flashIdx = (flashIdx - 1 + flashDeck.length) % flashDeck.length;
+  flashFlipped = false;
+  renderFlashcard();
+}
+
+function flashShuffle() {
+  for (let i = flashDeck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [flashDeck[i], flashDeck[j]] = [flashDeck[j], flashDeck[i]];
+  }
+  flashIdx = 0;
+  flashFlipped = false;
+  renderFlashcard();
+}
+
+function openLeaflet() {
+  document.getElementById('menuScreen').style.display = 'none';
+  document.getElementById('flashArea').style.display = 'none';
+  document.getElementById('theoryArea').style.display = 'block';
+  const main = document.getElementById('theoryMain');
+  let rows = LEAFLET.map(r => '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td></tr>').join('');
+  main.innerHTML =
+    '<div class="topic-block">' +
+      '<h2>Formula Leaflet — Unit 4: Data Analysis</h2>' +
+      '<p style="color:#6B655D; font-size:13.5px;">A one-page reference of every core formula in this unit. Print or save this page for quick review before a test.</p>' +
+      '<table class="leaflet-table"><tr><th>Topic</th><th>Formula</th><th>Speed Tip</th></tr>' + rows + '</table>' +
+    '</div>' +
+    '<div class="btn-bar"><button class="pdf-btn" onclick="window.print()">🖨️ Print / Save as PDF</button></div>';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderMenu() {
+  const grid = document.getElementById('menuGrid');
+  let html = '';
+  if (THEORY && THEORY.length) {
+    html += '<div class="menu-card theory-card" onclick="openTheory()">' +
+      '<h3>📘 Theory &amp; Formulas</h3>' +
+      '<p class="sub">Concepts, quick-reference formulas &amp; worked examples</p>' +
+      '<p class="meta">' + THEORY.length + ' topics · read at your own pace</p>' +
+    '</div>';
+  }
+  if (LEAFLET && LEAFLET.length) {
+    html += '<div class="menu-card leaflet-card" onclick="openLeaflet()">' +
+      '<h3>📄 Formula Leaflet</h3>' +
+      '<p class="sub">One printable page — every formula in this unit</p>' +
+      '<p class="meta">' + LEAFLET.length + ' formulas · print or save as PDF</p>' +
+    '</div>';
+  }
+  if (FLASHCARDS && FLASHCARDS.length) {
+    html += '<div class="menu-card flashcard-card" onclick="openFlashcards()">' +
+      '<h3>🗂️ Flashcards</h3>' +
+      '<p class="sub">Flip through every formula &amp; trap, one at a time</p>' +
+      '<p class="meta">' + FLASHCARDS.length + ' cards · shuffle for review</p>' +
+    '</div>';
+  }
+  html += TESTS.map((t, idx) => {
+    const saved = loadTestState(idx);
+    const statusHtml = saved && saved.submitted
+      ? '<span class="status done">✓ Completed</span>'
+      : (saved && saved.answers && Object.keys(saved.answers).length ? '<span class="status">In progress</span>' : '');
+    return (
+      '<div class="menu-card" onclick="openTest(' + idx + ')">' +
+        '<h3>' + t.title + '</h3>' +
+        '<p class="sub">' + t.subtitle + '</p>' +
+        '<p class="meta">' + t.questions.length + ' questions · ' + t.minutes + ' min</p>' +
+        statusHtml +
+      '</div>'
+    );
+  }).join('');
+  grid.innerHTML = html;
+}
+
+function openTheory() {
+  document.getElementById('menuScreen').style.display = 'none';
+  document.getElementById('testArea').style.display = 'none';
+  document.getElementById('flashArea').style.display = 'none';
+  document.getElementById('theoryArea').style.display = 'block';
+  const main = document.getElementById('theoryMain');
+  main.innerHTML = THEORY.map(t => {
+    let tableHtml = '';
+    if (t.table) {
+      tableHtml = '<h4>Benchmark Conversions</h4><table class="decimal-table"><tr><th>Fraction</th><th>Decimal</th><th>Percent</th></tr>' +
+        t.table.map(row => '<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td></tr>').join('') +
+        '</table><div class="inshort-box" style="margin-top:12px;"><span class="label">Why it matters</span>' + (t.tableNote||'') + '</div>';
+    }
+    const c = t.concept;
+    const conceptHtml = c ? (
+      '<div class="concept-flex">' +
+        '<div class="concept-text">' + c.paragraphs.map(p => '<p>' + p + '</p>').join('') + '</div>' +
+        (c.exampleTitle ? '<div class="example-box"><div class="ex-title">' + c.exampleTitle + '</div><pre>' + c.exampleLines + '</pre></div>' : '') +
+      '</div>' +
+      (c.inShort ? '<div class="inshort-box"><span class="label">In short</span>' + c.inShort + '</div>' : '')
+    ) : '';
+    const qrefHtml = t.quickref && t.quickref.length ? (
+      '<h4>Quick Reference</h4><div class="qref-grid">' +
+      t.quickref.map(q => '<div class="qref-card"><div class="qlabel">' + q.label + '</div><div class="qformula">' + q.formula + '</div>' + (q.note ? '<div class="qnote">' + q.note + '</div>' : '') + '</div>').join('') +
+      '</div>'
+    ) : '';
+    const workedHtml = (t.worked && t.worked.length) ? t.worked.map(w => (
+      '<div class="worked-block">' +
+        '<div class="wtitle">' + w.title + '</div>' +
+        '<div class="wproblem">' + w.problem + '</div>' +
+        w.steps.map((s,i) => '<div class="wstep"><div class="stepnum">' + (i+1) + '</div><div>' + s + '</div></div>').join('') +
+        (w.answer ? '<div class="wanswer">' + w.answer + '</div>' : '') +
+        '<div class="wbox tip"><span class="wlabel">Fastest method</span>' + w.shortcut + '</div>' +
+        '<div class="wbox trap"><span class="wlabel">⚠ Trap to avoid</span>' + w.trap + '</div>' +
+      '</div>'
+    )).join('') : '';
+    return '<div class="topic-block"><h2>' + t.name + '</h2>' + conceptHtml + tableHtml + qrefHtml + workedHtml + '</div>';
+  }).join('');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function openTest(idx) {
+  activeTest = idx;
+  const saved = loadTestState(idx);
+  answers = (saved && saved.answers) ? saved.answers : {};
+  submitted = (saved && saved.submitted) ? true : false;
+  timeLeft = (saved && typeof saved.timeLeft === 'number' && !submitted) ? saved.timeLeft : TESTS[idx].minutes * 60;
+
+  document.getElementById('menuScreen').style.display = 'none';
+  document.getElementById('flashArea').style.display = 'none';
+  document.getElementById('testArea').style.display = 'block';
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('submitBtn').style.display = submitted ? 'none' : 'inline-block';
+
+  if (submitted) {
+    renderResults();
+  } else {
+    renderQuestions();
+    clearInterval(timerHandle);
+    timerHandle = setInterval(tick, 1000);
+    updateTimerDisplay();
+  }
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function backToMenu() {
+  clearInterval(timerHandle);
+  document.getElementById('testArea').style.display = 'none';
+  document.getElementById('theoryArea').style.display = 'none';
+  document.getElementById('flashArea').style.display = 'none';
+  document.getElementById('menuScreen').style.display = 'block';
+  document.getElementById('resultBanner').innerHTML = '';
+  renderMenu();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function tick() {
+  if (submitted) return;
+  timeLeft -= 1;
+  if (timeLeft <= 0) { timeLeft = 0; updateTimerDisplay(); submitTest(); return; }
+  updateTimerDisplay();
+  if (timeLeft % 5 === 0) saveTestState(activeTest);
+}
+function updateTimerDisplay() {
+  const t = Math.max(0, Math.round(timeLeft));
+  const m = Math.floor(t/60), s = t%60;
+  const el = document.getElementById('timer');
+  el.textContent = m + ':' + String(s).padStart(2,'0');
+  el.classList.toggle('warn', t <= 60);
+}
+
+function renderQuestions() {
+  const test = TESTS[activeTest];
+  const container = document.getElementById('questions');
+  container.innerHTML = test.questions.map(q => {
+    let inputHtml = '';
+    if (q.type === 'numeric') {
+      const val = answers[q.n] || '';
+      inputHtml = '<input type="text" class="numeric-input" id="ans_' + q.n + '" value="' + String(val).replace(/"/g,'&quot;') + '" placeholder="Your answer" oninput="onAnswer(' + q.n + ', this.value)">';
+    } else {
+      inputHtml = q.choices.map((c,i) => {
+        const checked = answers[q.n] === String(i) ? 'checked' : '';
+        return '<label class="choice"><input type="radio" name="q' + q.n + '" value="' + i + '" ' + checked + ' onchange="onAnswer(' + q.n + ', this.value)"> ' + String.fromCharCode(65+i) + '.&nbsp; ' + c + '</label>';
+      }).join('');
+    }
+    return (
+      '<div class="q-card" id="card_' + q.n + '">' +
+        '<div class="q-topic">Question ' + q.n + ' · ' + q.topic + '</div>' +
+        '<div class="q-prompt">' + q.prompt + '</div>' +
+        (q.diagram && DIAGRAMS[q.diagram] ? '<img class="q-diagram" src="data:image/png;base64,' + DIAGRAMS[q.diagram] + '" alt="diagram" />' : '') +
+        inputHtml +
+        '<div class="explain" id="explain_' + q.n + '"></div>' +
+      '</div>'
+    );
+  }).join('');
+  updateProgress();
+}
+
+function onAnswer(n, value) {
+  answers[n] = value;
+  updateProgress();
+  saveTestState(activeTest);
+}
+
+function updateProgress() {
+  const test = TESTS[activeTest];
+  let answered = 0;
+  test.questions.forEach(q => { if (answers[q.n] !== undefined && answers[q.n] !== '') answered++; });
+  document.getElementById('progressLabel').textContent = answered + ' / ' + test.questions.length + ' answered';
+}
+
+function normalizeNumeric(s) { return String(s).trim().toLowerCase().replace(/\s+/g,'').replace(/€|\$/g,''); }
+function checkNumeric(userVal, correctVal) {
+  const u = normalizeNumeric(userVal), c = normalizeNumeric(correctVal);
+  if (u === c) return true;
+  const uf = parseFloat(u), cf = parseFloat(c);
+  if (!isNaN(uf) && !isNaN(cf) && u.indexOf('/') === -1 && u.indexOf(',') === -1) return Math.abs(uf-cf) < 0.02;
+  return false;
+}
+
+function submitTest() {
+  if (submitted) return;
+  submitted = true;
+  clearInterval(timerHandle);
+  document.getElementById('submitBtn').style.display = 'none';
+  saveTestState(activeTest);
+  renderResults();
+}
+
+function renderResults() {
+  const test = TESTS[activeTest];
+  let correctCount = 0;
+
+  const container = document.getElementById('questions');
+  container.innerHTML = test.questions.map(q => (
+    '<div class="q-card" id="card_' + q.n + '">' +
+      '<div class="q-topic">Question ' + q.n + ' · ' + q.topic + '</div>' +
+      '<div class="q-prompt">' + q.prompt + '</div>' +
+      (q.diagram && DIAGRAMS[q.diagram] ? '<img class="q-diagram" src="data:image/png;base64,' + DIAGRAMS[q.diagram] + '" alt="diagram" />' : '') +
+      '<div class="explain show" id="explain_' + q.n + '"></div>' +
+    '</div>'
+  )).join('');
+
+  test.questions.forEach(q => {
+    const val = answers[q.n];
+    let isCorrect = false, userAnswerText = '(no answer)';
+    if (q.type === 'numeric') {
+      userAnswerText = (val === undefined || val === '') ? '(no answer)' : val;
+      isCorrect = val !== undefined && val !== '' && checkNumeric(val, q.correct);
+    } else {
+      if (val !== undefined) {
+        const idx = parseInt(val, 10);
+        userAnswerText = String.fromCharCode(65+idx) + '. ' + q.choices[idx];
+        isCorrect = idx === q.correct;
+      }
+    }
+    if (isCorrect) correctCount++;
+    const correctText = q.type === 'numeric' ? q.correct : String.fromCharCode(65+q.correct) + '. ' + q.choices[q.correct];
+    const el = document.getElementById('explain_' + q.n);
+    el.innerHTML =
+      '<div class="verdict ' + (isCorrect?'correct':'incorrect') + '">' + (isCorrect?'✓ Correct':'✗ Incorrect') + ' — your answer: ' + userAnswerText + '</div>' +
+      '<div class="box explain-full"><span class="label">Correct answer</span>' + correctText + '</div>' +
+      '<div class="box explain-full"><span class="label">Formula</span>' + q.formula + '</div>' +
+      '<div class="box tip"><span class="label">Fastest method</span>' + q.shortcut + '</div>' +
+      '<div class="box trap"><span class="label">⚠ Trap to avoid</span>' + q.trap + '</div>' +
+      '<div class="box explain-full"><span class="label">Full explanation</span>' + q.explanation + '</div>';
+  });
+
+  const pct = Math.round((correctCount/test.questions.length)*100);
+  submitResultToSheet(test.title, correctCount, test.questions.length);
+  document.getElementById('resultBanner').innerHTML =
+    '<div class="result-banner">' +
+      '<div><div class="label">Your Score</div><div class="score">' + correctCount + ' / ' + test.questions.length + ' (' + pct + '%)</div></div>' +
+    '</div>' +
+    '<div class="btn-bar"><button class="btn btn-secondary" onclick="retakeTest()">Retake This Test</button><button class="pdf-btn" onclick="window.print()">🖨️ Save Results as PDF</button><button class="btn" onclick="backToMenu()">Back to Menu</button></div>';
+  document.getElementById('progressLabel').textContent = 'Test complete';
+  updateTimerDisplay0();
+}
+function updateTimerDisplay0() { document.getElementById('timer').textContent = '--:--'; }
+
+function retakeTest() {
+  try { localStorage.removeItem(testStorageKey(activeTest)); } catch (e) {}
+  openTest(activeTest);
+}
+
+renderMenu();
+</script>
+</body>
+</html>

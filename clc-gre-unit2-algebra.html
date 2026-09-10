@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLC GRE Quant Mastery — Unit 2: Algebra</title>
+<style>
+  :root {
+    --crimson: #A8002E; --crimson-dark: #7A0022; --gold: #B8882A; --gold-light: #D9B968;
+    --ink: #262019; --muted: #6B655D; --card: #F7F7F5; --tip-bg: #F4EEDD; --trap-bg: #FBE8EA;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Calibri, Arial, sans-serif; color: var(--ink); background:#FAFAF9; }
+  header { background: var(--crimson); color:white; padding: 28px 32px; }
+  header img.logo { height: 46px; float:right; }
+  header h1 { margin:0 0 4px; font-family: Cambria, Georgia, serif; font-size: 27px; }
+  header p { color: var(--gold-light); margin:0; font-size:14px; }
+  main { max-width: 880px; margin:0 auto; padding: 28px 20px 80px; }
+
+  .menu-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(250px,1fr)); gap:16px; margin-top: 10px; }
+  .menu-card { background:white; border-radius:12px; padding:20px 22px; box-shadow:0 1px 4px rgba(0,0,0,0.06); cursor:pointer; border:2px solid transparent; }
+  .menu-card:hover { border-color: var(--gold); }
+  .menu-card h3 { margin:0 0 4px; font-family: Cambria, Georgia, serif; color: var(--crimson); font-size:19px; }
+  .menu-card p.sub { margin:0 0 10px; color: var(--muted); font-size:13px; }
+  .menu-card p.meta { margin:0; color: var(--gold); font-size:12.5px; font-weight:bold; }
+  .menu-card .status { display:inline-block; margin-top:10px; font-size:11.5px; padding:3px 9px; border-radius:20px; background:#eee; color:var(--muted); }
+  .menu-card .status.done { background:#e6f4ea; color:#1e7d34; }
+
+  .meta-bar { display:flex; justify-content:space-between; align-items:center; background:white; padding:12px 32px; border-bottom:1px solid #E4E0D8; position:sticky; top:0; z-index:20; box-shadow:0 2px 6px rgba(0,0,0,0.05); }
+  #timer { font-size:19px; font-weight:bold; color: var(--crimson); font-variant-numeric: tabular-nums; }
+  #timer.warn { color:#c0392b; animation:pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity:.5; } }
+  .progress { font-size:13px; color: var(--muted); }
+  .back-link { font-size:13px; color: var(--crimson); cursor:pointer; text-decoration:underline; }
+
+  .q-card { background:white; border-radius:10px; padding:22px 24px; margin-bottom:18px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+  .q-topic { color: var(--gold); font-weight:bold; font-size:12px; letter-spacing:1px; text-transform:uppercase; }
+  .q-prompt { font-size:16px; margin:8px 0 14px; line-height:1.45; }
+  .q-diagram { display:block; margin: 4px auto 16px; max-width: 240px; }
+  .choice { display:block; margin:8px 0; padding:10px 14px; border:1px solid #E4E0D8; border-radius:8px; cursor:pointer; }
+  .choice:hover { background:#FAF6EE; }
+  .choice input { margin-right:10px; }
+  .numeric-input { padding:10px 12px; border:1px solid #ccc; border-radius:8px; font-size:16px; width:260px; }
+  .btn { background: var(--crimson); color:white; border:none; border-radius:8px; padding:14px 34px; font-size:16px; font-weight:bold; cursor:pointer; }
+  .btn:hover { background: var(--crimson-dark); }
+  .btn:disabled { opacity:.5; }
+  .btn-secondary { background:white; color: var(--crimson); border:2px solid var(--crimson); }
+  .btn-bar { text-align:center; margin:30px 0 10px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .result-banner { background: var(--crimson); color:white; border-radius:10px; padding:20px 26px; margin-bottom:22px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+  .result-banner .score { font-size:28px; font-weight:bold; }
+  .result-banner .label { color: var(--gold-light); font-size:12px; letter-spacing:1px; text-transform:uppercase; }
+  .explain { display:none; margin-top:14px; border-top:1px solid #E4E0D8; padding-top:12px; }
+  .explain.show { display:block; }
+  .verdict { font-weight:bold; padding:4px 10px; border-radius:6px; display:inline-block; margin-bottom:10px; font-size:13px; }
+  .verdict.correct { background:#e6f4ea; color:#1e7d34; }
+  .verdict.incorrect { background: var(--trap-bg); color: var(--crimson); }
+  .box { border-radius:8px; padding:12px 14px; margin-top:8px; font-size:14px; line-height:1.5; }
+  .box.tip { background: var(--tip-bg); }
+  .box.trap { background: var(--trap-bg); }
+  .box .label { font-weight:bold; font-size:11px; letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:4px; }
+  .box.tip .label { color: var(--gold); }
+  .box.trap .label { color: var(--crimson); }
+  .box.explain-full { background: var(--card); }
+  .box.explain-full .label { color: var(--muted); }
+  footer { text-align:center; color: var(--muted); font-size:12px; padding:24px; }
+
+  .menu-card.theory-card { border-color: var(--gold); background: var(--tip-bg); }
+  .menu-card.theory-card h3 { color: var(--gold); }
+
+  .topic-block { background:white; border-radius:12px; padding:24px 26px; margin-bottom:22px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+  .topic-block h2 { font-family: Cambria, Georgia, serif; color: var(--crimson); border-bottom:2px solid var(--gold); padding-bottom:8px; margin-top:0; }
+  .topic-block h4 { font-family: Cambria, Georgia, serif; color: var(--ink); font-size:15px; margin: 18px 0 8px; }
+  .concept-flex { display:flex; gap:22px; flex-wrap:wrap; }
+  .concept-text { flex: 1 1 380px; font-size:14px; line-height:1.6; color: var(--ink); }
+  .concept-text p { margin: 0 0 12px; }
+  .example-box { flex: 0 1 300px; background: var(--tip-bg); border-radius:10px; padding:16px 18px; }
+  .example-box .ex-title { font-weight:bold; color: var(--gold); font-size:11.5px; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; }
+  .example-box pre { white-space:pre-wrap; font-family: Cambria, Georgia, serif; font-size:14px; margin:0; }
+  .inshort-box { background: var(--card); border-radius:10px; padding:14px 18px; margin-top:14px; font-size:13.5px; font-style:italic; color: var(--ink); }
+  .inshort-box .label { font-style:normal; font-weight:bold; color: var(--crimson); font-size:11px; letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:4px; }
+  .qref-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap:14px; margin-top:8px; }
+  .qref-card { background: var(--card); border-radius:9px; padding:13px 16px; }
+  .qref-card .qlabel { font-weight:bold; color: var(--crimson); font-size:13px; margin-bottom:4px; }
+  .qref-card .qformula { font-family: Cambria, Georgia, serif; font-size:14px; color: var(--ink); margin-bottom:6px; }
+  .qref-card .qnote { font-size:11.5px; font-style:italic; color: var(--muted); }
+  .decimal-table { width:100%; border-collapse:collapse; margin-top:8px; }
+  .decimal-table th { background: var(--crimson); color:white; padding:8px; font-size:13px; }
+  .decimal-table td { padding:7px 8px; text-align:center; border-bottom:1px solid #E4E0D8; font-size:13.5px; }
+  .worked-block { border-top:1px solid #E4E0D8; margin-top:18px; padding-top:14px; }
+  .worked-block .wtitle { font-weight:bold; color: var(--ink); font-size:14.5px; margin-bottom:4px; }
+  .worked-block .wproblem { background: var(--card); border-radius:8px; padding:10px 14px; font-size:13.5px; margin:8px 0 10px; }
+  .worked-block .wstep { display:flex; gap:10px; margin-bottom:7px; font-size:13.5px; }
+  .worked-block .wstep .stepnum { flex:0 0 22px; height:22px; border-radius:50%; background: var(--crimson); color:white; font-size:11px; font-weight:bold; display:flex; align-items:center; justify-content:center; }
+  .worked-block .wanswer { background: var(--crimson); color:white; border-radius:8px; padding:8px 14px; font-size:13.5px; font-weight:bold; margin-top:8px; }
+  .worked-block .wbox { border-radius:8px; padding:9px 13px; margin-top:8px; font-size:13px; }
+  .worked-block .wbox.tip { background: var(--tip-bg); }
+  .worked-block .wbox.trap { background: var(--trap-bg); }
+  .worked-block .wbox .wlabel { font-weight:bold; font-size:10.5px; letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:3px; }
+  .worked-block .wbox.tip .wlabel { color: var(--gold); }
+  .worked-block .wbox.trap .wlabel { color: var(--crimson); }
+
+  /* Calculator */
+  .calc-toggle { position:fixed; bottom:22px; right:22px; background: var(--crimson); color:white; width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,0.28); z-index:200; user-select:none; }
+  .calc-toggle:hover { background: var(--crimson-dark); }
+  .calc-panel { position:fixed; bottom:86px; right:22px; width:236px; background:white; border-radius:12px; box-shadow:0 6px 24px rgba(0,0,0,0.22); padding:14px; z-index:200; }
+  .calc-title { font-size:11px; font-weight:bold; color: var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+  .calc-display { background: var(--card); border-radius:8px; padding:10px 12px; text-align:right; font-size:20px; font-family: 'Courier New', monospace; margin-bottom:8px; min-height:26px; overflow-x:auto; white-space:nowrap; }
+  .calc-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:6px; }
+  .calc-btn { padding:11px 0; border:none; border-radius:7px; background:#F0EAD9; cursor:pointer; font-size:15px; color: var(--ink); }
+  .calc-btn:hover { background:#E8DFC5; }
+  .calc-btn.op { background: var(--gold); color:white; }
+  .calc-btn.op:hover { background:#a17a26; }
+  .calc-btn.eq { background: var(--crimson); color:white; grid-column: span 2; }
+  .calc-btn.eq:hover { background: var(--crimson-dark); }
+  .calc-btn.wide { grid-column: span 2; }
+  .calc-btn.mem { font-size:12px; background:#EFEFEF; }
+  .calc-transfer { margin-top:9px; width:100%; padding:9px; border:none; border-radius:7px; background: var(--card); color: var(--crimson); font-weight:bold; cursor:pointer; font-size:11.5px; }
+  .calc-transfer:hover { background:#EFE9E2; }
+
+  /* Print / PDF export */
+  .print-header { display:none; }
+  .pdf-btn { background:white; color: var(--crimson); border:2px solid var(--crimson); border-radius:8px; padding:12px 24px; font-size:14px; font-weight:bold; cursor:pointer; }
+  .pdf-btn:hover { background:#FBEEF1; }
+  @media print {
+    .meta-bar, .calc-toggle, .calc-panel, .btn-bar, header img.logo, .back-link, .menu-grid, #menuScreen h2, #menuScreen p { display:none !important; }
+    header { background:white !important; color: var(--ink) !important; padding:10px 0; }
+    header p { color: var(--muted) !important; }
+    .print-header { display:block !important; margin:14px 0 20px; border-bottom:2px solid var(--crimson); padding-bottom:10px; }
+    .print-header .pf-row { display:flex; gap:30px; margin-top:8px; font-size:13px; }
+    body { background:white; }
+    .q-card, .topic-block, .result-banner { box-shadow:none; border:1px solid #ddd; }
+  }
+
+  /* Formula leaflet */
+  .leaflet-card { border-color: var(--crimson); background:#FBEEF1; }
+  .leaflet-card h3 { color: var(--crimson); }
+  .leaflet-table { width:100%; border-collapse:collapse; margin-top:12px; }
+  .leaflet-table th { background: var(--crimson); color:white; padding:9px 12px; font-size:13px; text-align:left; }
+  .leaflet-table td { padding:9px 12px; border-bottom:1px solid #E4E0D8; font-size:13.5px; }
+  .leaflet-table td:first-child { font-weight:bold; color: var(--ink); width:22%; }
+  .leaflet-table td:nth-child(2) { font-family: Cambria, Georgia, serif; color: var(--crimson); width:38%; }
+  .leaflet-table td:nth-child(3) { color: var(--muted); font-size:12.5px; }
+
+  /* Flashcards */
+  .flashcard-card { border-color: var(--gold); background:#FBF3E3; }
+  .flashcard-card h3 { color: var(--gold); }
+  .flash-wrap { max-width:520px; margin:0 auto; text-align:center; }
+  .flash-progress { color: var(--muted); font-size:13px; margin-bottom:14px; }
+  .flash-card { background:white; border-radius:16px; box-shadow:0 4px 18px rgba(0,0,0,0.12); padding:40px 30px; min-height:220px; display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative; }
+  .flash-topic { position:absolute; top:16px; left:20px; font-size:11px; font-weight:bold; color: var(--gold); letter-spacing:1px; text-transform:uppercase; }
+  .flash-side-label { position:absolute; top:16px; right:20px; font-size:11px; color: var(--muted); }
+  .flash-content { font-size:19px; color: var(--ink); line-height:1.5; }
+  .flash-content.back-content { font-family: Cambria, Georgia, serif; color: var(--crimson); }
+  .flash-note { margin-top:14px; font-size:13px; color: var(--muted); font-style:italic; }
+  .flash-hint { color: var(--muted); font-size:12.5px; margin-top:12px; }
+  .flash-controls { display:flex; justify-content:center; gap:14px; margin-top:20px; }
+  .flash-nav-btn { background: var(--card); border:none; border-radius:8px; padding:12px 22px; font-size:14px; font-weight:bold; color: var(--ink); cursor:pointer; }
+  .flash-nav-btn:hover { background:#EFE9E2; }
+  .flash-nav-btn.primary { background: var(--gold); color:white; }
+  .flash-nav-btn.primary:hover { background:#9a7423; }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHoAAACWCAYAAAFm2KyLAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAEM3SURBVHhe7T0HWFTX0gu7gGJ67z0viUaFbRQL9t57bImJNaab3kx5SSxspQnSm6CCvffeUbD3roANkY44/8zcu8vushSBBPN+5mM+7t5y2pwzZ2bOnDmSewu0LkoQLxkmSySOm34NsLpHEPCET5l7DHpHJdy+fRuWj/0VNnxvgIx9h4HuXT9zARYO/go2/mCA81tSIN7nXfsJ6BwU/EFlGN96ZDklqGICMZ7vlJ+AzhHRQQ4hr3bhl++UlJg/NDzkBbfxd3iz3uW3AQH91znK+X9xQSH/XzJ+Mv9f86UvRCoGVJ6ACU0JFOTkmO9FuPerPIGLu9L4/+1CIYHzm3bzf63EDcKaVlAF/0damhMhhDt3QOPoLlwj+D/SCma+1b38BKqC5bYBN5yD8FLY2z78f0fwe/zfeJ+HkAA+nzfwM/sJ7A6MhyUT+vKLsT4d+b/BVc3/5w3pyf8TO3eBosIi+wls14QKuVSGmKj4iTX4S9xfXDTyG/sfiXjryjX7H5vAKHX/s+DmLTA08LL6MPDZ9rB9SggESxRO4qsVw18S5SvTJI0h4IX22HCKinOtCKZI3N8SL+9VCMVuaXBSJ4s/GfRS5TWDTLlc/Mmgl6o2ah2VBeJPAYJf7QzR7oPgHA6UOZ3GQvaFdMCPsdd5welVW2BW63ch+2I6UsQTx0OZjztZkaki1DoqbD5+rbPdF+2hxsHm47C3evCDrPOXoCBbYBLXT53notN1anQShL7eja91OHDEzwSIUQ/lB4xOwiA5s3ar+d7cHhPM12U+nuUzEvQNVOYXCM+s2WK+9n/Y23ytte15s9q/y+M46GnsluJLZzdsN18X5eXzf4OzCj+W23zcbgQ/JLh19QZf52ZeB42TOywb9QMU4ti+g2yL7pcpdnxr4eOqIBa7UPxMgMAn2/CDoCfFumHqVoj35nQVWrsMnXWOqgJ6kNijK78wb2gvMNynphdh+RcD+V5YY4HnaR3lW8TPBBiLA74qc1x4eZNDUr+P7X5gQh39l5XD0wg0Mjls/NlY5sPiwmL8r7JuqPLAKFVDCZLt8JzloJMq1ou3/5eBhIqpj3rfL/6sEPSunu+KlxWC1lX+NDafdf+yBzNe6Qg3L1yG7dpwam9AVghaqdygc1b20spU8X446v3u84bi28WwZPQPcCllP76nwvfUy/XOHq9TRr4N1X2Mzqo8PXK+zKOn4Pz2FORDNhzQHjBjs+izWglO7jhthr7ZFXwdmvPYtOxJJqT70yRNwFfanP/rHUq5DEmQvrYjyx4EvdQBdJShRcI1xbiWw8sOa3sQjM1uWXMdcuN1X04DnQW/XP+VL2z4Rsu48Rud+b4Jw9/qBQuHTEJOLqQT6/FO1TKPdB9gzvzYkrVgaOjJ15HN++Hv9eYMzq7fDrdF+dKMWNDcq9fNv+/gWKUOTDJnGVZqD2YhfehDYtoE5oRtkGaK4oICq3u3Ll9BhigU1hKjUFqsUuYJHUfxB8SqKswc5ziTZG3C/KxsWP3pH1b3CMPd+padgexBfNvh5jmgMCdXmIGcVDCr5QgIeq50mju/eRdK5UXm30s/+BG0zu5c4MSuY3kizr1xk5+RoE3NL2ZRPsS3tZ7VdDhvzuk63ure4qFfw+IR31phwBPChEbcP6kXzhDIH0zvhzfrU7Vmj3TrZ/6otjAO+5G2KkxG39ADjA8IUvIW/UhISxrD16RR7p87DlZOGsS/A5/3hrQ5Y4F0Xfq9a+Yo/C20EIknqUljYcGo3vz7UMISavbLYhblg95RvrAgXxBVagOJDLkZ10Anc/cSs6gYaLxmHj5hN7G7QcqY5mWdVH5eTLpqgBNK3JpJf8HBxKV2E64IDfd7sB5GIrbGxf01Mcm7B9KG9I7qrUacoXZowqGkqBhWTvjdnBHOeHBs4Tq4euIMxHnhMHVUlCBb7SZ+/vcATrcn5w/+lDL7SLxVD/VQOaDYE6l3UU0Tf1YIf96velS8rBT0Lsoog+Q1F/FnWTBIFeEnlm0gISBf7+z2uni7DBgaevwy44WOxCxK/F1VT4m3y4C2gboVplWSFrMAPpZ0KT9jo1QRVpibx/a1wEd9wOCIEmhDj1OGBh4/oOT5Y8AjPpk6BzUs+3AyXDl0Agpz82HGC50AC1xscFb0pkKQtKpzUc0ijhjRrC8UoXCRdfp8xRkjEwjLvXId2Z8c0qLmQyGqnXsMsTCv50ewaPCXcATVFBKB5vf73MxMVnz4Gxdgy2/BMMtnFCzo/wUcTVrJ7y1652sa73Dj1DnMuIKmpozzRNWVkPgvibozX+8Egc+2A19JU/Mza1SBRtKcn9P7LFJbPM86cwEqpDEK9+H5onRRm0gZV1jjqLd7ziGLlr2Pa4KV1jiica/Zf0fGROMKM8ZZJ6rwVq7VR8FvdIfFI79lHYt+k4ay/luNWRGY26XU4sLPSXH4ajqQlMO/qXNhjSdLfBqI2ZQFjYMisuBmqcF4T0gCBD7WkjuWpeRJnY7A8HgL8z2+j5leOXmWxd6cK9dgxrNk3VLAzXOXULCswAyIclR43nWhc9HH+dmlzU5gEo9Nv7WOzc2/CTMOHGVrCF2vHP8L7AtKwOuqZCyOY/pw4eBJsGQYjUMh0bXUfOI1IYHGJmMycpuutRJ30LtQc1cpY3lYTuY1/jDjwDGIchOkTXtYJmOUOktu37Z6R8AqZnwr4yp/QDb+WJWFKc8GbTP2lTSDO7dLlzZMSJ0r+9zlijPGF7fnoIhKH9CwWj1pSpmETGibsdZBUHMs36E+wRlfyIApkiYVZrwvV2SZKTMTWVw1JaJDPUuDtTL9JihDY77nJvx2UMHV46ctMn69wozTSDukD/0fbc0JzeszEXUlFSpqWWUyMfVqqi0NsWKURtmeiYVM6PABBD3ZjjO+iU09p8snzcRsyoLW0X1/gZgx4a30TM6AwKTyENLsRTCr6/ugwUwPJizi+/4PCUs5BLfSr4jvYsZnL8F0Z7fGYjZlAV9My7OcJJBbJfecSBO++R6tky0ebq1NLkE0f9NABbM7ojpr+s01rqRXY+m2mcZx7aHAMjUSz4ZiNmWBBYHM2s2YaH/zdCWzk0Yqn5qfJTY1DoXV3w22YpPJgwT7PqGBuJLpGf7foh1p9W60R6mV4frxMxVnrJcpWhahzEWlJP2IdOMIhZBA8uCe/FsnEXhxauJYSIl8n699ZUp+FvJaa/69ZHx/2D97PPZ6OXeuYwvWVmwxmCyZ7HhJXJ2k0gc93QKCX2jJv6PVHTDhVsIzxMWj+sKKTwbwNSn0xoc8cAgKPX92r24QpWzH1ygoQrRyUOWmCv9n24JWJqxm1gau/XYatl4VDDT4cknG/mN2E7l7VMHtoiIa95Ub0Gmgp8XMY/rYT6zquPLzvyDg8daV19YEOKyKyS+AJAp7CVYFwxr3hmNL1iHZFFareBXCZEljZ+LPt4uLwWBaN74LTAmZDdt1EcizlXdnDzEBCniFe4LioSi/AHs49dJSa7At0pLilikhQKKTRuqONVUliMlUD1Av6m3AoZXY9n24jmLq2Y27zBIkYXLvj1mF2fZnMM9iGplqlaEiPak6oHFSrqbxvVUTDvPf+4ZnoWkOTcGIk8k0ifxV8bW/D4zO7v2i1CiPyZTZAyUSqXj7n4EpEsWD4mU91MO/ElDs6zHj5c4TxZ//BnAIfLT1UFSOZeLvu4dp0iZhZJDWIusyyJS39I08nhQfVRtIEDM6KW9qpWrQubb4TrxdI9C4qroYkXdrkZ9rHVUFFdq5KgODVBUe/HoXKCkpQb3oDMS1GMEKPAqJxUZnjzAseG/f+xSPia+XgWNLl7pEvNH7JZ1MPsHopDpIk0yM9zBWj0rulMD2aWGoEKixQVVZugbqnzUNPZ8VPy0XaM1c76rqgbrdYgPKD1pnJSwd8xN7uWSdOs9L0DWatDDRqIDn2kA+arH+D7SEzVOCsbAAedduwO7AWPB72JtELEF4cRC8YwRUsdRM1xqH5rBg+Nesy5GgcyhpGfg90AKfqyD0Pz3YATL/Zg6kRs3D+5QeigGUnkxVhGlkYxrZmH4Rp4sTo6/EDZJ6TYQrR05BYV4hZF28DKFv9oQYr6Fw4+TZWqr0sz5QQIYpcZFYqJAcZr7cFbb9FQoXd6RCTsZVKCooZJMsuUFS5egbsnodX7gW5vX9lBVakyHLFrmBXFRsjTmWvBoyDx6HHNTsCnPyWBnOv5kNWecvw8Vt+2C3PgaiFYO5DFQWUxrRHkOw0uewJyqw0hXoMpUBVjqSKE3LsrXtE1DbGOP1Dts0aam/RpUOe7NnXNCL7dlIc69XmhwraqXSUU16JAa/1gXyyQpp7t73JpIvs6nSFZrOKwONVBEW1rgn5F4pXVCoLhKDKg/tvX+3SP47tUJpMvlGNu9TbqWJmew0REE+TheX9h5kTTAn8yrMH/wFezWY38NektBmFKz+4i+21Jkg49AxZl5h/xGchu2iswr2zZzNdu7Lew9BMeaRdeEyJHYZZ9FgCohSDYKssxc4X19nxZtiFe4efB0U4RHNsNIWS0cmjHDrxwWP9nzH6v7C4V/x/ZTAWVb3TXh23XZ+Tg4xtjZTWwx5tSPLCDPe6IYVNN1XwdY/ZrANfeno78V7CvbxZoMfVrpCo19loHFQREQpB7N6bDmmA5/wwWmpBPZFzOUMTfcJZ7zYgRfkNv8eaHXfhOT7RECm84oqbXzAk3vF4bkrwGDzbFbbUZzH4ndNzt6Cn1StVFqL83S0ciDkZ91iKxlngP9TgmdxwROxy1oWpipInkcEtAZUUaUv7znI1DQ+IVjlKkYF7yfIOnuRK611at5ErMLdg1bqHhWL8x9JZKZKo0gJZAQniGoumALvBqtSadoUQcINCTpaB3GJoEJUsGvWTbHSFRrTKwO9g3tEXJvhkHcju7TSDYRVHYI5nS2N6FXDcxt38rcVVZrWS4rycvm9mf/pbvcdSySGFtq4BzvGk8OUriYbAjDBveQDbmnsJ4Uj88AxLtBZpJrtmDZhhFt/FDvLPjOP6YoYGRaclkII0vceLkd8VcHc7h+CgcRb6t7NevMiEZWvwoWiygATSyEXRZKtLTNcMOBzLhDBdt+y208Wjfwax31CKR+wQHJlJCiPe5tM+ItHfcceiQRbp8204N5EWSWs/0EDqz4n90dhrie3R4HSNaw0ZrBndvcx5gUoc6ZYmV1B8VwgE2Tj3EmMhODQnKV2K0x4bvMefoeGiOUaMlVk5uvdYMt/g8z3ji5Zy++aIAu5801UPAi2TA3hcgjfmrj3Zb6X2G5c9cc0ThW7Ezu9Dzk2lTZhtMdQuHriLBeCIPPwSQh/u7cVVQhJOJnf/3MWZETimYGYIq0IkrpKkNBeWKAxYaR8IFwXG5Mg/cBRCG/cy+odonakvH/tTFmo84rdW1gdLg9t51F7SA1RFbT3rYD2eYeA1sKJQVID7o3TRXis5zDIvZZVbne9VzCuRamWVSOFgzxbyL+eNxxZSGQmDG/ShqzuZe4TGl09Iei50q1Bthjfzv5uKKJ2hLwtywP2ngc+6Q1+D9iu9CggrvVwwYjgWEPLicbRfbjW2Y2tItNF9yyaPqJU7SGxaxfYHf4BLBnTFxK7dcWCCGuUgc+2gNndusCa7wfDVuO7eN0VQt8QtvjoGqLi0aULJPXuAamJYyAB34ttRV51QsFjW3TEdLvCvvixkDy4O+ehbyiYoWa+4gOzu3eFjVOHwbpfhvJ18MvCgix9u/bLvyADFRKNVJlLS2FiFe4etBL50zqZ+k4xChKz2gn7ME2YPKAnpMaPgbTkcUhV63mUqLE/eTykzh7LVLN8RvavVKzUnugPYD0W3uoZ4qovBsLeuLGQNncCrb9ZPQt/qy2kzsVnSeMg+CVr8ZTMSRt+1CN/URwTi199QPXx6urP/4Tr2HUsM6ENaeZrF+tKGxuUGglJeLB65mxhQCQKWwgeBrpmqou/LfLg32I+1DP8zHkowP+JNry+qJG5IyNz04pFrz5opIpuxoYeUJhfCEve+85cgHsGsaFuXsyATb/4Ez/IqfIu2ErAQSN12xX0VFuWkGJaDrOfeR3htVPn4OSaraCVqu5MkzVvIZa55jBbMlCK3DQ16Jl2qP3kwLbpoXVuKCTjRUFuHqz+DEVRqbLEV9aspVjc2gWNs+JHynDtdxqWjha99+0/WnmS7KI8h/D+h7Nbd4OWxryTMrtG3LoqwHslZKokqmxS30/g+unzkJ15FVZM+A38H26NBau9RqBKBjzuAysn/g5ZF9PZF2HhO1+xUoHMbLefpOre67UCgGNdJ1G+gQ1wmAoY9FR7WDb2J8i5fgPIVffa8bOw5fcZ4PdYC9DYEWzKIL5DO9bW/6iD6/gtOVTdOHsBkvpMhKDHcNpDjq2TqU7oJe7NaLiJxah7MMoUar1MkYhS0WnUfG6TtBbf5j04PHs5ZF++wlx2NhsehEYIb9IHzmzcBXnXs9jDi5QNnRM9U9xGTnxCK1OEaSXKV8Tk/zXggML/437OHr1QeVlFlY2QD4A81KyuYFdNIIEHKaiVKo7opYqB0yS818FB+PR/CJAnuOpkyjPYI675NlA+L96uh3qoh3qoh3qoCehl6q/jO7z/jPjznoeg59o9a2io7i3+rB6QvUnnpLqma9jSQ7xVG+Cgd1b2N9zX8nHxd41hIIqlRmdlV1Q+bmgdlFHi7eoBSkp5Ohc5bcwEPxePmlskEALu9/5d56gG7EXX/R/3uU+8XSPQO6vWGRw9WEHROqhqVmm9VJV/9dhpSO7/CVspDVLlMb2L+iNqWfGVKkPAfR5v6ZzUm3RSxZ1dfrFgfLwVip/KKyivjxNfuSuYTJKdk2oqirfptMKx8qPfIEo5sOaV1mGlsy+lw52SO7DtT9SYHvBmO5bBSXXE4OzxxXQn5dsV+WGu+8L3MUMjdVuDTB2JykcxeQfu8Y+F23fuoPJxGWI8yDCICoazaq3B1bNLFXw6HXT3e5Nm963eSZVJ34a91QeOzV/F+n18y6G1UGmZMj/r3AU4tmYT7y+myDrRqkG8/YRMwdQARiflVa2TcrXOUf6z1tVrrK+LciJS8w+9s3pz0MNk+iVjnxqCX+oMmYePczqLPviOHeSKioth6egfwODqzYqHUaa+jHl+p3FVNw98sOUreonHk0aXVi/rXFVumgYek4wN1MfIB5TeDXjUB9b/pGOHvexLGbzBr1Yqjd2vIPtyBszpMUFY6UdFniK30EbshM4fYAZuXADBc09wjRRQvEZlP/Dpdqg2rmEd+3ZRMYQr+jN1/Rq1gHXfa7jQN06eh8QuY4X9lzIc71JFMaZbgGnc1OF/2uxNjUxj1v+x1pAaNhdyr2bxPsDN/w2EwEd8BEq3Gl4rlM67ceY8zB/wCRYUKXGfFywfOxmuHT/DPh+0oYx05fXfG2HRkC9hbsexkNzjI1gx9lfYbYyFC9v2smmHPIJo8S7oOSEUoQlpLEbJB8OB+EVceUo3LTwZVk38A5I6T4D4FsNhdqexsHz0L7DHLw4ubt8HZIMnt8md2kgIf5MWCxVsKqZFfqa0tIbcG1u38FZGJiRbhAqjTMgIP6//5ziW1rB3MLlUFRffhhIc++TdSwUj387Lu/bD9imhEIyVNVHfstKMZBFBCoa+1p3fvbAlhQ335PJBfqHkopmTeZ171/GF67ABfgbjg6LjrJiGQSZstIxrPQwr7V47lF72rsl1qRSFbqzgDbOEAU/7QOib3SD09S5geMATpksaC92Vu771t/ZRaBTatT9d0oR38FOQK1pO4mvMQ1iPLpueidIJHd/Hb2pYaa1UVZCdngErPvixTEb3EhqQuRHQsnKNK43zdB4Z51aM/sluZvcK0tIRMcnaqbSTR8HNC5f+FZWmzfC1Ummdk0dh1r+l0sj9a6fSzh4FWecuwtJRP9jN7F5BoXsTI6uV7q0uzL1yDaeniqNb1jVSpQkSO9cC9yZGRr5Z8wdSdCn7GVYFTdObPbT3/t1i6ZRVG93bUVlIrk6WwoklkmiodVLA/MGfw9pvNBDl1leoDIumJlRBcveJsOE7LawXI65YIt2z9TiwRPI61DVUw6KhX8LaL6eyOxXt/rZ8BxUalhDJ/UsnlUeLxa8eoLSUd+tSJoqhn1llYsIY1WC4evIsXDl6ihfyKOOj81bymlRpxVUQ/p9ekNzrI7iwM427IQHt6Nn8WwAkdhgjyu9lkXpIrPdwFncpjxtnL6LEdwf2xy1ikdj8rpMaZfs8odKOyk1i8asHtJuNQhQl9frQqjCEFHYqD2Xgdd/6cstTRIodukgWQ08u28iipeX7JIb6P9mS1VSCS7v3s/8ZVczyPUsMfqkL7xZY9cVfrLzwTgJjNDsH7A6ON7+no/3lhcVcTm0tVDo/J+MKJPW0rjQt055dvw2uHDuFFS5dmjW4eiG177DM7Cux4+xKHsRYCQJypbTnMGtG7LK0PYEobNkwJI4W3srhXuXXSHTZwkoX5eRBMpazxpUmIwKtKFrGmSYkD1/qngvemWR1nzIvwJ5BKp/fQ2V9yHTO7vidWOnZFVc69I1uPPfO7fuRlUciuUWTHyp2KNSpxeiYVOm8gtqpNI7H/Lwbt2B2VyFQJWeAjGpPQBy39Ezsfqb7wjMlXEo5CLnYUBQdwPIZIcUOLa30kvIrjWP8+PKNUFhQBL42nsK0IH9pz0HeyGLEnkX3qNLF+bVUaQMystxrNyFODN3NGeC4uoECCy2a27o8kXEg5PXuMKfLeHzPjnbVQFHavSustJw3wNEuIYMNbyCkja6RCouYTVhp2qJYS5RWFhShPhvjU+rkNvOFzlzozDQKdXV3rhYax2YsIxMcrmBMaxoKR1dQ+Dt7z20ZoImRzes9EfNQbhSLXz3AFsyj2EHx7UeaM6AphuDM6i1Y6fLHpF10JUZWxN8fSiyf0uSdSHBu4y6rypWLROns3NqhNCZQSIa8KC8hjDshBUciOLFkXZlpqTL0dWyKzKlySm/8UcfvnN+8B39XboQgIYkZGU5ZtUPp6zchppXYvZHBrJjwKxfowtY9PHfaFqBCxG5bFUrvDojmdy7u2l8lSmuR0gVZt2BuL4pSVHNKF1CUyCivUqaxYsIvXCByKLcVBytDjay5eUxXNGXRhnSCW+lXq1ZpkdILB36G78urX+m/JE0f1krVtykCWrTnYE6cCmDq3iQV0Y532wKY0Y5TvM6Ke5df6TVfTeN38pB6OofKozYxpW/mYKU/x/ebV7/S5JiGElkJObhTGGxTBrM7fMAFIoiWl451S6TFgFltRmEjWY/HqgonkdjIBGRhNT5KoQTKvkPx7oJfFY6RoEqTXb2WKq0sIV9QMvSbMpvxXEcuEFGazxGw4eBU0YQO78Paz0letq40CSclVai0xlmIhUhAYZPKMjMVLB//M8TgfE2/udI4T9dOpaWqEureEc2Fc4MIWTg5dY4LRD7WtNnUslDGRp6QeeRk6aFElliJcMImXkSS501bGznAYCPrtAw49dG5LqbhZd293apfaV+J4jGNg7KEGBlt6bPMdPN/g8xbjc6g4hHwZFuuAPmGpkbOFahoZ0xbCyfLylSaYk7NeKoDX6dGJ/N71KNOrNoMgY/54PtKCHisDRxbtNZqE5yJkS0a/AUE3N+qZpRGTaeEvPsi3EopTej3aEtexRAA9SosWPr+oxxInKivf9AOlRHp+BZSVAiOoN7NK5biM9ojeXbjTgh6XIhRR+fhUHoE1L60NEQhQ6mn0BIQhYU0f4saGe38Te41EQyNWmwWq3D3YGJkVAk6HsmUASNScePPBlboLYEqT1sBSViweh+RqBqh6MfvEJDRgeKr0QlhFHpyxmsducH8GpUaB1Z/M5UrbAmU5/IJwqFoJjRRusbCCVeaKI1iqOWYNiEbDYyxrP4R0CbybdNm2hVNY9yH8Kl2ZFm1BNpvmZd5jbc1kjUz/0aWVZfXOakhBRmZkAO+j5Tf8kcQip3W6euI0jimqdI1Ek6o0thqwphuYj9mAXHu0P/0hEVDv4YZL5V/ZFW890iruJ7lYXKfj61mA9NURRFrFg75CoJfpANgrNPm95CR0XCrsextyb3D7VDaFiuSnNhYyP8rR3vfV4pY6aLcfKY0ziTWxzvdDUyWNH9II1XdpnmaTiO0m9m9gti9aUyTYRCnuxixCtUDcr8gZT7GSxBD71UkYz/p37Vj90YtKzfjqpU+fU+iM06FtGrpQ6HDaup+4agqoGAt8+ytcEgoZmz5G0hpW6CtiGpCHRaS5mW7zxCN5czzxMRCXjftryxFSo9gVothYHDwqGGlpcpbFP9g3bfTrDPCzP3uV8PKLwaZRUfLZ8hBYfNUbHWqtM0zwtm9uqKy0Aq/tZnP8Zn/Ex6w6H1knOK7ls+oQbb4jhQa0+KZoaE3exeFvd2LDIc1XctSZp9atQUOxS/GjIQC+j/iCYldusDyjwfAvoSxkNijC0R7dGAREXkAxLXpCEl9usP+BeNgwdDeMKtDZzA2VLPAEtG0Le+yTYkcDet/Hwqzu3ZDBUaIKBz0lDfvqF3z4xDYNxvT7d7FvDnV0EAN8ZhO8qCemO4ESOrfHeLbdeKxLDz3YkobnyCHPPcQsfjVA51McZGEgcspB4XNn5gBtXCkZ1s+h4jiK2/3f5cVBH5GBXBV81bgtLnjIC1hHAQ9Vyph0SLBhl+G4LMxiGM5aLQWhwk9oziGCd07cZr7546HLdRTxGeE1AP2Jgp57ps1DsXU0nT9H2mB0lyhaC52/1wsfvVAK5OfiGk9DDhcvsUYpG67N3YMB5me05vOTix9Rl2PDnBKTRjDhzvZ2tHoiNjU5HGQio1iaGTdvTXOck4zFSsW4UFUtkxXBZumDufete63d7irm54FPteW7eBsvpLK+4rFrx4YZIrIwMd9eKe8xiKyTOhrrWH+Oz2x9T1hzTdDuGubnhlclLDmp3c42PWScf1QO7JYaCMb26eDIOw1H4j17oDDpKtV4ePaduJN5UHPtoDVXw/Be6WV9kPmRkPKiLxk1VeDkaeUMrulo76DrDMXqbfc8ZU0+49Y/OrBdKlbVzp0jjScmRbqJe2BNklZvOJoUWm6NnFtDsogjjv+TfctlmUNLpSO5W8LytvI15ROabp0AKLwrk6qhku7UuEIqqpaqeKmWPTqA8UWwEoUkydwGuq39rSnOkdnlLtRcQlX9sPyKQ6KRa8+0EHhqE1dSx70Cdw8nw4aSVWCJ/2zSA5zZOjXy+SgdZIHikWvGWikzY3+D3iz6pjYcTR233uH2sRQr508A0fmraBhUjxFonhBLHbNQCPxfBYzKDk0dxlc3nuwXEmqLjDSYwBH5vB7tAXtPjgpFrnmQFuGce47QcFRi++UwELUe6uy1PJ3I+2+zbqYAXvDZxMzuzNNoqi90AAEepmbSi9VwOY/g/gUoODnq37G9d+BtFp6KGk5ZGde4fgqGpnbIbGotQe8QdzRfb7R1QPS9x+BS/sO8pkv9gr0t2NDD/Y7ySc9n2RtmbKIDpcXi1q7oHuw+UPIyYv9HmrJTubk6WNoSN38n+vqFPz4xIqNLGdHeaBUhnO5xkk5XCzi3wMoMGA3VxaGvNwFMg8d4/hgFBeBXCLsFbK2kNJP7DQarhw+CVmXMiDGcygLQVoX9X9pWhWL9/eBRqb0QbEzy3i/F6RGz2cb9EHUwmI9hpWRs2uGghNenPcIOJCwmI+aPhC3CPxQLMb7hVpZDRWLu4XpOIZQLj9Jsm60ejBcO3EWbhffhgvb0yAWFXm/B1tUez6nitKxS/Ft34PLqYfZIpKedpSNk+xLJlVlGGRKb7Eo/ywYJOoHtLQ/Sqq8bXT1hoi3e8Px5RuguOQ25KRfhdNrtnFQU1vvoPKQpD1qwJMrNwOZqIpRGEqLTELlphvQUaw6meqOTib/WSdp/pBYhLoDOtASqapDzCL1M/SlrrBs9M9wYukGNuBTTMC9IbOFQOQ2gWBoOAQ90x62/hEMV46c5j1bRxasgUUjvoEZT7fn97VS5UV8d7LW5R6MgsHbAGXyz7B77iBthyoU8IQPrP9WC5d2H4DCwiLYHZxgdnjTN/CAFR//l4Oi0hrV5sn+EPCkD+vtqDtn6Z0UW30d3UaDZPLfz6hqC6bJVBNwSrlpxCmNum7wq534rHOa7rBCcHjxKiB3yrhWQ9n10UAqqVSRbZTJJ4lJ/DuBYgppJc2b6Jw9vsEecNPYyBt2+EXBedJ/F66GwMfaUEWLNVK50SBRutcoLve9CIGSpg/rnJRBWpniTlr8ImRMyIllykU6Z+Ub4iv/u2BwVX+ncZTf1ktrSff9l4DDNMdmH5M8L/6uh3qoh3qoh3qoh3qoh3qoh3ooA1qpIoDsdAGPtDrj/1ib7/2cW/6HDq0WH9+L4DBd0qyR7kGfujezVQIREp8GBlcPBSqlP/s18typl6lD6szcMFXWOIr285BnJqOT6o6ukecufSOPjhqJ5yO1FV68pkDLAX73qx7VOCsG6p2UGQZndYbeRf3BXw+2fPgeiirs4C9pfJ++geIFCn6GZTxNBjSyJlIbk0tgrR8xXVXQSN3CtDJlfuib3WFv6BwIb94bfB15P1GJXqq8ZnBSbtY1VH0ytaF7nQQpJCuFpqGnWu+iiDXIlBlkoOfTQl0pDJbyNnbOS74yZZTGSd1c/OQfB14ZdVK56ZxVAQYnxSmdVJmrc1Tc0TkrYMYrnSHw6fbktc+ErtFZtDUBOscWG4sJfetyJhTm5cHZDTtg1ad/QciLncVgTUpamcjXyZQH9c6KaEND1QT9w15va54b0FBMptaAWJvB1cvdz9VjrNFFHat3Up/RS9UldOBYRJPesNMQDTcvZ/AS1MbfAiD09e6gdXAnt40CJPw+o4tKp3f16lGbAR9tgVZn9I282htcVL8gYZdi21xC4t6hk6PoHDI6RH6nPgoy9h/hMGVxrYaZR3SdERobJwLn6Pygl9pzuEDaeUQbe+7cKYGC7FtwaO5yWDD4C5j5ancgVzRahKRtzxwtT6bO1UtVe7RO6kBiVUZndfeABp4+yAXcDS7yV30lyucNDdXPUaOHSrzvpxOg6bd/A/cXka011jdUqiLeHtQnyn3QxwEPt/5d56xeiWXJxM5XInQucjVtB7O7jIX9iUugOD+fV5gyDh1n5K0jWNbU2PmQ0OkDCHqiDa/8kicojq5cxI0GZ9U3FJWTyhQk8XzW8Ij6AZqOaCqwtWnSb7pPz+k9rWurp7VOqiZ+Lh5tjA3UIw0uHlpMbydOHTnCuqaCvbVDXuiE+Y+BbdpIuH7uEu/pKczN4+V32jpOMeXovOE6Zd1GqSIMGzSPFmsoeNetzKsQ12UkzO37IaQfPM6FNUHW+Yuw8Xd/ZEedYJqkGWgkcvYl5BUtROoA3AkcVeDvoIIARzUEyDzAzwlRqgZ/vA4kxGs/fIfes3SMprSmS5rDdFlTSOg2Bk6t3cJrp7S5iZCON5jVaRQvLtFZbBHKAXBGPJSOgPyTDs5fCdEt3gFfh2bIjdw4bVOZ/GSYL5YFO8BNQwN1uv/93qf0DTwW42ibZ3DxXOJ/X4tT2BHT9S6eN/2cPbHsVE41f891dFBw3r6SJrwRa9Ov/nwAtWnzFf2/cvwULBz1NcT4DOHF6Runz1kRug5ZtzISR1EBndOcnZ7JLrgcAQYrRc7ZIa92g+R+n0JqRBJkX0zn3kp7iCg0JZ3vejhpJWz8xQ/mdB8Pwa91A7/7vWhRS1h1Z6RrEwr3yAdDK5OD4QEvjjZB+5m2/RkCJ5asx5F6AvJvIEcpKWHvgMv7DsHqL6dCVPOBYHAljiI2uglxRAW/2IXT2BeJZcTphxqY3J0vpRyCg4nLYO2X0yCu5QjmDnQ4Nm0yZYdYsVzUGUzl47LRNZbP70Fv3lM1D+tP5Tu2cB2kpx7hgwSJs9AWwmvHznAknDndPoSZL3fj9MkZNsbzHSY+bWaNbzlMmKOldTii9aYR/VpnoMCLFJpj/kCb+EbYEBQkEVUFXpBf+eHvkBqaBOe37IWblzLNG00JCnPz4caFDMg4cBzOb0uBM2u2wcmlGxE3wOnVW+H81hRew86+mMH7r0xAaWRjWuc27YG9MxJh2Xs/8OY4Yt9MDMvylINEJPKfoRPgVn82BfZHzYeL21PZm4I6DuVBJ8NdOXaaQ4KeWr4Zji5YA0eSlsPReavgxLKNfJhhxv6j3GEorioBdW4KdkVEpvfI8WDBQJzOXusOOicsn42DAoVPoZOVKdoWETqOwoE6KpDQ7jii60i9whEdhSO6kI6bp7CitF9t3oBPeURbFt4e8ghFQgQ+3RZmtXkXVn3+F+ydOYdjPNGR8Zn7j8HVIyfh2tFTjFePnIJM7AAXd+6HEyu2QFrkPFj/jQYSO7wPQc+2w0YTRry9vKqLFJGARic5UsR6DIFF738H26bMhNTI+XB8/ho4vXIrnFu/A86u3wmnsEzH5q2B1PBkHMHBsHTU9xDrNYwD45IEXZXoBoSoHfCx+AQ03cS1HYEjWlFA28zqTI82j+hXhRGdhz1+xeifqzyKykUUVshf3+CEcxyyV0a6RmR9XdQv7wmkstRieSxHNJ3ZSHsJ65zQNKIpHHTg82153qWwExRj05Yd1WPVkTaomOdolLoTOaS2Ir9OCR3wUOsI1FPzZ7zSESjgOQlCTOiajuj/x0iEjm89koVC04imOZoIXWdzdHTTXrMpWm7Qyx1YfaKgE/UjumZIhI5rOZyFP1tC19mIjnq75xwm9IuCwYQ2JNYTumZIhI5tgYRGSf/eIXSTHol6F3XBzDe7w83zl1iNWPjOl1WSuuvRPrIwxqy7VBirc9Yd9FynGJSOC0NEN+YCCmZIwZHrCV1tJPXKUhi7J0a0FtUrVC3ywhr3BAr7LRhMahD6W6IAraQ5+EqaMmrwmoz9dt8tB+kb0/d3h6LZ006ad4tUZkqL0jSlW9V62FOviNAaqXtknY1oOlafVn5mvtaZ2TapV3c7osmkGPJ6D1jztQaOL93Im5BunDgL10+cg8z9R+HM2u2wQxMB8S1HgM6Z3refDu37IwvcwiGTYIcuAg7ELYSLO/bxKbc3Tpzn03pK8RzeO8d5ZOw7DMcWrIY9QXEwf9DnvLHCfvrlI5cJCRT2RnfYMNnIVrOMtKO8SkYrUGQVO7ViM4eqi3QfyKfi26sHmVbJVhDp3h9KikvYNiFGKC/ROyqW4kConY3RdwsaB0WYDkd0pFtfyEm/guz7BszrX7URTTbtaNVgSAlNhJxr1+HK0ZOwNzgRVn70Byx593tYO2k6pEUv4EN1CMg2fHbTTkju+zGHq9GVs7ON9zBJ3HEkNQdtAwUsm/AL3LpyzRzpjQEvKeDZqkl/gv9jLZEL0CILjbpqCJEuHhDnPQzSYhZAHgqjmYdOAJ14tvLD/8LS936AdV/5woH4xbwfk6LF0WlKRxetwVE7EgwNbO3v2MlkKj7ZjMLQ3zx7EeZ0G4vqKp+3s1nn7P6W2PT/LPg6yKO0DsqCsMY9+OhkWvbjYOcVjGgikK6hClZM/BVuYOWLigphuzESgp704R5t2pFLPZ46Q8BTPrzKZCJUFlZ++ZifmTC2adtDrYs7L1CYouERUJxC2hjnK0PiWkS1u1ukWOLLPpwMxcVFSORbsJtCezbC+tmkSR0orFlvOLlyE9vNCeicMZqL2dJnfpcWRFQc9sykR1PUalqZ0zgqN9Cpc2LT/7Pg66AIR8LlRzTrAxS4ika0bSh/W9S5KGH9d7747jWuMC2yU6xVU7iSMu/j6I3zHgoUUpyA9MtDc1eAztX+iLZFirp7dt025ggmoLVoiuipdUQZoJqENiD73TothPfOUSz3PcEJXDf7W8dp710zWP3pH+ygQUcYUL/d9lcIBD5s6uD0Hv5HQkfK+/NxAxRamaIFEqG1jspNdTaitQ7ycD0SOko1BEf0TV7dSeppf0TTCKUjSZaO+Qmy6EgBbPBLe/ZDjHpIuUQmJA4Q+lYPnhqodSjC6GEktL6R2u77tqjDEW1L6NsioWldujqE1skUsOKjXzkYAUUmzjx4AgKeaYP1KKfzSQUhccmIb1k+ICIT7pgeCgF8DKLpXQtC5xXcQ4SWKiOwt+ZHKQZzgE4idnyHd+0T2kEOsdghTq/dxo1NhF7/rS/4P9yyzLvWiOz74VawzTcMrp06z8uBJJWS4GX/fWvUOrnB2Q3bkRNYELqQCL3krgktCFByCG/eh5ci6XC/ApxL136rYcna3jcC8hwLAc924BW660jsI/NXQ2jjXjYLIgLrptC7xfmF9xKhFWEGFMboxFE6T5JOH4xrX3pMhSUSq1v/nZZZL8GtixkwtwsKGhWMZksk9UTwTKnacp8ZGypQct9qh3XfPaEJ6RyRfZHJfL4HAdUj9O0+pZ4kFSAKrixbTJe8LQh+ZQRKYUSzMHZPsW5aj0b1ioSKovw8DqXNR3NgwSwrQIscMTjqSRgxAZ1nEIsdhNQry3drGymK9vlNu8yHPxCQjlod1k2jMuiljnxKLfFeEhApvqS+kWm01xSFEU2x4un4ECZ0L4HQKIxtmu7s1lhs+n8WUI8Owx6YNwtZKcWAJjeZuLbDy1SAIgqRSw15gZjg5LL1ENm0f5VHdLXRVQln1mzBEW2KOk4juoAPvrhrQuP0s2TUdyx0EpTg/EyeL+Q9Y+/9u0ca0YIeTQdp3EMj2p0d+GO9aEQX8CGykZ4Dy4xovbMSln3wExSjhGqCUys2QbR8MFfC6t1aRjrK5fzmsiOaYuTfLaFJN9+pCYP8XEEDIFXp0s5UZue1MaKp01MU9plvdReEsbNI6N7mEb1xilPzJmLT/7NgHtFtcERn3YRbGddKj50xFx6xAerNE35lIcgEmWlHIL4lClV/M+vmOXoNzdGWIxrn6GqMaDJn0jE3BTk5nA4dX0cnIgc+I0SrrSkyoUkYc+/HIzr7fDos6PcxeYHW3YieLHmxAUrXy7SOqqL4diPZFznvejZEew8uO0c7K/ho6GLRX5mAQoMvHPKF4Plo8W5tIx3Zc27jzjJS9+G5dz+iyQ6/HUe0idAEuahpUEzJ2vBXMxE6tEkPUb26DIsGT2LHRb2D24bpkmb/vMGET+JwVKVQ5P5ZHd5jtp2DIzoC5xfbCmhoju5Lc3QGq1Um2B0UV62IhMaGnuD/QGVqmYBkMDmDKp09g0l15uh52DlzrwlzNAEd1ZCKUrhWdnfaAHG6gIdaswm19J5AaFLfaG0/+0IGnxNDhKYDcqZIXv/nR7RAaOVeK0JnXrM6UslcARzhMYohcGrNZrF5BD264NYtSOrzES8I2H5jHxUwA3XR7ZpQSAtPYutYZXNjbRtM6Jx4PjyILB4IJHnfwnrHdaBVJvvflEUVBDzeAs5u3s2mYMN9wiFAloSmsLb3EqH3YeVKiHUX5OSyF2hY0142lRKQJNN132h4NJkaiJoq4+AxmNVqOKsV1AD2viUkgga/0BH2hCTAORSuolWDWLe2964lksHk3IYddgwmVSQ0TUPiVERloG9SghO4s5iAhDI6OyicDyAW3iuTjojEFWj9/viSdXBi+XqY8WIncxlMhKYw+4U5+VaE1tYxoffQiKY1U1Kv6Eg6e8fsEJIuHdl8AJxYtkFsndJ/FCl78civwNjIw6qh+Bob2eCkhDjsDCdQD796/AzMp8pX1XBSgcGkUls3ljnw8bYQ9lpP8HP1FsqD79OpOlePnTIbfwhI1co4eBySB3yCXAQ7LFsHhY5rqgc57M/tMZ7PHr6ceohDJpKBxJRfGWHsQrqZ0AapalPAU63rjNBpWgcc0W1HCOoVFo6PCxNHgC1qsMBJvT+CdJS4Rc5nBhrh57fvhWVjf4Z4rxEQhZ0iXj0UFg79Eg4vWAVFOAqvnjwDS97/HtOp+nyokTaD81t2lzWYoDBWKaFRW9gTOAu2+YZCyHOiLEFLhkjEhG6jIefKdSuZg6AQ2+H0pp2wGPVt2vUR3XwQxHkO53LTfjB6Tmc1z6ag4M7W+jcT2kK9Yql7wGdYRiUEPdpu64oPp7mJzf/PARFa5yjfgz2yZG6PsbxESQsPEW79rApvi2SjntNjHG8LLQ9IbaFlRV7Sox6BfzdOnoW41sjisTHspWsPaST5Pd4SLiNbpZNHTEAj8ez6HeCLbN2UnmDCNKWtgumSphynkwIar540FfwfEg4DMaEBiRTbehjkXS1LbBNQ571tqovYsy/sSYUYClKMHcx2EUQY0Woe0TRoSOo2G0xwRNeJekWH/mHB9mscVSXxbYbziKbTB8scC2cHqUKhb/aAlJmzIQclWDpNnedsE3IjCUjhNLei8DXjhU44ArFxqrArgkacRioH/ydbwU5jJI8OIdVSIGmZhKG08GTYrYuG7X+EwJZfA2HLb0GwfWoYql/LWUsoys+Hef0+4d0iZfLCstBGwp2BsVCMHMdUZqucxN+0L3vrlBkQ8nJnK3ZtjVS/0hGdRQaTXub16LoxmJQ7R9scelgRkrEk9K0+sPYrXzgydyVc3JICl3H+os1yBxOWwqpP/oTglzrjHOVeJQITt1g05CvYZYiEg4lL4Py2vXA55RCkpxwsB/HZ3lLMENHy3qnlG1G2IFOtfT2ZJG3aQxb2Zk9Y/4Mejs5bDRe27sN6HED9fTcciFvMxqIQrEfl3AifkwlUOYCD4lrauuvMYGKeo0Wpm1ZbyMskrJzj/ypFqgxK0dORWLR3urx5vjIkSZxWuCiNmiIJfLT8SJzEXl72kIjia/4eRyjVw/bwq3JRWNQg9YrkCEtbN05DdUloVQqympKE9u/y3mjWo7GQ9itRj5WjOKIVA3hbMLlNze42FjmaohgxiQIAic3/zwGFcNA6uiejOlAY33IkG0xyUQqNQrZjvxL1WCV0UkOM11Ae0TfuFXdfvYN7BO2mjJIPZEGMz9JvOaTabLceyWZAW3KGoVAnbsnp8B4Tuk53apCHCc4peWHNevG22dwr1yAJVSd7FbBFA6oWNJ+ShGzveUXIagh+R99WLuCURZo/7d2vDNl9iTtxVedcAamc9G2V6uqihoR2o6CkuJiD1VDEA42Dqm6D1Uzn9WhVof+TreHmxXQUyHJh2dgfBTcZe5WwQKr0/KG9YFbHznwyH+m89t4riyoIfMYb5vTvBjEtOjDB7b9nB1F1CXqpJWz471A2hlBaVcsX35MpYOmH/SHcrQ2vr9t/ryxSZ452bw/z3+kFIa+0qjQ/nZMn74kmoI0MMcqB1JkLsIPV3ZYcjaP7R6hL3vB/uAXH9aB5mjwbNY5lHeUM2LD+D3qA3wMeYLxPDRHN28AWzQjYETAKIpu1BSPeJ4L7P+gJRuzVZqc5/G9spObv+Pkjnnyyadrs8bBi0kAIfMqb75ueE+sz5+ukBP8HPM3PAp/0hrU/DIE9MR/wcbBG+u5+L3yO7zTytFLhjK7q0m+xvLFtOsDuiNGwRfcuBL/YQrhPSGflWi7KoNRMaZmeBzzhBUvG9IXU2eMgeWBPCHgUn5nKex9+a6M2Gl1bwNIPfmADz9XDJyHo5Y6gkQoxTOqM0L6OzQZj49ykhYP9sQv4GPfTa7bDdDItmtkbjRokMlaQjo/dEfg+7Js1FvYnjYe0OeP5cNK0pHGwL2EM7Jr5Acwf0pMbwuw4hw0X/GIrWPX1INgT8QGfxJqK7/N3c8dzOntjRsPGP4dBjEdHMDYQDBsoO7BteZZPZz4cNSVuDByaMxG/G8NppCXR4afjYFfo+7DiswHiwchigyN7DnqmBSwZ3w92hYzCTiWUkcpLJ8weSMY8Z42B7QHv8ZG5VqZMFxV2Yh9Y/+tQ7FCjuYyl5RUwJWo0rP1xCIS+2ca6Y9I05OoFO6fPxDn6DlzYnGJaobumk7r/ITb7Pw8656ZvaKXy04YGHneWjvmBHdnJbzn4Nax8OWxRhxWjw1Z3hLyHlaajecdgbx8PUd4dweCKz216uPk7mRICHveC+SN6wsH5SGD89kDyOFj7y2AIeaMVxSEt5ztsPGz8oBe9YPfM95FYRLCxsC9+DCz7uD8YGgp52rN5U2ehb+e92xP2RAnfpmIHSYkYAzNea8Fciolj8x0h6cMzsPOs+nYg7J8v5Jk2fyws/bgvBD3Xgjuhve8CcRo8t2k35N/Kg5Tg2eDrQINGka53dKu7A3UoAq1eKt+KuvTt4Fc6s7sv2bxXfPgrzsH2Fx745FwcQTtD3oeFI3vD/OE9YXvQe7D6m0EQ8LAXVcrud7xq9LoPbPN/DzZPG4FssDss/ag/7ETizaWjjstpOCYgcod5Q3rBvrixsPyTgTgKu8B6nKd3YFph/2ldvpCEI3vGS944xYyErfp3YW6/7rBwVB8k+hhYjKOdBKfyCE0dL6FdFyzfKFg5aQB+2w3WTX6HuVaUsh1yKjvfYOeIVg3gMFy0H03Ya07P5GkozLUSm71OwEEjU36FI/eW3/3esD9mPh/cRU76Ons7KbDQYa+3gVjv9khUnBMdVGxC1DdQQkL7LjDj+RZc2TLfIdLoicC5PMYT5ywcpWx6RALNwNER06IjzHgKv+VGsfPtg2qY27M7zo+lxzwTywx90wfi23QS2LzF+yak9GNR4GMBDPMXpiMVzu0qmNO1G86/3tiJ7BPa/xEviPJoLwhgWC5KnwTH8CY+EOvVAQJQFrH9xtDIC/YExvNGvPQ9B8H/CR+ycRdpHOVJFPlXbPO6AV9Jk+exxx3VO6tL4nxGQGFeAdy6ch2WjUbp2+Eu1Zhy2HZlaI9I/ybkTuDkAZEeA9kWQTaJdd9MR7WKVtfkl7SOzSeKzV13QIFONTL3H5FFFvo96AW7guN5We7izjSY+Xo3rkRVdjH8/0bkFA+o4fS6bRxC89zm3aBHroHyT7HBUb4qUNLsCbG56xQcprs0e1knle/Geack7M0ecDntCLvCUJhFv4cEf6h6tI80HRgaeSDLjuW5mU73j20huEyjvHLe18ntHbGd6x4ohPF0qVtXLNgtWred1WEUb6OlpUvaFksxNv/t7PXvQG4TlGU2Twvh9XFa/Zs38GMmPgq4tzRSt6n33NEVwRKFK7Lwb1CduU07+ef2HM+xQcnfm5zp9K4eLJTYq/D/RyQTsLahAg4mr4ACHMm0+je3zwQwuHiCr0xRMF0qj7+HjoGwBjqYxODg/guqXCWGhh7sypt+5Bj7SdE20WglbcGpnp35fwm1Und2Ejy/Yx8UFxVB5sFjENeSzkDHkSxTFOqk7v4aiWetn1BQqzBV8sb9Wme3b5HY10mXjFYMgmNL1kFRcRFcPXEGVn3yBwQ+TpvGy9E//0eR2DQZbyKa9oPdIYmQcyOLR3FKyCxUETsIaqVUcUPj5Pbfe57IJqC1aqOzR1cs/CUk6B2ao5dP/A1uZVwBctEjV9fkAR8Lczfpof/DLJ3nYWcVzEQhdW/4XA5oU1RYDGe37IEo1UA+dkInVZboZfLT2gbqVrZHONzzMBDnl6l0grqTwt+A0jgJaRSrZP2PBsi+lM4s6/rpC7D1L8FhzrTZrtRG/u9E4lREXHI/8n+iFSyb+Ctc2LkfCZwLBQUFkJawGGJbjQDDfWRswfecVQUaZ+XP0xs1e+JfR2RLmCzxaYBzT2vstYnYELkUGmLG8x1g2Zif4NTabSxt5ufkwumNO2HDz0aI8xqO6oanee2XhBbbxryXkCVkJCr5lxnu84RY72Gw7nsdnFy5GXJRiqazOshJce03Gghv0gdHt3jOhlRxyOCs/NLg4v0q2SLE5vr3AxJcZpTJW+lk8jhsmPOIdCA8hL7VEzb9EsDHFFDsLwr+knPlGhxIXAKLR/0AseqhEPJ8ZzA2EuzghPYa/J9CLgOORL/7vGDmS90gvsUIWDb+FziUtIId+sngQRERTq/bDht+MkBY496gldEIV93RSpXXtU7KdRonxUg6Fklsmv9doB48vaFHP61MvZeOHzIiaiXkPdkUwpr0gu26CMi6kM6L7yYf6cL8QjiDo37Nl9MgrGkf0Eibw3RJY+Awkn+HJE/2aUIcqRRzxNfBDcLf7gXrv5kOF3bs5Q5pKhvJHZfSjsCar6ZD0Asd8P1m7HBgkKq5biiH7Mep6V1/iU/d2qvrCmiUGyTq57BBOhmkiml6R0WKXqoq5CVOF5zTn2oH0e6DYX6/z2DL74EcJYEOTqH5nXR0cnC/vGs/HE1eBZt/DeTTZgKeofM1RGKZ1rQrReE9khNIQIxWDYHVn0yB/dEL4dzWFJQlzqOETEIUyhWnzsOROctg7aSpMKfjOAh/qw9HTaLlV0G+UOQgbtNKVX8aperuFNZxsqSxs1jlejCBQSJ/VSNVDMQ57E+cyxZhox1BzKNNa+xn7ayAkBc7wZxO42ANEiMlIB5OrdzCB43Qyhl1gitHTkJa9HxYPv433thHRzPZWuZY3UGJP+DJtjC3+4ew9Y8ZcGb9Dsi9cZPToJCOp9ds49WkVR/9AQlt34cZT7fjHSDs/yWw8Cz8v0/noIjRyhRfY7m7TZd43RN26X8lkG7uK3Pz1jq6fYsNayL+ZSRWNjZ2MS1Z0sY7/0dbweyu42B30CxI33+M/cyJxfIux0GfQwA+52XFBh7Ihvvwe7lZNxGzeZcmnXM1f8gkCHymPY9u1gQofZk82+ioSMeOd0jn6J483dH9c61TUzlFfRCLWA9/AzgQyycrHOITGom8KRJkLKozC/Qy5TVklyzV0iY4P2Sp5Dp7dPEanOPz4crx0zB30ETYPSMO8lDSv5RyABYOnQRBT7QFQ0NvZr/UEQyOimwc9WuxA32Ko1eul3g8SevB6zBfyl8oRj3UGZDHi19D72cMMqUP4pdItC044guQrUJ4s76wOzieDRYn1mzhs7b0zNIVdDLuCZ1UbsQOM2iKs/tb1InEJOvh3wLTG7i/qHeW/4QC2jG9i6ok2nso6F0VJdgBLuudlbE4T7chDiG+Xg//diCVborM7ROD1P2azkm+4v+tqvP/AYjYf0jefrLO/KProR7qoR6qCRLJ/wFNbtMtyRKguAAAAABJRU5ErkJggg==" alt="CLC" />
+  <h1>GRE Quant Mastery — Unit 2: Algebra</h1>
+  <p>CLC Educational Institute · 4 online practice tests, increasing difficulty</p>
+</header>
+
+<div class="print-header">
+  <strong>CLC Educational Institute — GRE Quant Mastery, Unit 2: Algebra</strong>
+  <div class="pf-row"><span>Name: _______________________</span><span>Date: _______________</span></div>
+</div>
+
+<div id="menuScreen">
+  <main>
+    <h2 style="font-family:Cambria, Georgia, serif; color:#262019;">Choose a test</h2>
+    <p style="color:#6B655D;">Each test is timed and self-contained. Your results for each are saved separately in this browser.</p>
+    <div class="menu-grid" id="menuGrid"></div>
+  </main>
+</div>
+
+<div id="testArea" style="display:none;">
+  <div class="meta-bar">
+    <div><span class="back-link" onclick="backToMenu()">← Back to test menu</span> &nbsp;·&nbsp; <span class="progress" id="progressLabel">0 / 12 answered</span></div>
+    <div id="timer">--:--</div>
+  </div>
+  <main>
+    <div id="resultBanner"></div>
+    <div id="questions"></div>
+    <div class="btn-bar">
+      <button class="btn" id="submitBtn" onclick="submitTest()">Submit Test</button>
+    </div>
+  </main>
+</div>
+
+<div id="theoryArea" style="display:none;">
+  <div class="meta-bar">
+    <div><span class="back-link" onclick="backToMenu()">← Back to test menu</span></div>
+    <div class="progress">Theory &amp; Formulas</div>
+  </div>
+  <main id="theoryMain"></main>
+</div>
+
+<div id="flashArea" style="display:none;">
+  <div class="meta-bar">
+    <div><span class="back-link" onclick="backToMenu()">← Back to test menu</span></div>
+    <div class="progress">Flashcards</div>
+  </div>
+  <main>
+    <div class="flash-wrap">
+      <div class="flash-progress" id="flashProgress">Card 1 of 20</div>
+      <div class="flash-card" id="flashCardEl" onclick="flipCard()">
+        <div class="flash-topic" id="flashTopic"></div>
+        <div class="flash-side-label" id="flashSideLabel">TAP TO FLIP</div>
+        <div>
+          <div class="flash-content" id="flashContent"></div>
+          <div class="flash-note" id="flashNote" style="display:none;"></div>
+        </div>
+      </div>
+      <p class="flash-hint">Click the card to flip it. Use the buttons below to move through the deck.</p>
+      <div class="flash-controls">
+        <button class="flash-nav-btn" onclick="flashPrev()">← Previous</button>
+        <button class="flash-nav-btn primary" onclick="flashShuffle()">🔀 Shuffle</button>
+        <button class="flash-nav-btn" onclick="flashNext()">Next →</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="calcToggle" class="calc-toggle" onclick="toggleCalc()" title="Calculator">🖩</div>
+<div id="calcPanel" class="calc-panel" style="display:none;">
+
+  <div class="calc-title">On-Screen Calculator</div>
+  <div class="calc-display" id="calcDisplay">0</div>
+  <div class="calc-grid">
+    <button class="calc-btn mem" onclick="calcMC()">MC</button>
+    <button class="calc-btn mem" onclick="calcMR()">MR</button>
+    <button class="calc-btn mem" onclick="calcMPlus()">M+</button>
+    <button class="calc-btn mem" onclick="calcMMinus()">M-</button>
+    <button class="calc-btn" onclick="calcClear()">C</button>
+    <button class="calc-btn" onclick="calcSign()">±</button>
+    <button class="calc-btn" onclick="calcSqrt()">√</button>
+    <button class="calc-btn op" onclick="calcOpPress('÷')">÷</button>
+    <button class="calc-btn" onclick="calcDigit('7')">7</button>
+    <button class="calc-btn" onclick="calcDigit('8')">8</button>
+    <button class="calc-btn" onclick="calcDigit('9')">9</button>
+    <button class="calc-btn op" onclick="calcOpPress('×')">×</button>
+    <button class="calc-btn" onclick="calcDigit('4')">4</button>
+    <button class="calc-btn" onclick="calcDigit('5')">5</button>
+    <button class="calc-btn" onclick="calcDigit('6')">6</button>
+    <button class="calc-btn op" onclick="calcOpPress('-')">−</button>
+    <button class="calc-btn" onclick="calcDigit('1')">1</button>
+    <button class="calc-btn" onclick="calcDigit('2')">2</button>
+    <button class="calc-btn" onclick="calcDigit('3')">3</button>
+    <button class="calc-btn op" onclick="calcOpPress('+')">+</button>
+    <button class="calc-btn wide" onclick="calcDigit('0')">0</button>
+    <button class="calc-btn" onclick="calcDot()">.</button>
+    <button class="calc-btn eq" onclick="calcEquals()">=</button>
+  </div>
+  <button class="calc-transfer" onclick="calcTransfer()">Use this value →</button>
+</div>
+
+<footer>CLC Educational Institute · clc.gr · 210 6858406</footer>
+
+
+<script>
+/* ===== CLC reporting hook: captures student name/section, sends score to Google Sheet ===== */
+const REPORT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxeqNLSGf1Wd0AiYWcTkfcyePAc6eMkJYqWV4fwoW8_Q5icDKEFacbkhzjSNswbppk1AQ/exec";
+const TEST_NAME_PREFIX = "Unit 2: Algebra";
+let studentName = "";
+let studentSection = "";
+(function initStudentInfo(){
+  const params = new URLSearchParams(window.location.search);
+  studentName = (params.get('name') || '').trim();
+  studentSection = (params.get('section') || '').trim();
+  if(!studentName){
+    studentName = (prompt("Enter your full name:") || "Unknown").trim();
+    studentSection = (prompt("Enter your class/section (τμήμα):") || "").trim();
+  }
+  const menuEl = document.getElementById('menuScreen');
+  if(menuEl){
+    const tag = document.createElement('div');
+    tag.style.cssText = "font-size:13px;color:#6B655D;margin:0 0 10px;";
+    tag.textContent = "Test taker: " + studentName + (studentSection ? " (" + studentSection + ")" : "");
+    menuEl.insertBefore(tag, menuEl.firstChild);
+  }
+})();
+function submitResultToSheet(testTitle, score, maxScore){
+  if(!REPORT_WEBHOOK_URL || REPORT_WEBHOOK_URL.indexOf("PASTE_YOUR") === 0) return;
+  const body = new URLSearchParams({
+    name: studentName, section: studentSection,
+    test: TEST_NAME_PREFIX + " — " + testTitle,
+    score: score, maxScore: maxScore, when: new Date().toISOString()
+  });
+  fetch(REPORT_WEBHOOK_URL, { method: 'POST', mode: 'no-cors', body: body });
+}
+</script>
+<script>
+const TESTS = [{"testIndex":0,"title":"Algebra Practice Test 1","subtitle":"Building Fluency","minutes":20,"questions":[{"n":1,"topic":"Algebraic Operations","type":"mc","prompt":"Simplify: 5(2x − 3) + 4(x + 6)","diagram":null,"choices":["14x + 9","14x − 9","6x + 9","9x + 14","14x + 21"],"correct":0,"formula":"Distribute each term across its parentheses, then combine like terms.","shortcut":"Distribute both parentheses fully first — don't try to combine anything until every parenthesis is gone.","trap":"Don't forget to distribute the 5 and the 4 into BOTH terms inside their respective parentheses.","explanation":"5(2x−3) = 10x − 15. 4(x+6) = 4x + 24. Combine: 10x + 4x = 14x; −15 + 24 = 9. Result: 14x + 9."},{"n":2,"topic":"Exponents","type":"mc","prompt":"Simplify: (x⁵ · x³) ÷ x²","diagram":null,"choices":["x¹⁰","x⁶","x⁰","x¹⁵","x⁴"],"correct":1,"formula":"Same base: add exponents when multiplying, subtract when dividing.","shortcut":"Combine the exponent arithmetic in one step: 5 + 3 − 2 = 6.","trap":"Don't multiply the exponents together — exponent rules for the SAME base use addition/subtraction, not multiplication.","explanation":"x⁵ · x³ = x⁸. x⁸ ÷ x² = x⁶."},{"n":3,"topic":"Equations","type":"numeric","prompt":"Solve for x: 4x − 7 = 21","diagram":null,"choices":null,"correct":"7","formula":"Isolate x by undoing addition/subtraction first, then multiplication/division.","shortcut":"Add 7 to both sides, then divide by 4 — two clean steps.","trap":"Don't divide by 4 before dealing with the −7 — operations must be undone in reverse order.","explanation":"4x = 28 → x = 7."},{"n":4,"topic":"Inequalities","type":"mc","prompt":"Solve: 2x + 3 \u003c 11","diagram":null,"choices":["x \u003c 4","x \u003c 7","x > 4","x \u003c 5.5","x \u003c 8"],"correct":0,"formula":"Solve like an equation; only flip the sign if you multiply/divide by a negative.","shortcut":"Subtract 3, then divide by 2 — no sign flip needed here since 2 is positive.","trap":"Don't flip the inequality sign — you never multiplied or divided by a negative number in this problem.","explanation":"2x \u003c 8 → x \u003c 4."},{"n":5,"topic":"Systems","type":"numeric","prompt":"Solve the system: x + y = 12, x − y = 4. Find x.","diagram":null,"choices":null,"correct":"8","formula":"Elimination: add the equations to cancel a variable.","shortcut":"Adding the two equations directly cancels y, since it appears as +y and −y.","trap":"Don't forget to solve for the SPECIFIC variable asked (x), not y — after finding x = 8, y = 4 is a separate step.","explanation":"Adding: 2x = 16 → x = 8."},{"n":6,"topic":"Word Problems","type":"mc","prompt":"Seven less than twice a number is 15. Find the number.","diagram":null,"choices":["4","8","11","14","22"],"correct":2,"formula":"Translate phrase by phrase: 'twice a number' = 2x; 'seven less than' reverses order.","shortcut":"Write '2x − 7' (not '7 − 2x') since 'less than' reverses the order of subtraction.","trap":"Don't write 7 − 2x = 15 — 'seven less than twice a number' means 2x − 7, with the subtraction order reversed from how it reads.","explanation":"2x − 7 = 15 → 2x = 22 → x = 11."},{"n":7,"topic":"Functions","type":"numeric","prompt":"If f(x) = 3x − 5, find f(4).","diagram":null,"choices":null,"correct":"7","formula":"f(a) means substitute a for every x in the rule.","shortcut":"Just plug in directly: 3(4) − 5.","trap":"Don't confuse f(4) with 4·f(x) — you're substituting 4 for x, not multiplying the whole function by 4.","explanation":"f(4) = 3(4) − 5 = 12 − 5 = 7."},{"n":8,"topic":"Slope","type":"mc","prompt":"Find the slope of the line through (2, 3) and (6, 11).","diagram":null,"choices":["1/2","2","4","8","−2"],"correct":1,"formula":"m = (y₂ − y₁) / (x₂ − x₁).","shortcut":"Rise = 11−3 = 8. Run = 6−2 = 4. 8/4 = 2.","trap":"Don't swap the order between numerator and denominator (e.g. using x's on top and y's on bottom).","explanation":"m = (11−3)/(6−2) = 8/4 = 2."},{"n":9,"topic":"Algebraic Operations","type":"numeric","prompt":"Factor out the GCF completely: 12x² + 18x. (Enter in the form a(bx+c) or a·x(...))","diagram":null,"choices":null,"correct":"6x(2x+3)","formula":"Find the greatest common factor of all terms, then divide it out of each term.","shortcut":"GCF of 12x² and 18x is 6x — factor that out first before checking if anything else simplifies.","trap":"Don't stop at factoring out just 6 (or just x) — always find the FULL greatest common factor, including both the number and the variable.","explanation":"GCF = 6x. 12x²÷6x = 2x, 18x÷6x = 3. Result: 6x(2x+3)."},{"n":10,"topic":"Exponents & Radicals","type":"numeric","prompt":"Simplify: √72","diagram":null,"choices":null,"correct":"6√2","formula":"Pull out the largest perfect-square factor from under the radical.","shortcut":"72 = 36 × 2, and 36 is a perfect square, so √72 = √36 · √2 = 6√2.","trap":"Don't stop at a smaller perfect-square factor (like 4 or 9) — always find the LARGEST one for full simplification.","explanation":"72 = 36 × 2. √72 = 6√2."},{"n":11,"topic":"Equations","type":"mc","prompt":"Solve: x² − 9 = 0","diagram":null,"choices":["x = 3 only","x = −3 only","x = 3 or x = −3","x = 9","no real solution"],"correct":2,"formula":"Isolate x², then take the square root of both sides — remembering BOTH signs.","shortcut":"Recognize x²−9 as a difference of squares: (x−3)(x+3) = 0.","trap":"Don't report only the positive root — taking a square root always yields a ± pair of solutions.","explanation":"x² = 9 → x = ±3."},{"n":12,"topic":"Mixed","type":"qc","prompt":"Quantity A: the value of 2x + 3 when x = 5     Quantity B: the value of 3x − 2 when x = 5","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":2,"formula":"Substitute the given value into each expression, then compare.","shortcut":"Evaluate both directly: 2(5)+3 = 13, and 3(5)−2 = 13.","trap":"Don't assume differently-structured expressions must give different values — always calculate both fully.","explanation":"Quantity A = 13. Quantity B = 13. The two quantities are equal."}]},{"testIndex":1,"title":"Algebra Practice Test 2","subtitle":"Applied Practice","minutes":22,"questions":[{"n":1,"topic":"Algebraic Operations","type":"mc","prompt":"Simplify: 3(2x − 5) − 2(3x − 4) + 7","diagram":null,"choices":["0","−7","7","12x","6x − 7"],"correct":0,"formula":"Distribute each term fully, then combine like terms carefully, tracking signs.","shortcut":"Distribute first, then group the x-terms and constants separately before adding.","trap":"Don't lose track of the sign when distributing −2 across (3x−4) — it becomes −6x+8, not −6x−8.","explanation":"3(2x−5)=6x−15. −2(3x−4)=−6x+8. Sum: 6x−15−6x+8+7 = 0x + 0 = 0."},{"n":2,"topic":"Exponents","type":"mc","prompt":"Simplify: (3x²y³)² ÷ (9xy⁴)","diagram":null,"choices":["x³y²","3x³y²","x²y²","9x³y²","x³y³"],"correct":0,"formula":"Apply the outer exponent to every factor first, then divide term by term.","shortcut":"Square the coefficient and each variable separately: (3)²=9, (x²)²=x⁴, (y³)²=y⁶ — then divide.","trap":"Don't forget to square the coefficient (3) along with the variables before dividing.","explanation":"(3x²y³)² = 9x⁴y⁶. Dividing by 9xy⁴: 9/9=1, x⁴/x=x³, y⁶/y⁴=y². Result: x³y²."},{"n":3,"topic":"Equations","type":"numeric","prompt":"Solve: 2(x − 3) = 3(x + 1) − 11","diagram":null,"choices":null,"correct":"2","formula":"Distribute both sides fully, then isolate x.","shortcut":"Distribute completely before moving any terms — trying to move terms too early risks sign errors.","trap":"Don't distribute only one side — both the left AND right expressions need distributing before you can combine.","explanation":"2x−6 = 3x+3−11 → 2x−6 = 3x−8 → −6+8 = 3x−2x → x = 2."},{"n":4,"topic":"Inequalities","type":"numeric","prompt":"Solve for x: −4x + 9 ≥ −3x − 2. (Enter as x≤__ or x≥__)","diagram":null,"choices":null,"correct":"x≤11","formula":"Move variable terms to one side, constants to the other, watching for sign flips.","shortcut":"Add 4x to both sides first to avoid ever dividing by a negative coefficient.","trap":"If you instead isolate x by dividing by a negative coefficient, remember to flip the inequality sign.","explanation":"−4x+9 ≥ −3x−2 → 9+2 ≥ −3x+4x → 11 ≥ x → x ≤ 11."},{"n":5,"topic":"Systems","type":"numeric","prompt":"Solve the system: 2x + 3y = 13, 4x − y = 5. Find y.","diagram":null,"choices":null,"correct":"3","formula":"Substitution or elimination both work — choose based on which variable is easiest to isolate.","shortcut":"Solve the second equation for y (y = 4x−5) since it's already nearly isolated, then substitute.","trap":"After finding x, don't forget to actually solve for y — the question asks for y specifically, not x.","explanation":"y = 4x−5. Substitute: 2x+3(4x−5)=13 → 14x−15=13 → x=2. Then y=4(2)−5=3."},{"n":6,"topic":"Word Problems","type":"numeric","prompt":"The sum of three consecutive integers is 72. Find the largest integer.","diagram":null,"choices":null,"correct":"25","formula":"Represent consecutive integers as n, n+1, n+2, then set their sum equal to the total.","shortcut":"Once you solve for the smallest integer n, the largest is simply n+2 — no need to re-solve.","trap":"Don't report the value of n (the smallest integer) when the question asks for the LARGEST of the three.","explanation":"n + (n+1) + (n+2) = 72 → 3n+3=72 → n=23. Largest = n+2 = 25."},{"n":7,"topic":"Functions","type":"mc","prompt":"If f(x) = x² − 2x + 1, find f(−3).","diagram":null,"choices":["4","10","16","−4","−16"],"correct":2,"formula":"Substitute the given value for x everywhere it appears, including in the squared term.","shortcut":"Careful with signs: (−3)² = 9 (positive), and −2(−3) = +6.","trap":"Don't forget that squaring a negative number gives a POSITIVE result — (−3)² is 9, not −9.","explanation":"f(−3) = (−3)² − 2(−3) + 1 = 9 + 6 + 1 = 16."},{"n":8,"topic":"Slope","type":"numeric","prompt":"A line passes through (−2, 5) and (4, −7). Find its slope.","diagram":null,"choices":null,"correct":"-2","formula":"m = (y₂−y₁)/(x₂−x₁).","shortcut":"Keep the point order consistent: use the SAME point as \"point 1\" in both numerator and denominator.","trap":"Don't mix up which point is subtracted first in the top vs. the bottom — this flips the sign of the slope.","explanation":"m = (−7−5)/(4−(−2)) = −12/6 = −2."},{"n":9,"topic":"Exponents","type":"qc","prompt":"Quantity A: (2³)²     Quantity B: 2^(3+2)","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":0,"formula":"Power of a power multiplies exponents; same-base multiplication adds exponents.","shortcut":"A: 2^(3×2) = 2⁶ = 64. B: 2⁵ = 32.","trap":"Don't confuse 'power of a power' (multiply exponents) with 'multiplying same bases' (add exponents) — they're different rules.","explanation":"Quantity A = 64. Quantity B = 32. Quantity A is greater."},{"n":10,"topic":"Equations","type":"mc","prompt":"Use the quadratic formula to solve: x² + 2x − 5 = 0 (round each root to the nearest hundredth)","diagram":null,"choices":["1.45, −3.45","1.5, −3.5","2.45, −4.45","0.45, −2.45","1.45, 3.45"],"correct":0,"formula":"x = (−b ± √(b²−4ac)) / 2a","shortcut":"Compute the discriminant first (b²−4ac = 4+20 = 24), then √24 ≈ 4.90 for both roots at once.","trap":"Don't forget the ± — both roots come from the same discriminant, one added and one subtracted.","explanation":"Discriminant = 4+20 = 24. √24 ≈ 4.899. x = (−2±4.899)/2 → x ≈ 1.45 or x ≈ −3.45."},{"n":11,"topic":"Word Problems","type":"numeric","prompt":"A rectangle's length is 3 more than twice its width. If the perimeter is 36, find the width.","diagram":null,"choices":null,"correct":"5","formula":"Perimeter = 2(length + width); translate the length in terms of width first.","shortcut":"Substitute the length expression (2w+3) directly into the perimeter formula before solving.","trap":"Don't set up the perimeter as length × width (that's area) — perimeter uses addition of the two dimensions, doubled.","explanation":"2(w + 2w+3) = 36 → 2(3w+3) = 36 → 6w+6 = 36 → w = 5."},{"n":12,"topic":"Mixed","type":"qc","prompt":"Quantity A: the slope of the line through (1,4) and (3,10)     Quantity B: the slope of the line through (0,−2) and (2,4)","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":2,"formula":"Compute each slope independently using m = (y₂−y₁)/(x₂−x₁).","shortcut":"A: (10−4)/(3−1) = 3. B: (4−(−2))/(2−0) = 3.","trap":"Don't assume different point pairs must give different slopes — always compute both before comparing.","explanation":"Both slopes equal 3. The two quantities are equal."}]},{"testIndex":2,"title":"Algebra Practice Test 3","subtitle":"Advanced Traps","minutes":25,"questions":[{"n":1,"topic":"Algebraic Operations","type":"qc","prompt":"Quantity A: the coefficient of the x-term when (x+3)² is expanded     Quantity B: 6","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":2,"formula":"(a+b)² = a² + 2ab + b² — expand fully before reading off any coefficient.","shortcut":"Recognize the pattern directly: 2 × x × 3 = 6x, so the coefficient is 6.","trap":"Don't assume (x+3)² = x² + 9 (forgetting the middle term entirely) — that's a very common expansion error.","explanation":"(x+3)² = x² + 6x + 9. The coefficient of x is 6. The two quantities are equal."},{"n":2,"topic":"Exponents","type":"numeric","prompt":"Simplify: (x⁻² · x⁵) ÷ x⁻¹. (Enter as x^n)","diagram":null,"choices":null,"correct":"x^4","formula":"Add exponents when multiplying; subtract when dividing — including negative exponents.","shortcut":"Track the exponent arithmetic directly: −2 + 5 − (−1) = −2+5+1 = 4.","trap":"Don't drop the sign when subtracting a negative exponent — dividing by x⁻¹ means SUBTRACTING −1, which adds 1.","explanation":"Exponent = −2 + 5 + 1 = 4. Result: x⁴."},{"n":3,"topic":"Equations","type":"numeric","prompt":"Solve: (x−1)/3 + (x+2)/4 = 6","diagram":null,"choices":null,"correct":"10","formula":"Multiply every term by the LCD to clear all fractions at once.","shortcut":"Multiply the whole equation by 12 (LCD of 3 and 4) in one step, including the right-hand side.","trap":"Don't forget to multiply the LCD into the RIGHT side (6) as well — a common slip only distributes it across the left side.","explanation":"12·[(x−1)/3] + 12·[(x+2)/4] = 12·6 → 4(x−1)+3(x+2) = 72 → 4x−4+3x+6=72 → 7x+2=72 → x=10."},{"n":4,"topic":"Inequalities","type":"numeric","prompt":"For how many integer values of x is x² − 5x − 14 ≤ 0 true?","diagram":null,"choices":null,"correct":"10","formula":"Factor the quadratic, find the boundary roots, then determine which region satisfies the inequality.","shortcut":"Since the parabola opens upward and we want ≤ 0, the solution is BETWEEN the roots (inclusive) — no need to test points once you know the shape.","trap":"Don't forget to include the boundary values themselves (the inequality is ≤, not \u003c), and remember the question asks for a COUNT of integers, not the range itself.","explanation":"(x−7)(x+2) ≤ 0 → −2 ≤ x ≤ 7. Integers from −2 to 7 inclusive: −2,−1,0,1,2,3,4,5,6,7 = 10 integers."},{"n":5,"topic":"Systems","type":"numeric","prompt":"Solve the system: 3x − 2y = 4, 5x + 4y = 3. Find x + y.","diagram":null,"choices":null,"correct":"0.5","formula":"Scale one equation so a variable's coefficients match or become opposite, then eliminate.","shortcut":"Multiply the first equation by 2 to make the y-coefficients opposite (−4y and +4y), then add.","trap":"Don't forget to solve for BOTH x and y before adding them — the question asks for x+y, not just x.","explanation":"×2 first eq: 6x−4y=8. Add to second: 11x=11 → x=1. Then 3(1)−2y=4 → y=−0.5. x+y = 0.5."},{"n":6,"topic":"Word Problems","type":"numeric","prompt":"A rectangle's length is increased by 3 and its width is decreased by 2, turning it into a square with perimeter 44. Find the original perimeter of the rectangle.","diagram":null,"choices":null,"correct":"42","formula":"Work backward from the square's known perimeter to find its side, then reverse the length/width adjustments to recover the original dimensions.","shortcut":"Find the square's side first (44÷4=11), then undo each adjustment separately (subtract 3 from the side for original length, add 2 back for original width).","trap":"Don't apply the +3/−2 adjustments to the PERIMETER directly — they apply to the individual length and width, so you must find the side length first.","explanation":"Square side = 44/4 = 11. Original length = 11−3 = 8. Original width = 11+2 = 13. Original perimeter = 2(8+13) = 42."},{"n":7,"topic":"Functions","type":"qc","prompt":"Given f(x) = x² − 4 and g(x) = 2x + 1. Quantity A: f(g(1))     Quantity B: g(f(1))","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":0,"formula":"Work from the inside out: evaluate the inner function first, then plug that result into the outer function.","shortcut":"g(1) = 3, so f(g(1)) = f(3) = 5. f(1) = −3, so g(f(1)) = g(−3) = −5.","trap":"Don't assume f(g(x)) and g(f(x)) give the same result — the order of composition generally matters.","explanation":"f(g(1)) = f(3) = 9−4 = 5. g(f(1)) = g(−3) = −6+1 = −5. Quantity A is greater."},{"n":8,"topic":"Slope","type":"mc","prompt":"A line has slope −2/3 and passes through (6, 1). What is its x-intercept?","diagram":null,"choices":["6","7","7.5","9","4.5"],"correct":2,"formula":"Use point-slope form, then set y = 0 to find where the line crosses the x-axis.","shortcut":"Plug y=0 into y−1=−2/3(x−6) and solve for x directly, rather than converting to slope-intercept form first.","trap":"Don't confuse the x-intercept (set y=0) with the y-intercept (set x=0) — they require solving for different variables.","explanation":"0−1 = −2/3(x−6) → −1 = −2/3(x−6) → multiply both sides by −3/2: 1.5 = x−6 → x = 7.5."},{"n":9,"topic":"Exponents & Radicals","type":"qc","prompt":"x = −7.   Quantity A: √(x²)     Quantity B: x","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":0,"formula":"√(x²) = |x| for any real x — the square root symbol always denotes the NON-NEGATIVE root.","shortcut":"Recognize immediately that √(x²) can never be negative, regardless of whether x itself is negative.","trap":"Don't assume √(x²) = x — that's only true when x is already non-negative. For negative x, √(x²) = −x (which is positive).","explanation":"√(x²) = |−7| = 7. Quantity B = −7. Quantity A is greater."},{"n":10,"topic":"Equations","type":"numeric","prompt":"Solve: x² − 6x + 9 = 0. How many DISTINCT solutions does this equation have?","diagram":null,"choices":null,"correct":"1","formula":"Factor first — a perfect-square trinomial produces a repeated (double) root.","shortcut":"Recognize x²−6x+9 as (x−3)², immediately signaling a repeated root rather than two distinct ones.","trap":"Don't assume every quadratic has two distinct solutions — a perfect-square trinomial like this one has only ONE distinct solution (a double root).","explanation":"x²−6x+9 = (x−3)² = 0 → x = 3 (a repeated root). Only 1 distinct solution."},{"n":11,"topic":"Algebraic Operations","type":"mc","prompt":"If a − b = 7 and a + b = 15, what is the value of a² − b²?","diagram":null,"choices":["105","8","22","15","7"],"correct":0,"formula":"a² − b² factors as (a−b)(a+b) — a difference of squares.","shortcut":"You're already given both factors directly — just multiply them: 7 × 15.","trap":"Don't try to solve for a and b individually first — recognizing the difference-of-squares pattern skips that entire step.","explanation":"a² − b² = (a−b)(a+b) = 7 × 15 = 105."},{"n":12,"topic":"Mixed","type":"qc","prompt":"Quantity A: the y-intercept of y = −2x + 7     Quantity B: the x-intercept of y = −2x + 7","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":0,"formula":"y-intercept: set x=0. x-intercept: set y=0.","shortcut":"y-intercept is read directly from the equation (7). x-intercept needs solving: 0=−2x+7 → x=3.5.","trap":"Don't assume the two intercepts are equal just because they come from the same line — they answer different questions (x=0 vs y=0).","explanation":"y-intercept = 7. x-intercept: −2x+7=0 → x=3.5. Quantity A (7) is greater."}]},{"testIndex":3,"title":"Algebra Practice Test 4","subtitle":"Mixed Mastery (Timed)","minutes":25,"questions":[{"n":1,"topic":"Word Problems","type":"numeric","prompt":"Adult tickets cost €12 and child tickets cost €7. A group buys 15 tickets total for €140. How many adult tickets did they buy?","diagram":null,"choices":null,"correct":"7","formula":"Set up two equations: total tickets, and total cost, then solve the system.","shortcut":"Express one ticket type in terms of the other from the 'total tickets' equation, then substitute into the cost equation.","trap":"Don't assume an even split (would give 7.5 tickets each) — set up and solve the actual system instead of guessing.","explanation":"a+c=15 → c=15−a. 12a+7(15−a)=140 → 12a+105−7a=140 → 5a=35 → a=7."},{"n":2,"topic":"Exponents","type":"numeric","prompt":"Simplify and evaluate: (2⁴ · 2⁻¹) ÷ 2² as a single number.","diagram":null,"choices":null,"correct":"2","formula":"Combine same-base exponents first (add/subtract), then evaluate the single resulting power.","shortcut":"Track the exponent arithmetic in one line: 4 − 1 − 2 = 1, so the answer is 2¹.","trap":"Don't evaluate 2⁴, 2⁻¹, and 2² separately and then multiply/divide the resulting large and small numbers — combine exponents FIRST.","explanation":"Exponent = 4 − 1 − 2 = 1. 2¹ = 2."},{"n":3,"topic":"Equations","type":"mc","prompt":"Solve: 2x² − 7x + 3 = 0","diagram":null,"choices":["x = 1/2 or 3","x = 1 or 3","x = −1/2 or −3","x = 2 or 3","x = 1/2 or −3"],"correct":0,"formula":"Factor by finding two numbers multiplying to (2)(3)=6 and summing to −7: those are −6 and −1.","shortcut":"Split the middle term using −6 and −1: 2x²−6x−x+3=0 → 2x(x−3)−1(x−3)=0 → (2x−1)(x−3)=0.","trap":"Don't forget that the leading coefficient (2) affects one of the fractional roots — the factor (2x−1) gives x=1/2, not x=1.","explanation":"(2x−1)(x−3) = 0 → x = 1/2 or x = 3."},{"n":4,"topic":"Algebraic Operations","type":"numeric","prompt":"If x + y = 10 and xy = 21, find the value of x² + y².","diagram":null,"choices":null,"correct":"58","formula":"Use the identity (x+y)² = x² + 2xy + y² to relate the sum, product, and sum of squares.","shortcut":"Compute (x+y)² first, then subtract 2xy — no need to solve for x and y individually.","trap":"Don't try to solve the system for x and y individually (which leads to irrational roots here) — the identity shortcut avoids that entirely.","explanation":"(x+y)² = x² + 2xy + y² → 100 = (x²+y²) + 42 → x²+y² = 58."},{"n":5,"topic":"Systems","type":"qc","prompt":"System: 2x + y = 7, x − y = 2.     Quantity A: x     Quantity B: y","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":0,"formula":"Add the two equations to eliminate y directly.","shortcut":"Adding cancels y immediately since it appears as +y and −y: 3x = 9.","trap":"Don't stop after finding x — you need both values to answer this QC, since it compares x to y specifically.","explanation":"Adding: 3x=9 → x=3. Then 2(3)+y=7 → y=1. Quantity A (3) is greater than Quantity B (1)."},{"n":6,"topic":"Word Problems","type":"numeric","prompt":"The perimeter of a rectangle is 58 cm. The length is 5 cm more than twice the width. Find the area of the rectangle, in square cm.","diagram":null,"choices":null,"correct":"168","formula":"Translate the length in terms of width, use the perimeter formula to solve for width, then compute area.","shortcut":"Solve for width first using perimeter, THEN compute length, and only then multiply for area — don't try to combine steps.","trap":"Don't plug the perimeter value directly into an area formula — perimeter and area are computed from completely different formulas.","explanation":"2(w + 2w+5) = 58 → 6w+10=58 → w=8. Length = 2(8)+5 = 21. Area = 8 × 21 = 168."},{"n":7,"topic":"Functions","type":"numeric","prompt":"If f(x) = x² − 3x and f(a) = 4, and a is a positive number, find a.","diagram":null,"choices":null,"correct":"4","formula":"Set the function rule equal to the given output, forming a quadratic equation to solve.","shortcut":"Rearrange to standard form (a²−3a−4=0) and factor: (a−4)(a+1)=0.","trap":"Don't report the negative root (−1) — the problem specifies a is POSITIVE, which selects only one of the two solutions.","explanation":"a²−3a=4 → a²−3a−4=0 → (a−4)(a+1)=0 → a=4 or a=−1. Since a>0, a=4."},{"n":8,"topic":"Slope","type":"mc","prompt":"Line ℓ₁ passes through (0,3) and (4,11). Line ℓ₂ is perpendicular to ℓ₁ and passes through (2,5). What is ℓ₂'s y-intercept?","diagram":null,"choices":["4","5","6","7","8"],"correct":2,"formula":"Perpendicular slopes are negative reciprocals of each other.","shortcut":"Find ℓ₁'s slope first (2), flip and negate for ℓ₂'s slope (−1/2), then use point-slope form with (2,5).","trap":"Don't use ℓ₁'s slope for ℓ₂ — perpendicular lines have a DIFFERENT (negative reciprocal) slope, not the same one.","explanation":"Slope of ℓ₁ = (11−3)/(4−0) = 2. Perpendicular slope = −1/2. ℓ₂: y−5=−1/2(x−2) → y=−1/2x+6. y-intercept = 6."},{"n":9,"topic":"Exponents & Radicals","type":"numeric","prompt":"Solve for x: √(2x + 3) = 5. (Check that your solution isn't extraneous.)","diagram":null,"choices":null,"correct":"11","formula":"Square both sides to eliminate the radical, then solve — and always verify in the original equation.","shortcut":"Square both sides immediately: 2x+3 = 25, then solve the resulting linear equation.","trap":"Don't skip the verification step — squaring can introduce extraneous solutions that don't satisfy the ORIGINAL radical equation.","explanation":"2x+3 = 25 → x = 11. Check: √(2(11)+3) = √25 = 5. ✓ Valid."},{"n":10,"topic":"Algebraic Operations","type":"mc","prompt":"Simplify: (x² − 4x − 5) / (x² − 25)","diagram":null,"choices":["(x+1)/(x+5)","(x−1)/(x+5)","(x+1)/(x−5)","(x−5)/(x+5)","cannot be simplified"],"correct":0,"formula":"Factor both numerator and denominator completely, then cancel common factors.","shortcut":"Recognize the denominator as a difference of squares immediately: x²−25 = (x−5)(x+5).","trap":"Don't cancel x² terms or individual terms before fully factoring — only complete factored expressions can be cancelled.","explanation":"Numerator: (x−5)(x+1). Denominator: (x−5)(x+5). Cancel (x−5): (x+1)/(x+5), for x≠5,−5."},{"n":11,"topic":"Mixed","type":"qc","prompt":"Quantity A: the greatest integer satisfying x² \u003c 50     Quantity B: 7","diagram":null,"choices":["Quantity A is greater","Quantity B is greater","The two quantities are equal","The relationship cannot be determined from the information given"],"correct":2,"formula":"Find the boundary by taking the square root of the limiting value, then test nearby integers.","shortcut":"√50 ≈ 7.07, so test x=7 (49\u003c50 ✓) and x=8 (64\u003c50 ✗) to confirm the greatest valid integer.","trap":"Don't round √50 to 7 and assume that's automatically the answer without checking — always verify by testing the boundary integers directly.","explanation":"7² = 49 \u003c 50 (valid). 8² = 64, not \u003c 50 (invalid). Greatest integer = 7, equal to Quantity B."},{"n":12,"topic":"Word Problems","type":"numeric","prompt":"A car rental company charges a flat €25 fee plus €0.20 per km. Another charges a flat €10 fee plus €0.35 per km. At how many km do both companies charge the same total?","diagram":null,"choices":null,"correct":"100","formula":"Set the two total-cost expressions equal to each other and solve for the shared variable.","shortcut":"Write both total-cost expressions in terms of km (k), set them equal, then isolate k directly.","trap":"Don't compare only the flat fees or only the per-km rates separately — the total cost combines both, so the equation must include both terms.","explanation":"25 + 0.20k = 10 + 0.35k → 15 = 0.15k → k = 100."}]}];
+const THEORY = [{"name":"Algebraic Operations","concept":{"kicker":"Algebraic Operations · Foundations","title":"Variables, like terms & the distributive property","badgeKey":"algops_concept","paragraphs":["A variable is a placeholder for an unknown or changing number. An expression is built from terms separated by + or − signs; LIKE TERMS have identical variable parts (same letters, same powers) — only like terms can be combined.","Combining like terms means adding or subtracting their coefficients while leaving the variable part untouched: 3x + 5x = 8x, but 3x + 5x² can't be combined further, since x and x² are different variable parts entirely.","The distributive property, a(b + c) = ab + ac, is how a single term multiplies across a sum inside parentheses — EVERY term inside gets multiplied, not just the first one.","Simplifying an expression always follows this order: distribute first to remove parentheses, THEN combine like terms."],"exampleTitle":"Distribute, then combine","exampleLines":"Simplify:\n3(2x + 5) − 4x\n\nDistribute:\n6x + 15 − 4x\n\nCombine like terms:\n2x + 15","inShort":"Only combine terms with identical variable parts. Distribute across parentheses before combining anything."},"quickref":[{"label":"Combining like terms","formula":"ax + bx = (a + b)x","note":"Same variable, same power only."},{"label":"Distributive property","formula":"a(b + c) = ab + ac","note":"Multiply into every term inside the parentheses."},{"label":"Factoring out a GCF","formula":"ab + ac = a(b + c)","note":"The reverse of distributing — pull out the common factor."},{"label":"Order of operations","formula":"Parentheses → Exponents → Multiply/Divide → Add/Subtract","note":"Simplify inside-out, following this order every time."}],"worked":[{"kicker":"Algebraic Operations · Worked Problem","title":"Distributing across two parentheses","problem":"Simplify: 4(3x − 2) − 2(x − 5)","steps":["Distribute the first term: 4(3x − 2) = 12x − 8.","Distribute the second term (careful with the negative sign): −2(x − 5) = −2x + 10.","Combine like terms: (12x − 2x) + (−8 + 10) = 10x + 2."],"shortcut":"Distribute each parenthesis completely and separately before combining anything across them — treat it as two mini-problems first.","trap":"Don't forget to distribute the negative sign into BOTH terms inside the second parenthesis — a very common slip turns −2(x−5) into −2x−10 instead of the correct −2x+10.","answer":"Answer: 10x + 2"}]},{"name":"Exponents & Radicals","concept":{"kicker":"Exponents & Radicals · Foundations","title":"What exponents and radicals actually mean","badgeKey":"exp_concept","paragraphs":["An exponent counts copies of a base being multiplied together: x³ means x · x · x. This is exactly why multiplying powers of the same base means ADDING exponents — you're just counting up more copies of the base, not multiplying the exponents themselves.","A radical (√) undoes an exponent: √x asks 'what number, squared, gives x?' This is why fractional exponents and radicals are two notations for the same idea: x^(1/2) = √x.","Exponent rules: x^a · x^b = x^(a+b); x^a ÷ x^b = x^(a−b); (x^a)^b = x^(ab); and x^0 = 1 for any nonzero x.","Radicals combine like terms only when the numbers under the root MATCH: √a + √a = 2√a, but √a + √b generally does not simplify at all unless a and b share a common perfect-square factor."],"exampleTitle":"Same base, add exponents","exampleLines":"Simplify:\n(x³ · x⁵) ÷ x²\n\nAdd/subtract exponents:\nx^(3+5−2)\n\n= x⁶","inShort":"Exponents track copies of the base: multiply→add exponents, divide→subtract, power of a power→multiply exponents."},"quickref":[{"label":"Multiplying powers","formula":"x^a · x^b = x^(a+b)","note":"Same base? Add the exponents."},{"label":"Dividing powers","formula":"x^a ÷ x^b = x^(a−b)","note":"Same base? Subtract the exponents."},{"label":"Power of a power","formula":"(x^a)^b = x^(ab)","note":"Raise to a power? Multiply the exponents."},{"label":"Negative & zero exponents","formula":"x^0 = 1,   x^(−a) = 1/x^a","note":"A negative exponent means 'reciprocal', not 'negative number'."}],"worked":[{"kicker":"Exponents & Radicals · Worked Problem 1","title":"Combining radicals by simplifying first","problem":"Simplify: √50 − √18 + √8","steps":["Break each radical into (largest perfect square) × (remaining factor): √50 = √25·√2 = 5√2.","Similarly: √18 = √9·√2 = 3√2, and √8 = √4·√2 = 2√2.","Now all three terms share √2, so combine like like terms: 5√2 − 3√2 + 2√2 = 4√2."],"shortcut":"Pull out the largest perfect-square factor from under each radical FIRST — only after simplifying do 'unlike-looking' radicals reveal a shared term you can combine.","trap":"Don't assume √50, √18, and √8 can't be combined just because they look different — always simplify each radical fully before deciding.","answer":"Answer: 4√2"},{"kicker":"Exponents & Radicals · Worked Problem 2","title":"Applying an outer exponent to every factor","problem":"Simplify: (2x²y)³ ÷ (4xy²)","steps":["Apply the outer exponent to EVERY factor inside the parentheses: (2x²y)³ = 2³ · x⁶ · y³ = 8x⁶y³.","Divide each part by the matching part of 4xy²: coefficients 8÷4=2; x⁶÷x=x⁵; y³÷y²=y.","Combine: 2x⁵y."],"shortcut":"Cube the coefficient, the variable, AND its exponent together — (ab)³ = a³b³ applies to every factor inside, not just the variables.","trap":"Don't forget to cube the coefficient (2) along with the variables — a common error writes 2x⁶y³ instead of the correct 8x⁶y³.","answer":"Answer: 2x⁵y"}]},{"name":"Equations","concept":{"kicker":"Equations · Foundations","title":"The balance-scale idea, and three ways to solve quadratics","badgeKey":"eq_concept","paragraphs":["An equation is a balance scale: whatever you do to one side, you must do to the OTHER side too, to keep both sides equal.","Solving means isolating the variable by undoing operations in reverse order — undo addition/subtraction first, then multiplication/division (PEMDAS, backwards).","For quadratics (x² terms), there are three tools: factoring (fastest when the numbers are friendly), the quadratic formula (always works, for any quadratic), and recognizing special patterns like a difference of squares.","Always check your solution by substituting it back into the ORIGINAL equation — this catches sign errors and, for equations with square roots or fractions, catches 'extraneous' solutions that don't actually work."],"exampleTitle":"Undo operations in reverse","exampleLines":"Solve:\n3x + 7 = 22\n\nUndo +7:\n3x = 15\n\nUndo ×3:\nx = 5","inShort":"Keep both sides balanced. Undo +/- before ×/÷. Quadratics generally have TWO solutions — find both."},"quickref":[{"label":"Linear equations","formula":"Isolate x: undo +/− first, then ×/÷","note":"Undo operations in reverse order (PEMDAS backwards)."},{"label":"Factoring quadratics","formula":"x² + bx + c = 0 → find two numbers multiplying to c, summing to b","note":"Look for factor pairs of c that sum to b."},{"label":"Quadratic formula","formula":"x = (−b ± √(b²−4ac)) / 2a","note":"Always works, even when factoring doesn't."},{"label":"Checking solutions","formula":"Substitute back into the ORIGINAL equation","note":"Catches sign errors and extraneous roots."}],"worked":[{"kicker":"Equations · Worked Problem 1","title":"A linear equation with the variable on both sides","problem":"Solve: 5x − 3 = 2x + 12","steps":["Move all x-terms to one side: subtract 2x from both sides → 3x − 3 = 12.","Move constants to the other side: add 3 to both sides → 3x = 15.","Divide both sides by 3: x = 5."],"shortcut":"Move the SMALLER x-term to the other side (here, 2x is smaller than 5x) so you never have to divide by a negative coefficient.","trap":"Don't forget to apply each move to BOTH sides of the equation — moving a term to one side without changing the other breaks the balance.","answer":"Answer: x = 5"},{"kicker":"Equations · Worked Problem 2","title":"Solving a quadratic by factoring","problem":"Solve: x² − 5x − 14 = 0","steps":["Look for two numbers that multiply to −14 and add to −5: those are −7 and 2.","Rewrite as a product: (x − 7)(x + 2) = 0.","Set each factor equal to zero: x − 7 = 0 or x + 2 = 0, giving x = 7 or x = −2."],"shortcut":"List factor pairs of the constant term (−14: 1&14, 2&7) and check their sums/differences against the middle coefficient (−5) — 7 and −2 fit immediately.","trap":"Don't stop after finding only one root — quadratics generally have TWO solutions; reporting only x = 7 loses half the answer.","answer":"Answer: x = 7 or x = −2"}]},{"name":"Inequalities","concept":{"kicker":"Inequalities · Foundations","title":"The one rule that's different from equations","badgeKey":"ineq_concept","paragraphs":["Solving inequalities uses the same moves as equations, with ONE crucial exception: multiplying or dividing both sides by a NEGATIVE number flips the inequality sign.","This flip happens because multiplying by a negative reverses order on the number line — 2 \u003c 3, but multiplying both sides by −1 gives −2 > −3, not −2 \u003c −3.","Quadratic inequalities (like x² − 5x + 6 > 0) are solved by first finding the boundary points (where the expression equals zero), then testing which regions between those points satisfy the inequality.","Compound inequalities (like −3 \u003c 2x + 1 \u003c 7) require performing the same operation on ALL THREE parts simultaneously, keeping the variable isolated in the middle."],"exampleTitle":"The negative-flip rule","exampleLines":"Solve:\n−2x + 4 > 10\n\nSubtract 4:\n−2x > 6\n\nDivide by −2\n(FLIP the sign):\nx \u003c −3","inShort":"Same steps as equations — except ×/÷ by a negative flips the inequality sign. Always check for the flip."},"quickref":[{"label":"The negative-flip rule","formula":"×or÷ both sides by a negative → flip the sign","note":"Check this every single time you multiply or divide."},{"label":"Compound inequalities","formula":"Apply the same operation to all THREE parts at once","note":"Keep the variable isolated in the middle."},{"label":"Quadratic inequalities","formula":"Find the zeros, then test a point in each region","note":"Sketch a number line and test each interval."},{"label":"Interval notation","formula":"( ) for strict \u003c, >     [ ] for inclusive ≤, ≥","note":"Match the bracket style to whether the boundary is included."}],"worked":[{"kicker":"Inequalities · Worked Problem 1","title":"Remembering to flip the sign","problem":"Solve: −3x + 5 ≤ 20","steps":["Subtract 5 from both sides: −3x ≤ 15.","Divide both sides by −3, and FLIP the inequality sign: x ≥ −5."],"shortcut":"Whenever you're about to divide by a negative coefficient, pause and flip the sign in the same step — don't let it become an afterthought.","trap":"Forgetting to flip the inequality sign after dividing by a negative number is the single most common inequality error on the GRE.","answer":"Answer: x ≥ −5"},{"kicker":"Inequalities · Worked Problem 2","title":"A quadratic inequality — testing regions","problem":"Solve: x² − x − 6 \u003c 0","steps":["Factor the quadratic: (x − 3)(x + 2) \u003c 0.","Find the boundary points where it equals zero: x = 3 and x = −2. These split the number line into three regions.","Test one value from each region in the ORIGINAL inequality: only the middle region (−2 \u003c x \u003c 3) satisfies it."],"shortcut":"Factor first to locate the boundary points, then test a single convenient value from each of the three regions the number line splits into — never guess without testing.","trap":"Don't assume the solution is automatically 'between the roots' — for a 'greater than 0' quadratic inequality, the solution would instead be the two OUTER regions. Always test.","answer":"Answer: −2 \u003c x \u003c 3"}]},{"name":"Simultaneous Equations","concept":{"kicker":"Simultaneous Equations · Foundations","title":"Two equations, two unknowns, one shared solution","badgeKey":"sys_concept","paragraphs":["A system of two equations with two unknowns has one solution (an x, y pair) where BOTH equations are true at once — graphically, it's the point where the two lines cross.","SUBSTITUTION works best when one equation is already solved for a variable (or easily can be): solve one equation for one variable, then plug that expression into the other equation.","ELIMINATION works best when a variable's coefficients already match (or can easily be matched): add or subtract the two equations to make that variable cancel out entirely.","Before eliminating, you may need to multiply one or both equations by a constant so a variable's coefficients become equal (to subtract) or opposite (to add)."],"exampleTitle":"Elimination in action","exampleLines":"Solve:\nx + y = 10\nx − y = 2\n\nAdd the equations:\n2x = 12 → x = 6\n\nThen y = 4","inShort":"Substitution: isolate, then plug in. Elimination: match coefficients, then add or subtract to cancel a variable."},"quickref":[{"label":"Substitution","formula":"Solve one equation for a variable, plug into the other","note":"Best when a variable is already isolated or easy to isolate."},{"label":"Elimination","formula":"Add or subtract equations to cancel a variable","note":"Best when coefficients already match or are easy to match."},{"label":"Scaling before eliminating","formula":"Multiply one/both equations so coefficients match","note":"Find the LCM of the coefficients — don't just guess."},{"label":"Checking the solution","formula":"Substitute both values into BOTH original equations","note":"Confirms neither equation was mishandled."}],"worked":[{"kicker":"Simultaneous Equations · Worked Problem","title":"Elimination with a scaling step","problem":"Solve: 3x + 2y = 16   and   2x − y = 6","steps":["Scale the second equation ×2 so its y-coefficient becomes the OPPOSITE of the first's: 4x − 2y = 12.","Add the two equations to cancel y: (3x + 2y) + (4x − 2y) = 16 + 12 → 7x = 28 → x = 4.","Substitute x = 4 into 2x − y = 6: 8 − y = 6 → y = 2."],"shortcut":"Scale so the target variable's coefficients become OPPOSITES (not just equal) — then adding the equations cancels it directly, with no sign-tracking needed.","trap":"After scaling, don't forget to decide ADD vs. SUBTRACT correctly: opposite signs on the target variable means add; matching signs means subtract.","answer":"Answer: x = 4, y = 2"}]},{"name":"Word Problems","concept":{"kicker":"Word Problems · Foundations","title":"Translating English into algebra","badgeKey":"word_concept","paragraphs":["The core skill in word problems is TRANSLATION: converting English phrases into algebraic symbols. Certain words reliably signal certain operations — 'more than' means add, 'is' means equals, and so on.","Always define your variable in WORDS first ('let x = the number of apples Maria has') before writing any equation — this prevents confusion later about what the final answer represents.","For rate problems (work, speed, mixtures), set up the relationship as rate × time = amount, or rate × quantity = total, and keep units consistent throughout.","After solving, translate the number back into the context of the question, and sanity-check it — a negative age or a fractional number of people signals an error somewhere."],"exampleTitle":"Translate phrase by phrase","exampleLines":"“Five more than twice\na number is 17.”\n\n2x + 5 = 17\n\nSolve:\n2x = 12 → x = 6","inShort":"Define the variable in words first. Translate one phrase at a time. Watch for 'less than' — it reverses order."},"quickref":[{"label":"“more than / increased by”","formula":"addition (+)     “5 more than x” → x + 5","note":"Order matches the English order here."},{"label":"“less than / decreased by”","formula":"subtraction (−), ORDER REVERSES     “5 less than x” → x − 5","note":"NOT 5 − x — this is the #1 translation trap."},{"label":"“times / product of / twice”","formula":"multiplication (×)     “twice a number” → 2x","note":"“Of” between a number and a quantity also signals multiply."},{"label":"“is / was / equals / totals”","formula":"the equals sign (=)","note":"This is almost always where the equation splits into two sides."}],"worked":[{"kicker":"Word Problems · Worked Problem","title":"Translating a multi-part sentence","problem":"“Five more than three times a number is the same as twice the number plus 17.” Find the number.","steps":["Translate the left side: 'five more than three times a number' → 3x + 5.","Translate the right side: 'twice the number plus 17' → 2x + 17.","Set them equal (from 'is the same as') and solve: 3x + 5 = 2x + 17 → x = 12."],"shortcut":"Translate the sentence in small chunks, left to right, writing each piece down as you go — don't try to hold the whole equation in your head at once.","trap":"Watch for 'less than' phrasing in similar problems — it reverses the order of subtraction ('5 less than x' is x − 5, NOT 5 − x). Here 'more than' is safe, since it doesn't reverse.","answer":"Answer: the number is 12"}]},{"name":"Functions & Graphs","concept":{"kicker":"Functions & Graphs · Foundations","title":"What a function is, and how to read its graph","badgeKey":"func_concept","paragraphs":["A function is a rule that assigns exactly ONE output (y) to each input (x). This is why the vertical line test works: if a vertical line crosses a graph more than once, that x-value has two different y-values, so it isn't a function.","Function notation f(x) means 'the output of function f when the input is x.' f(3) simply asks you to substitute 3 everywhere x appears in the rule.","The graph of a function plots every (input, output) pair as a point; reading a graph means matching an x-coordinate to its corresponding y-coordinate, or vice versa.","Key features to identify: x-intercepts / roots (where y = 0, the graph crosses the horizontal axis) and the y-intercept (where x = 0, the graph crosses the vertical axis)."],"exampleTitle":"Evaluating f(x)","exampleLines":"f(x) = 2x² − 3x + 1\n\nFind f(2):\n2(4) − 3(2) + 1\n\n= 8 − 6 + 1 = 3","inShort":"A function gives exactly one output per input. f(a) means substitute a for x. Roots: set y=0. Y-intercept: set x=0."},"quickref":[{"label":"Function notation","formula":"f(x) = “output when input is x”","note":"Substitute the given value everywhere x appears."},{"label":"Vertical line test","formula":"A graph is a function only if every vertical line crosses it once","note":"More than one crossing = not a function."},{"label":"x-intercepts (roots)","formula":"Set y (or f(x)) = 0, solve for x","note":"Where the graph crosses the horizontal axis."},{"label":"y-intercept","formula":"Set x = 0, solve for y","note":"Where the graph crosses the vertical axis — often just the constant term."}],"worked":[{"kicker":"Functions & Graphs · Worked Problem","title":"Finding x-intercepts by factoring","problem":"Given f(x) = x² − 4x + 3, find the x-intercepts.","steps":["Set f(x) = 0, since x-intercepts occur where the graph crosses the horizontal axis: x² − 4x + 3 = 0.","Factor: find two numbers multiplying to 3 and summing to −4: −1 and −3. So (x − 1)(x − 3) = 0.","Set each factor to zero: x = 1 or x = 3."],"shortcut":"Factor rather than reaching for the quadratic formula whenever the numbers look 'friendly' (small integer factors) — it's much faster.","trap":"Don't confuse x-intercepts (set y = 0) with the y-intercept (set x = 0) — mixing these up is one of the most common graph-reading errors.","answer":"Answer: x-intercepts at x = 1 and x = 3"}]},{"name":"Slope & Coordinate Geometry","concept":{"kicker":"Slope & Coordinate Geometry · Foundations","title":"Slope as steepness, and the forms that reveal it","badgeKey":"slope_concept","paragraphs":["Slope measures steepness: 'rise over run,' or how much y changes for each unit change in x. Positive slope rises left-to-right; negative falls; zero is flat; undefined is vertical.","The slope formula, m = (y₂−y₁)/(x₂−x₁), works between any two points on a line — just keep the point order CONSISTENT between the top and bottom.","Slope-intercept form, y = mx + b, directly reveals the slope (m) and the y-intercept (b) — this is why it's the most useful form for quickly sketching or comparing lines.","Parallel lines have EQUAL slopes. Perpendicular lines have slopes that are NEGATIVE RECIPROCALS of each other (their product is −1)."],"exampleTitle":"Slope between two points","exampleLines":"Points (1, 2) and (4, 11)\n\nm = (11−2)/(4−1)\n\n= 9/3 = 3","inShort":"Slope = rise/run, kept consistent in point order. y=mx+b reveals slope and y-intercept directly."},"quickref":[{"label":"Slope formula","formula":"m = (y₂ − y₁) / (x₂ − x₁)","note":"Keep point order consistent in both top and bottom."},{"label":"Slope-intercept form","formula":"y = mx + b","note":"m = slope, b = y-intercept — read both directly off this form."},{"label":"Parallel & perpendicular","formula":"Parallel → equal slopes.   Perpendicular → m₁ × m₂ = −1","note":"Flip and negate the slope for a perpendicular line."},{"label":"Distance between two points","formula":"d = √[(x₂−x₁)² + (y₂−y₁)²]","note":"The Pythagorean theorem applied to coordinates."}],"worked":[{"kicker":"Slope & Coordinate Geometry · Worked Problem","title":"Building a line's equation from a point and a slope","problem":"Find the equation of the line through (2, 5) with slope 3. What is its y-intercept?","steps":["Use point-slope form: y − y₁ = m(x − x₁) → y − 5 = 3(x − 2).","Distribute and simplify: y − 5 = 3x − 6 → y = 3x − 1.","Read the y-intercept directly from slope-intercept form: b = −1."],"shortcut":"Start from point-slope form and simplify to slope-intercept form — it's faster than plugging into y=mx+b and solving for b separately.","trap":"If plugging directly into y = mx + b, don't forget to multiply m by x₁ first — a common slip writes 5 = 3 + b instead of the correct 5 = 3(2) + b.","answer":"Answer: y = 3x − 1, so the y-intercept is −1"}]}];
+const DIAGRAMS = {};
+const LEAFLET = [["Combining like terms","ax + bx = (a+b)x","Same variable, same power only"],["Exponents (multiply)","x^a · x^b = x^(a+b)","Same base → add exponents"],["Quadratic formula","x = (−b ± √(b²−4ac)) / 2a","Always works, even when factoring fails"],["Inequality flip","× or ÷ by a negative → flip the sign","Check the sign every time you multiply or divide"],["Elimination (systems)","Scale so coefficients match or cancel","Add if opposite signs, subtract if same"],["Slope formula","m = (y₂−y₁) / (x₂−x₁)","Keep point order consistent top & bottom"],["Word problem: “less than”","“b less than a” = a − b","Order reverses — don't write b − a"]];
+const FLASHCARDS = [{"topic":"Algebraic Operations","front":"Combining like terms","back":"ax + bx = (a + b)x","note":"Same variable, same power only."},{"topic":"Algebraic Operations","front":"Distributive property","back":"a(b + c) = ab + ac","note":"Multiply into every term inside the parentheses."},{"topic":"Algebraic Operations","front":"Factoring out a GCF","back":"ab + ac = a(b + c)","note":"The reverse of distributing — pull out the common factor."},{"topic":"Algebraic Operations","front":"Order of operations","back":"Parentheses → Exponents → Multiply/Divide → Add/Subtract","note":"Simplify inside-out, following this order every time."},{"topic":"Algebraic Operations","front":"Trap: Distributing across two parentheses","back":"Don't forget to distribute the negative sign into BOTH terms inside the second parenthesis — a very common slip turns −2(x−5) into −2x−10 instead of the correct −2x+10.","note":"Fastest method: Distribute each parenthesis completely and separately before combining anything across them — treat it as two mini-problems first."},{"topic":"Exponents & Radicals","front":"Multiplying powers","back":"x^a · x^b = x^(a+b)","note":"Same base? Add the exponents."},{"topic":"Exponents & Radicals","front":"Dividing powers","back":"x^a ÷ x^b = x^(a−b)","note":"Same base? Subtract the exponents."},{"topic":"Exponents & Radicals","front":"Power of a power","back":"(x^a)^b = x^(ab)","note":"Raise to a power? Multiply the exponents."},{"topic":"Exponents & Radicals","front":"Negative & zero exponents","back":"x^0 = 1,   x^(−a) = 1/x^a","note":"A negative exponent means 'reciprocal', not 'negative number'."},{"topic":"Exponents & Radicals","front":"Trap: Combining radicals by simplifying first","back":"Don't assume √50, √18, and √8 can't be combined just because they look different — always simplify each radical fully before deciding.","note":"Fastest method: Pull out the largest perfect-square factor from under each radical FIRST — only after simplifying do 'unlike-looking' radicals reveal a shared term you can combine."},{"topic":"Exponents & Radicals","front":"Trap: Applying an outer exponent to every factor","back":"Don't forget to cube the coefficient (2) along with the variables — a common error writes 2x⁶y³ instead of the correct 8x⁶y³.","note":"Fastest method: Cube the coefficient, the variable, AND its exponent together — (ab)³ = a³b³ applies to every factor inside, not just the variables."},{"topic":"Equations","front":"Linear equations","back":"Isolate x: undo +/− first, then ×/÷","note":"Undo operations in reverse order (PEMDAS backwards)."},{"topic":"Equations","front":"Factoring quadratics","back":"x² + bx + c = 0 → find two numbers multiplying to c, summing to b","note":"Look for factor pairs of c that sum to b."},{"topic":"Equations","front":"Quadratic formula","back":"x = (−b ± √(b²−4ac)) / 2a","note":"Always works, even when factoring doesn't."},{"topic":"Equations","front":"Checking solutions","back":"Substitute back into the ORIGINAL equation","note":"Catches sign errors and extraneous roots."},{"topic":"Equations","front":"Trap: A linear equation with the variable on both sides","back":"Don't forget to apply each move to BOTH sides of the equation — moving a term to one side without changing the other breaks the balance.","note":"Fastest method: Move the SMALLER x-term to the other side (here, 2x is smaller than 5x) so you never have to divide by a negative coefficient."},{"topic":"Equations","front":"Trap: Solving a quadratic by factoring","back":"Don't stop after finding only one root — quadratics generally have TWO solutions; reporting only x = 7 loses half the answer.","note":"Fastest method: List factor pairs of the constant term (−14: 1&14, 2&7) and check their sums/differences against the middle coefficient (−5) — 7 and −2 fit immediately."},{"topic":"Inequalities","front":"The negative-flip rule","back":"×or÷ both sides by a negative → flip the sign","note":"Check this every single time you multiply or divide."},{"topic":"Inequalities","front":"Compound inequalities","back":"Apply the same operation to all THREE parts at once","note":"Keep the variable isolated in the middle."},{"topic":"Inequalities","front":"Quadratic inequalities","back":"Find the zeros, then test a point in each region","note":"Sketch a number line and test each interval."},{"topic":"Inequalities","front":"Interval notation","back":"( ) for strict \u003c, >     [ ] for inclusive ≤, ≥","note":"Match the bracket style to whether the boundary is included."},{"topic":"Inequalities","front":"Trap: Remembering to flip the sign","back":"Forgetting to flip the inequality sign after dividing by a negative number is the single most common inequality error on the GRE.","note":"Fastest method: Whenever you're about to divide by a negative coefficient, pause and flip the sign in the same step — don't let it become an afterthought."},{"topic":"Inequalities","front":"Trap: A quadratic inequality — testing regions","back":"Don't assume the solution is automatically 'between the roots' — for a 'greater than 0' quadratic inequality, the solution would instead be the two OUTER regions. Always test.","note":"Fastest method: Factor first to locate the boundary points, then test a single convenient value from each of the three regions the number line splits into — never guess without testing."},{"topic":"Simultaneous Equations","front":"Substitution","back":"Solve one equation for a variable, plug into the other","note":"Best when a variable is already isolated or easy to isolate."},{"topic":"Simultaneous Equations","front":"Elimination","back":"Add or subtract equations to cancel a variable","note":"Best when coefficients already match or are easy to match."},{"topic":"Simultaneous Equations","front":"Scaling before eliminating","back":"Multiply one/both equations so coefficients match","note":"Find the LCM of the coefficients — don't just guess."},{"topic":"Simultaneous Equations","front":"Checking the solution","back":"Substitute both values into BOTH original equations","note":"Confirms neither equation was mishandled."},{"topic":"Simultaneous Equations","front":"Trap: Elimination with a scaling step","back":"After scaling, don't forget to decide ADD vs. SUBTRACT correctly: opposite signs on the target variable means add; matching signs means subtract.","note":"Fastest method: Scale so the target variable's coefficients become OPPOSITES (not just equal) — then adding the equations cancels it directly, with no sign-tracking needed."},{"topic":"Word Problems","front":"“more than / increased by”","back":"addition (+)     “5 more than x” → x + 5","note":"Order matches the English order here."},{"topic":"Word Problems","front":"“less than / decreased by”","back":"subtraction (−), ORDER REVERSES     “5 less than x” → x − 5","note":"NOT 5 − x — this is the #1 translation trap."},{"topic":"Word Problems","front":"“times / product of / twice”","back":"multiplication (×)     “twice a number” → 2x","note":"“Of” between a number and a quantity also signals multiply."},{"topic":"Word Problems","front":"“is / was / equals / totals”","back":"the equals sign (=)","note":"This is almost always where the equation splits into two sides."},{"topic":"Word Problems","front":"Trap: Translating a multi-part sentence","back":"Watch for 'less than' phrasing in similar problems — it reverses the order of subtraction ('5 less than x' is x − 5, NOT 5 − x). Here 'more than' is safe, since it doesn't reverse.","note":"Fastest method: Translate the sentence in small chunks, left to right, writing each piece down as you go — don't try to hold the whole equation in your head at once."},{"topic":"Functions & Graphs","front":"Function notation","back":"f(x) = “output when input is x”","note":"Substitute the given value everywhere x appears."},{"topic":"Functions & Graphs","front":"Vertical line test","back":"A graph is a function only if every vertical line crosses it once","note":"More than one crossing = not a function."},{"topic":"Functions & Graphs","front":"x-intercepts (roots)","back":"Set y (or f(x)) = 0, solve for x","note":"Where the graph crosses the horizontal axis."},{"topic":"Functions & Graphs","front":"y-intercept","back":"Set x = 0, solve for y","note":"Where the graph crosses the vertical axis — often just the constant term."},{"topic":"Functions & Graphs","front":"Trap: Finding x-intercepts by factoring","back":"Don't confuse x-intercepts (set y = 0) with the y-intercept (set x = 0) — mixing these up is one of the most common graph-reading errors.","note":"Fastest method: Factor rather than reaching for the quadratic formula whenever the numbers look 'friendly' (small integer factors) — it's much faster."},{"topic":"Slope & Coordinate Geometry","front":"Slope formula","back":"m = (y₂ − y₁) / (x₂ − x₁)","note":"Keep point order consistent in both top and bottom."},{"topic":"Slope & Coordinate Geometry","front":"Slope-intercept form","back":"y = mx + b","note":"m = slope, b = y-intercept — read both directly off this form."},{"topic":"Slope & Coordinate Geometry","front":"Parallel & perpendicular","back":"Parallel → equal slopes.   Perpendicular → m₁ × m₂ = −1","note":"Flip and negate the slope for a perpendicular line."},{"topic":"Slope & Coordinate Geometry","front":"Distance between two points","back":"d = √[(x₂−x₁)² + (y₂−y₁)²]","note":"The Pythagorean theorem applied to coordinates."},{"topic":"Slope & Coordinate Geometry","front":"Trap: Building a line's equation from a point and a slope","back":"If plugging directly into y = mx + b, don't forget to multiply m by x₁ first — a common slip writes 5 = 3 + b instead of the correct 5 = 3(2) + b.","note":"Fastest method: Start from point-slope form and simplify to slope-intercept form — it's faster than plugging into y=mx+b and solving for b separately."}];
+const STORAGE_PREFIX = "clc_gre_algebra_test_";
+
+let activeTest = null;
+let submitted = false;
+let timeLeft = 0;
+let timerHandle = null;
+let answers = {};
+
+function testStorageKey(idx) { return STORAGE_PREFIX + idx; }
+
+function loadTestState(idx) {
+  try {
+    const raw = localStorage.getItem(testStorageKey(idx));
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function saveTestState(idx) {
+  try {
+    localStorage.setItem(testStorageKey(idx), JSON.stringify({ answers, submitted, timeLeft }));
+  } catch (e) {}
+}
+
+// ---------------- Calculator ----------------
+let calcCur = "0", calcPrev = null, calcOp = null, calcMemory = 0, calcResetNext = false;
+function calcUpdateDisplay() { document.getElementById('calcDisplay').textContent = calcCur; }
+function toggleCalc() {
+  const p = document.getElementById('calcPanel');
+  p.style.display = (p.style.display === 'none') ? 'block' : 'none';
+}
+function calcDigit(d) {
+  if (calcResetNext) { calcCur = d; calcResetNext = false; }
+  else { calcCur = (calcCur === '0') ? d : calcCur + d; }
+  calcUpdateDisplay();
+}
+function calcDot() {
+  if (calcResetNext) { calcCur = '0.'; calcResetNext = false; }
+  else if (calcCur.indexOf('.') === -1) { calcCur += '.'; }
+  calcUpdateDisplay();
+}
+function calcOpPress(op) {
+  if (calcOp && !calcResetNext) calcEquals();
+  calcPrev = parseFloat(calcCur);
+  calcOp = op;
+  calcResetNext = true;
+}
+function calcEquals() {
+  if (calcOp === null || calcPrev === null) return;
+  const cur = parseFloat(calcCur);
+  let res = cur;
+  if (calcOp === '+') res = calcPrev + cur;
+  else if (calcOp === '-') res = calcPrev - cur;
+  else if (calcOp === '×') res = calcPrev * cur;
+  else if (calcOp === '÷') res = (cur === 0) ? NaN : calcPrev / cur;
+  calcCur = isNaN(res) ? 'Error' : String(Math.round(res * 1e10) / 1e10);
+  calcOp = null; calcPrev = null; calcResetNext = true;
+  calcUpdateDisplay();
+}
+function calcClear() { calcCur = '0'; calcPrev = null; calcOp = null; calcResetNext = false; calcUpdateDisplay(); }
+function calcSign() { calcCur = calcCur.charAt(0) === '-' ? calcCur.slice(1) : '-' + calcCur; calcUpdateDisplay(); }
+function calcSqrt() {
+  const v = parseFloat(calcCur);
+  calcCur = (isNaN(v) || v < 0) ? 'Error' : String(Math.round(Math.sqrt(v) * 1e10) / 1e10);
+  calcResetNext = true; calcUpdateDisplay();
+}
+function calcMPlus() { calcMemory += parseFloat(calcCur) || 0; }
+function calcMMinus() { calcMemory -= parseFloat(calcCur) || 0; }
+function calcMR() { calcCur = String(calcMemory); calcResetNext = true; calcUpdateDisplay(); }
+function calcMC() { calcMemory = 0; }
+function calcTransfer() {
+  const active = document.activeElement;
+  if (active && active.classList && active.classList.contains('numeric-input')) {
+    active.value = calcCur;
+    active.dispatchEvent(new Event('input'));
+  } else {
+    const inputs = document.querySelectorAll('.numeric-input');
+    if (inputs.length) { inputs[0].value = calcCur; inputs[0].dispatchEvent(new Event('input')); }
+  }
+}
+
+// ---------------- Formula Leaflet ----------------
+// ---------------- Flashcards ----------------
+let flashDeck = FLASHCARDS.slice();
+let flashIdx = 0;
+let flashFlipped = false;
+
+function openFlashcards() {
+  document.getElementById('menuScreen').style.display = 'none';
+  document.getElementById('flashArea').style.display = 'block';
+  flashDeck = FLASHCARDS.slice();
+  flashIdx = 0;
+  flashFlipped = false;
+  renderFlashcard();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderFlashcard() {
+  if (!flashDeck.length) return;
+  const card = flashDeck[flashIdx];
+  document.getElementById('flashProgress').textContent = 'Card ' + (flashIdx + 1) + ' of ' + flashDeck.length;
+  document.getElementById('flashTopic').textContent = card.topic;
+  document.getElementById('flashSideLabel').textContent = flashFlipped ? 'ANSWER' : 'TAP TO FLIP';
+  const contentEl = document.getElementById('flashContent');
+  const noteEl = document.getElementById('flashNote');
+  if (flashFlipped) {
+    contentEl.className = 'flash-content back-content';
+    contentEl.textContent = card.back;
+    if (card.note) { noteEl.style.display = 'block'; noteEl.textContent = card.note; }
+    else { noteEl.style.display = 'none'; }
+  } else {
+    contentEl.className = 'flash-content';
+    contentEl.textContent = card.front;
+    noteEl.style.display = 'none';
+  }
+}
+
+function flipCard() {
+  flashFlipped = !flashFlipped;
+  renderFlashcard();
+}
+
+function flashNext() {
+  flashIdx = (flashIdx + 1) % flashDeck.length;
+  flashFlipped = false;
+  renderFlashcard();
+}
+
+function flashPrev() {
+  flashIdx = (flashIdx - 1 + flashDeck.length) % flashDeck.length;
+  flashFlipped = false;
+  renderFlashcard();
+}
+
+function flashShuffle() {
+  for (let i = flashDeck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [flashDeck[i], flashDeck[j]] = [flashDeck[j], flashDeck[i]];
+  }
+  flashIdx = 0;
+  flashFlipped = false;
+  renderFlashcard();
+}
+
+function openLeaflet() {
+  document.getElementById('menuScreen').style.display = 'none';
+  document.getElementById('flashArea').style.display = 'none';
+  document.getElementById('theoryArea').style.display = 'block';
+  const main = document.getElementById('theoryMain');
+  let rows = LEAFLET.map(r => '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td></tr>').join('');
+  main.innerHTML =
+    '<div class="topic-block">' +
+      '<h2>Formula Leaflet — Unit 2: Algebra</h2>' +
+      '<p style="color:#6B655D; font-size:13.5px;">A one-page reference of every core formula in this unit. Print or save this page for quick review before a test.</p>' +
+      '<table class="leaflet-table"><tr><th>Topic</th><th>Formula</th><th>Speed Tip</th></tr>' + rows + '</table>' +
+    '</div>' +
+    '<div class="btn-bar"><button class="pdf-btn" onclick="window.print()">🖨️ Print / Save as PDF</button></div>';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderMenu() {
+  const grid = document.getElementById('menuGrid');
+  let html = '';
+  if (THEORY && THEORY.length) {
+    html += '<div class="menu-card theory-card" onclick="openTheory()">' +
+      '<h3>📘 Theory &amp; Formulas</h3>' +
+      '<p class="sub">Concepts, quick-reference formulas &amp; worked examples</p>' +
+      '<p class="meta">' + THEORY.length + ' topics · read at your own pace</p>' +
+    '</div>';
+  }
+  if (LEAFLET && LEAFLET.length) {
+    html += '<div class="menu-card leaflet-card" onclick="openLeaflet()">' +
+      '<h3>📄 Formula Leaflet</h3>' +
+      '<p class="sub">One printable page — every formula in this unit</p>' +
+      '<p class="meta">' + LEAFLET.length + ' formulas · print or save as PDF</p>' +
+    '</div>';
+  }
+  if (FLASHCARDS && FLASHCARDS.length) {
+    html += '<div class="menu-card flashcard-card" onclick="openFlashcards()">' +
+      '<h3>🗂️ Flashcards</h3>' +
+      '<p class="sub">Flip through every formula &amp; trap, one at a time</p>' +
+      '<p class="meta">' + FLASHCARDS.length + ' cards · shuffle for review</p>' +
+    '</div>';
+  }
+  html += TESTS.map((t, idx) => {
+    const saved = loadTestState(idx);
+    const statusHtml = saved && saved.submitted
+      ? '<span class="status done">✓ Completed</span>'
+      : (saved && saved.answers && Object.keys(saved.answers).length ? '<span class="status">In progress</span>' : '');
+    return (
+      '<div class="menu-card" onclick="openTest(' + idx + ')">' +
+        '<h3>' + t.title + '</h3>' +
+        '<p class="sub">' + t.subtitle + '</p>' +
+        '<p class="meta">' + t.questions.length + ' questions · ' + t.minutes + ' min</p>' +
+        statusHtml +
+      '</div>'
+    );
+  }).join('');
+  grid.innerHTML = html;
+}
+
+function openTheory() {
+  document.getElementById('menuScreen').style.display = 'none';
+  document.getElementById('testArea').style.display = 'none';
+  document.getElementById('flashArea').style.display = 'none';
+  document.getElementById('theoryArea').style.display = 'block';
+  const main = document.getElementById('theoryMain');
+  main.innerHTML = THEORY.map(t => {
+    let tableHtml = '';
+    if (t.table) {
+      tableHtml = '<h4>Benchmark Conversions</h4><table class="decimal-table"><tr><th>Fraction</th><th>Decimal</th><th>Percent</th></tr>' +
+        t.table.map(row => '<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td></tr>').join('') +
+        '</table><div class="inshort-box" style="margin-top:12px;"><span class="label">Why it matters</span>' + (t.tableNote||'') + '</div>';
+    }
+    const c = t.concept;
+    const conceptHtml = c ? (
+      '<div class="concept-flex">' +
+        '<div class="concept-text">' + c.paragraphs.map(p => '<p>' + p + '</p>').join('') + '</div>' +
+        (c.exampleTitle ? '<div class="example-box"><div class="ex-title">' + c.exampleTitle + '</div><pre>' + c.exampleLines + '</pre></div>' : '') +
+      '</div>' +
+      (c.inShort ? '<div class="inshort-box"><span class="label">In short</span>' + c.inShort + '</div>' : '')
+    ) : '';
+    const qrefHtml = t.quickref && t.quickref.length ? (
+      '<h4>Quick Reference</h4><div class="qref-grid">' +
+      t.quickref.map(q => '<div class="qref-card"><div class="qlabel">' + q.label + '</div><div class="qformula">' + q.formula + '</div>' + (q.note ? '<div class="qnote">' + q.note + '</div>' : '') + '</div>').join('') +
+      '</div>'
+    ) : '';
+    const workedHtml = (t.worked && t.worked.length) ? t.worked.map(w => (
+      '<div class="worked-block">' +
+        '<div class="wtitle">' + w.title + '</div>' +
+        '<div class="wproblem">' + w.problem + '</div>' +
+        w.steps.map((s,i) => '<div class="wstep"><div class="stepnum">' + (i+1) + '</div><div>' + s + '</div></div>').join('') +
+        (w.answer ? '<div class="wanswer">' + w.answer + '</div>' : '') +
+        '<div class="wbox tip"><span class="wlabel">Fastest method</span>' + w.shortcut + '</div>' +
+        '<div class="wbox trap"><span class="wlabel">⚠ Trap to avoid</span>' + w.trap + '</div>' +
+      '</div>'
+    )).join('') : '';
+    return '<div class="topic-block"><h2>' + t.name + '</h2>' + conceptHtml + tableHtml + qrefHtml + workedHtml + '</div>';
+  }).join('');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function openTest(idx) {
+  activeTest = idx;
+  const saved = loadTestState(idx);
+  answers = (saved && saved.answers) ? saved.answers : {};
+  submitted = (saved && saved.submitted) ? true : false;
+  timeLeft = (saved && typeof saved.timeLeft === 'number' && !submitted) ? saved.timeLeft : TESTS[idx].minutes * 60;
+
+  document.getElementById('menuScreen').style.display = 'none';
+  document.getElementById('flashArea').style.display = 'none';
+  document.getElementById('testArea').style.display = 'block';
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('submitBtn').style.display = submitted ? 'none' : 'inline-block';
+
+  if (submitted) {
+    renderResults();
+  } else {
+    renderQuestions();
+    clearInterval(timerHandle);
+    timerHandle = setInterval(tick, 1000);
+    updateTimerDisplay();
+  }
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function backToMenu() {
+  clearInterval(timerHandle);
+  document.getElementById('testArea').style.display = 'none';
+  document.getElementById('theoryArea').style.display = 'none';
+  document.getElementById('flashArea').style.display = 'none';
+  document.getElementById('menuScreen').style.display = 'block';
+  document.getElementById('resultBanner').innerHTML = '';
+  renderMenu();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function tick() {
+  if (submitted) return;
+  timeLeft -= 1;
+  if (timeLeft <= 0) { timeLeft = 0; updateTimerDisplay(); submitTest(); return; }
+  updateTimerDisplay();
+  if (timeLeft % 5 === 0) saveTestState(activeTest);
+}
+function updateTimerDisplay() {
+  const t = Math.max(0, Math.round(timeLeft));
+  const m = Math.floor(t/60), s = t%60;
+  const el = document.getElementById('timer');
+  el.textContent = m + ':' + String(s).padStart(2,'0');
+  el.classList.toggle('warn', t <= 60);
+}
+
+function renderQuestions() {
+  const test = TESTS[activeTest];
+  const container = document.getElementById('questions');
+  container.innerHTML = test.questions.map(q => {
+    let inputHtml = '';
+    if (q.type === 'numeric') {
+      const val = answers[q.n] || '';
+      inputHtml = '<input type="text" class="numeric-input" id="ans_' + q.n + '" value="' + String(val).replace(/"/g,'&quot;') + '" placeholder="Your answer" oninput="onAnswer(' + q.n + ', this.value)">';
+    } else {
+      inputHtml = q.choices.map((c,i) => {
+        const checked = answers[q.n] === String(i) ? 'checked' : '';
+        return '<label class="choice"><input type="radio" name="q' + q.n + '" value="' + i + '" ' + checked + ' onchange="onAnswer(' + q.n + ', this.value)"> ' + String.fromCharCode(65+i) + '.&nbsp; ' + c + '</label>';
+      }).join('');
+    }
+    return (
+      '<div class="q-card" id="card_' + q.n + '">' +
+        '<div class="q-topic">Question ' + q.n + ' · ' + q.topic + '</div>' +
+        '<div class="q-prompt">' + q.prompt + '</div>' +
+        (q.diagram && DIAGRAMS[q.diagram] ? '<img class="q-diagram" src="data:image/png;base64,' + DIAGRAMS[q.diagram] + '" alt="diagram" />' : '') +
+        inputHtml +
+        '<div class="explain" id="explain_' + q.n + '"></div>' +
+      '</div>'
+    );
+  }).join('');
+  updateProgress();
+}
+
+function onAnswer(n, value) {
+  answers[n] = value;
+  updateProgress();
+  saveTestState(activeTest);
+}
+
+function updateProgress() {
+  const test = TESTS[activeTest];
+  let answered = 0;
+  test.questions.forEach(q => { if (answers[q.n] !== undefined && answers[q.n] !== '') answered++; });
+  document.getElementById('progressLabel').textContent = answered + ' / ' + test.questions.length + ' answered';
+}
+
+function normalizeNumeric(s) { return String(s).trim().toLowerCase().replace(/\s+/g,'').replace(/€|\$/g,''); }
+function checkNumeric(userVal, correctVal) {
+  const u = normalizeNumeric(userVal), c = normalizeNumeric(correctVal);
+  if (u === c) return true;
+  const uf = parseFloat(u), cf = parseFloat(c);
+  if (!isNaN(uf) && !isNaN(cf) && u.indexOf('/') === -1 && u.indexOf(',') === -1) return Math.abs(uf-cf) < 0.02;
+  return false;
+}
+
+function submitTest() {
+  if (submitted) return;
+  submitted = true;
+  clearInterval(timerHandle);
+  document.getElementById('submitBtn').style.display = 'none';
+  saveTestState(activeTest);
+  renderResults();
+}
+
+function renderResults() {
+  const test = TESTS[activeTest];
+  let correctCount = 0;
+
+  const container = document.getElementById('questions');
+  container.innerHTML = test.questions.map(q => (
+    '<div class="q-card" id="card_' + q.n + '">' +
+      '<div class="q-topic">Question ' + q.n + ' · ' + q.topic + '</div>' +
+      '<div class="q-prompt">' + q.prompt + '</div>' +
+      (q.diagram && DIAGRAMS[q.diagram] ? '<img class="q-diagram" src="data:image/png;base64,' + DIAGRAMS[q.diagram] + '" alt="diagram" />' : '') +
+      '<div class="explain show" id="explain_' + q.n + '"></div>' +
+    '</div>'
+  )).join('');
+
+  test.questions.forEach(q => {
+    const val = answers[q.n];
+    let isCorrect = false, userAnswerText = '(no answer)';
+    if (q.type === 'numeric') {
+      userAnswerText = (val === undefined || val === '') ? '(no answer)' : val;
+      isCorrect = val !== undefined && val !== '' && checkNumeric(val, q.correct);
+    } else {
+      if (val !== undefined) {
+        const idx = parseInt(val, 10);
+        userAnswerText = String.fromCharCode(65+idx) + '. ' + q.choices[idx];
+        isCorrect = idx === q.correct;
+      }
+    }
+    if (isCorrect) correctCount++;
+    const correctText = q.type === 'numeric' ? q.correct : String.fromCharCode(65+q.correct) + '. ' + q.choices[q.correct];
+    const el = document.getElementById('explain_' + q.n);
+    el.innerHTML =
+      '<div class="verdict ' + (isCorrect?'correct':'incorrect') + '">' + (isCorrect?'✓ Correct':'✗ Incorrect') + ' — your answer: ' + userAnswerText + '</div>' +
+      '<div class="box explain-full"><span class="label">Correct answer</span>' + correctText + '</div>' +
+      '<div class="box explain-full"><span class="label">Formula</span>' + q.formula + '</div>' +
+      '<div class="box tip"><span class="label">Fastest method</span>' + q.shortcut + '</div>' +
+      '<div class="box trap"><span class="label">⚠ Trap to avoid</span>' + q.trap + '</div>' +
+      '<div class="box explain-full"><span class="label">Full explanation</span>' + q.explanation + '</div>';
+  });
+
+  const pct = Math.round((correctCount/test.questions.length)*100);
+  submitResultToSheet(test.title, correctCount, test.questions.length);
+  document.getElementById('resultBanner').innerHTML =
+    '<div class="result-banner">' +
+      '<div><div class="label">Your Score</div><div class="score">' + correctCount + ' / ' + test.questions.length + ' (' + pct + '%)</div></div>' +
+    '</div>' +
+    '<div class="btn-bar"><button class="btn btn-secondary" onclick="retakeTest()">Retake This Test</button><button class="pdf-btn" onclick="window.print()">🖨️ Save Results as PDF</button><button class="btn" onclick="backToMenu()">Back to Menu</button></div>';
+  document.getElementById('progressLabel').textContent = 'Test complete';
+  updateTimerDisplay0();
+}
+function updateTimerDisplay0() { document.getElementById('timer').textContent = '--:--'; }
+
+function retakeTest() {
+  try { localStorage.removeItem(testStorageKey(activeTest)); } catch (e) {}
+  openTest(activeTest);
+}
+
+renderMenu();
+</script>
+</body>
+</html>

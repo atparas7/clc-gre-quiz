@@ -105,6 +105,14 @@ h1,h2,h3,.brand{font-family:'Cormorant Garamond',Georgia,serif;}
 .box-fastest{background:#fff8ea;border-color:#B8882A;} .box-fastest h4{color:#8a6416;}
 .your-answer{font-size:14px;margin:10px 0;padding:10px 14px;border-radius:5px;background:#f7f5f2;}
 footer.tag{text-align:center;padding:22px;color:var(--muted);font-size:12px;}
+
+.pdf-btn{background:#fff;color:var(--crimson);border:2px solid var(--crimson);padding:10px 22px;border-radius:4px;font-size:14px;font-weight:bold;cursor:pointer;margin-top:16px;}
+.pdf-btn:hover{background:var(--crimson);color:#fff;}
+@media print{
+  .topbar, .calc-panel, .no-print { display:none !important; }
+  body { background:#fff; }
+  #resultsScreen { display:block !important; }
+}
 </style>
 </head>
 <body>
@@ -639,6 +647,7 @@ function showFinalResults(){
           <div style="font-size:22px;font-weight:bold;color:var(--crimson);">` + s2Raw + ` / ` + sec2Pool.length + `</div>
         </div>
       </div>
+      <button class="pdf-btn no-print" onclick="window.print()">🖨️ Save Results as PDF</button>
     </div>
     <h3 style="color:var(--crimson);margin:25px 0 15px;">Section 1 Detailed Solutions</h3>
   `;
