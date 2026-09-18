@@ -169,10 +169,10 @@ footer.credit{
     <div class="eyebrow">Choose a subject</div>
     <h2>What would you like to practice today?</h2>
     <div class="ledger">
-      <div class="ledger-item disabled">
-        <div class="li-left"><div class="li-icon">📖</div><div><div class="li-title">Verbal Reasoning</div><div class="li-sub">Text Completion · Sentence Equivalence · Reading Comprehension · Vocabulary</div></div></div>
-        <span class="tag-soon">Coming Soon</span>
-      </div>
+      <button class="ledger-item" onclick="go('screen-verbal')">
+        <div class="li-left"><div class="li-icon">📖</div><div><div class="li-title">Verbal Reasoning</div><div class="li-sub">Vocabulary word bank — word lists, flashcards, matching &amp; fill-in-the-blank drills</div></div></div>
+        <div class="li-arrow">→</div>
+      </button>
       <button class="ledger-item" onclick="go('screen-tests')">
         <div class="li-left"><div class="li-icon">📐</div><div><div class="li-title">Quantitative Reasoning</div><div class="li-sub">Study guides &amp; section-adaptive practice tests — Algebra, Functions, Geometry, Counting, Data Interpretation &amp; more</div></div></div>
         <div class="li-arrow">→</div>
@@ -185,6 +185,23 @@ footer.credit{
         <div class="li-left"><div class="li-icon">🎯</div><div><div class="li-title">Full Practice Test</div><div class="li-sub">Verbal + Quant sections, with a timer</div></div></div>
         <span class="tag-soon">Coming Soon</span>
       </div>
+    </div>
+  </section>
+
+  <!-- ============ VERBAL REASONING ============ -->
+  <section class="screen" id="screen-verbal">
+    <div class="pagehead"><button class="back-link" onclick="go('screen-subject')">← Back</button></div>
+    <div class="eyebrow">📖 Verbal Reasoning</div>
+    <h2>Vocabulary Word Bank</h2>
+    <p class="lede">Build the vocabulary you need for Text Completion and Sentence Equivalence questions. 1,305 words sorted into 88 study sets — work through the word list, then practice with flashcards, matching, and fill-in-the-blank drills.</p>
+    <div class="note-box">Opens in a new tab as its own complete study tool — pick any set and choose word list, flashcards, matching, or fill-in-the-blank.</div>
+    <div class="ledger">
+
+      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-vocabulary.html')">
+        <div class="li-left"><div class="li-icon">📚</div><div><div class="li-title">CLC GRE Word Bank — Interactive Glossary</div><div class="li-sub">1,305 words · 88 study sets · word list, flashcards, matching &amp; fill-in-the-blank</div></div></div>
+        <div class="li-arrow">→</div>
+      </a>
+
     </div>
   </section>
 
@@ -251,11 +268,6 @@ footer.credit{
     <p class="lede" style="margin-bottom:16px;">Each test is section-adaptive with two timed sections, an on-screen calculator, and a full answer review afterward.</p>
     <div class="note-box">Each test opens in a new tab as its own complete testing environment — your timer and answers stay there until you finish.</div>
     <div class="ledger">
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-mock-test-1.html')">
-        <div class="li-left"><div class="li-icon">🎯</div><div><div class="li-title">Full Mock Test 1</div><div class="li-sub">Complete section-adaptive quant mock exam · 12 + 15 questions</div></div></div>
-        <span class="tag-diff">Mixed</span>
-      </a>
 
       <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-quantative-test-medium.html')">
         <div class="li-left"><div class="li-icon">📐</div><div><div class="li-title">Mixed Quant Adaptive Test</div><div class="li-sub">Number Properties · Combinatorics · Advanced Algebra · Functions · Geometry · 12 + 15 questions</div></div></div>

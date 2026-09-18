@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CLC GRE Word Bank — Interactive Glossary</title>
+<style>
+:root{
+  --cream:#fbf6e9;--paper:#fffdf7;--ink:#271b18;--soft:#6e5c55;
+  --red:#8c0028;--deep:#63001d;--gold:#b18a35;--gold-soft:#e6d3a3;--rule:#d9cbb4;
+  --green:#3f6e42;--wrong:#a13327;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:Arial,Helvetica,sans-serif;}
+main{max-width:1080px;margin:auto;padding:40px 24px 72px;}
+a{color:inherit;text-decoration:none;}
+header{text-align:center;border-bottom:3px double var(--gold);padding-bottom:26px;margin-bottom:30px;}
+.logo{width:60px;height:auto;}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-top:12px;}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:clamp(26px,4.6vw,42px);margin:12px 0 8px;line-height:1.1;}
+header p.desc{color:var(--soft);line-height:1.6;margin:0 auto;max-width:62ch;font-size:14.5px;}
+.stats{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-top:10px;}
+
+/* step indicator */
+.steps{display:flex;justify-content:center;gap:0;margin:0 0 34px;flex-wrap:wrap;}
+.step{display:flex;align-items:center;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--soft);}
+.step .dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--rule);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:700;font-size:12px;color:var(--soft);background:var(--paper);margin-right:8px;flex:none;}
+.step.done .dot{border-color:var(--gold);background:var(--gold);color:#fff;}
+.step.active .dot{border-color:var(--red);background:var(--red);color:#fff;}
+.step.active{color:var(--red);font-weight:700;}
+.step-line{width:34px;height:1px;background:var(--rule);margin:0 10px;align-self:center;}
+.step a{color:inherit;}
+.step.disabled{opacity:.5;pointer-events:none;}
+
+/* category grid (index page) */
+.section-label{font-family:Georgia,serif;font-style:italic;color:var(--deep);font-size:19px;margin:36px 0 16px;border-bottom:1px solid var(--rule);padding-bottom:8px;}
+.section-label:first-of-type{margin-top:6px;}
+.search{width:100%;padding:12px 16px;border:1px solid var(--rule);border-radius:3px;background:var(--paper);color:var(--ink);font-family:Arial,sans-serif;font-size:14px;margin-bottom:6px;}
+.search:focus{outline:2px solid var(--gold-soft);}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.category{padding:0;border:1px solid var(--rule);background:var(--paper);color:inherit;text-align:left;cursor:pointer;overflow:hidden;border-radius:3px;display:block;}
+.category:hover{border-color:var(--gold);transform:translateY(-2px);}
+.category .banner{width:100%;aspect-ratio:2.4/1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--deep),var(--red) 60%,var(--gold) 140%);}
+.category.general .banner{background:linear-gradient(135deg,#8a7a52,var(--gold) 55%,var(--gold-soft) 140%);}
+.category .banner .glyph{font-family:Georgia,serif;font-weight:700;font-size:52px;color:rgba(255,255,255,.5);}
+.copy{display:flex;flex-direction:column;padding:14px 16px 16px;}
+.copy .kicker{font-family:Georgia,serif;font-weight:700;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);}
+.copy strong{font-size:17px;line-height:1.25;margin:5px 0 8px;font-family:Georgia,serif;}
+.copy em{font-style:normal;font-size:10.5px;color:var(--soft);letter-spacing:.06em;text-transform:uppercase;}
+@media(max-width:760px){.grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){.grid{grid-template-columns:1fr;}}
+
+/* generic content header on inner pages */
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:20px;}
+.page-head h2{font-family:Georgia,serif;color:var(--deep);font-size:30px;margin:2px 0;}
+.page-head .count-badge{font-size:11.5px;color:var(--soft);text-transform:uppercase;letter-spacing:.06em;}
+.back-link{font-size:12.5px;color:var(--red);font-weight:700;letter-spacing:.03em;}
+.back-link:hover{text-decoration:underline;}
+
+/* word list grid */
+.words{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px;}
+.words article{border:1px solid var(--rule);border-left:3px solid var(--gold);background:var(--paper);padding:13px;}
+.words strong{display:block;font-size:17px;font-family:Georgia,serif;color:var(--deep);}
+.words .pos{font-size:10.5px;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-left:6px;font-family:Arial,sans-serif;font-weight:700;}
+.words span.def{display:block;font-size:12.5px;color:var(--soft);margin-top:5px;line-height:1.4;}
+@media(max-width:760px){.words{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){.words{grid-template-columns:1fr;}}
+
+/* nav footer buttons on exercise pages */
+.page-nav{display:flex;justify-content:space-between;align-items:center;margin-top:38px;padding-top:20px;border-top:1px solid var(--rule);gap:12px;flex-wrap:wrap;}
+.btn{font-family:Arial,sans-serif;font-weight:700;font-size:13px;letter-spacing:.03em;padding:11px 20px;border-radius:3px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);cursor:pointer;display:inline-block;}
+.btn:hover{border-color:var(--gold);}
+.btn.primary{background:var(--red);color:#fff;border-color:var(--red);}
+.btn.primary:hover{background:var(--deep);}
+.btn.ghost{border:none;background:none;color:var(--red);padding:11px 4px;}
+
+/* flashcards */
+.fc-wrap{display:flex;flex-direction:column;align-items:center;gap:18px;margin-top:6px;}
+.fc-card{width:100%;max-width:520px;height:230px;perspective:1200px;cursor:pointer;}
+.fc-inner{position:relative;width:100%;height:100%;transition:transform .5s cubic-bezier(.2,.7,.3,1);transform-style:preserve-3d;}
+.fc-card.flipped .fc-inner{transform:rotateY(180deg);}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:22px;border:1px solid var(--rule);box-shadow:0 6px 20px rgba(39,27,24,.08);}
+.fc-front{background:var(--paper);}
+.fc-front .fword{font-family:Georgia,serif;font-weight:700;font-size:36px;color:var(--deep);}
+.fc-front .fpos{color:var(--gold);font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin-top:8px;font-weight:700;}
+.fc-front .hint{position:absolute;bottom:14px;font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.06em;}
+.fc-back{background:var(--deep);color:var(--cream);transform:rotateY(180deg);}
+.fc-back .fdef{font-size:18px;line-height:1.4;font-family:Georgia,serif;}
+.fc-back .fword2{font-size:13px;color:var(--gold-soft);margin-top:14px;text-transform:uppercase;letter-spacing:.08em;}
+.fc-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;}
+.fc-progress{font-size:12px;color:var(--soft);text-transform:uppercase;letter-spacing:.06em;}
+
+/* matching */
+.match-wrap{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:10px;}
+@media(max-width:640px){.match-wrap{grid-template-columns:1fr;}}
+.match-col-title{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:10px;font-weight:700;}
+.match-item{padding:11px 13px;border:1px solid var(--rule);border-radius:3px;margin-bottom:8px;font-size:13.5px;cursor:pointer;background:var(--paper);line-height:1.35;}
+.match-item.word{font-family:Georgia,serif;font-weight:700;color:var(--deep);font-size:15px;}
+.match-item.selected{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-soft) inset;}
+.match-item.correct{background:rgba(63,110,66,.12);border-color:var(--green);cursor:default;}
+.match-item.wrong{animation:shake .3s;}
+.match-item.done{opacity:.4;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+.match-status{font-size:13px;color:var(--soft);margin-top:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+
+/* fill in the blank */
+.fib-wrap{max-width:640px;margin-top:6px;}
+.fib-q-count{font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+.fib-sentence{font-size:17px;line-height:1.6;background:var(--paper);border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:3px;padding:20px 22px;margin-bottom:18px;font-family:Georgia,serif;}
+.fib-sentence b.blank{color:var(--red);}
+.fib-options{display:flex;flex-direction:column;gap:9px;}
+.fib-opt{padding:11px 15px;border:1px solid var(--rule);border-radius:3px;cursor:pointer;font-size:14px;background:var(--paper);}
+.fib-opt:hover{border-color:var(--gold);}
+.fib-opt.correct{background:rgba(63,110,66,.15);border-color:var(--green);}
+.fib-opt.wrong{background:rgba(161,51,39,.13);border-color:var(--wrong);}
+.fib-opt.disabled{pointer-events:none;}
+.fib-footer{display:flex;justify-content:space-between;align-items:center;margin-top:18px;flex-wrap:wrap;gap:10px;}
+.score-pill{font-size:11.5px;padding:6px 13px;border-radius:20px;background:var(--paper);color:var(--ink);border:1px solid var(--rule);text-transform:uppercase;letter-spacing:.04em;}
+.done-banner{text-align:center;padding:36px 10px;}
+.done-banner .big{font-family:Georgia,serif;font-size:38px;color:var(--red);}
+.done-banner p{color:var(--soft);}
+
+footer.foot{text-align:center;border-top:1px solid var(--rule);margin-top:50px;padding-top:20px;color:var(--red);font-family:Georgia,serif;font-style:italic;font-size:14px;}
+
+.section-h{font-family:Georgia,serif;color:var(--deep);font-size:22px;margin:40px 0 14px;padding-top:26px;border-top:1px solid var(--rule);}
+.section-h:first-of-type{border-top:none;padding-top:0;margin-top:26px;}
+#detail{display:none;}
+#detail.open{display:block;}
+#grid.hidden{display:none;}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <img class="logo" src="data:image/png;base64,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" alt="CLC">
+  <div class="eyebrow">CLC Educational Institute · GRE Vocabulary Program</div>
+  <h1>GRE Word Bank</h1>
+  <p class="desc">1,305 words sorted into 75 meaning-based word families, plus 13 general review sets. Open a set to work through its word list, flashcards, matching game, and fill-in-the-blank drill.</p>
+  <div class="stats">1305 words &middot; 88 study sets</div>
+</header>
+
+<div id="grid">
+<input class="search" id="searchBox" type="text" placeholder="Search a set or a word…" oninput="filterCards(this.value)">
+
+<div class="section-label">Thematic Word Families</div>
+<div class="grid" id="themedGrid">
+<button class="category" type="button" data-idx="0">
+  <div class="banner"><span class="glyph">A</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Anger & Hostility</strong>
+    <em>30 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="1">
+  <div class="banner"><span class="glyph">E</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Extravagance, Waste & Excess</strong>
+    <em>26 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="2">
+  <div class="banner"><span class="glyph">D</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Disagreement, Conflict & Discord</strong>
+    <em>18 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="3">
+  <div class="banner"><span class="glyph">H</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Harm, Danger & Destruction</strong>
+    <em>18 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="4">
+  <div class="banner"><span class="glyph">V</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Vagueness, Ambiguity & Obscurity</strong>
+    <em>17 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="5">
+  <div class="banner"><span class="glyph">C</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Criticize, Scold & Condemn</strong>
+    <em>15 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="6">
+  <div class="banner"><span class="glyph">D</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Diligence, Persistence & Effort</strong>
+    <em>15 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="7">
+  <div class="banner"><span class="glyph">S</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Skill, Expertise & Proficiency</strong>
+    <em>14 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="8">
+  <div class="banner"><span class="glyph">D</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Difficulty & Ease</strong>
+    <em>13 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="9">
+  <div class="banner"><span class="glyph">I</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Insult, Contempt & Disrespect</strong>
+    <em>13 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="10">
+  <div class="banner"><span class="glyph">C</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Calm, Peaceful & Composed</strong>
+    <em>13 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="11">
+  <div class="banner"><span class="glyph">U</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Uncertainty & Doubt</strong>
+    <em>13 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="12">
+  <div class="banner"><span class="glyph">C</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Claiming & Asserting</strong>
+    <em>13 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="13">
+  <div class="banner"><span class="glyph">B</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Boldness, Courage & Fearlessness</strong>
+    <em>13 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="14">
+  <div class="banner"><span class="glyph">S</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Self-Control & Restraint</strong>
+    <em>12 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="15">
+  <div class="banner"><span class="glyph">H</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Happiness, Joy & Cheerfulness</strong>
+    <em>12 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="16">
+  <div class="banner"><span class="glyph">E</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Easing & Soothing Distress</strong>
+    <em>12 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="17">
+  <div class="banner"><span class="glyph">S</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Secrecy & Concealment</strong>
+    <em>11 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="18">
+  <div class="banner"><span class="glyph">S</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Strength & Reinforcement</strong>
+    <em>11 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="19">
+  <div class="banner"><span class="glyph">H</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Honesty & Sincerity</strong>
+    <em>11 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="20">
+  <div class="banner"><span class="glyph">C</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Complexity & Convolution</strong>
+    <em>11 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="21">
+  <div class="banner"><span class="glyph">P</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Praise & Approval</strong>
+    <em>10 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="22">
+  <div class="banner"><span class="glyph">W</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Wisdom, Intelligence & Insight</strong>
+    <em>10 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="23">
+  <div class="banner"><span class="glyph">I</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Increase, Growth & Intensification</strong>
+    <em>10 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="24">
+  <div class="banner"><span class="glyph">O</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Openness & the Obvious</strong>
+    <em>10 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="25">
+  <div class="banner"><span class="glyph">S</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Speed & Suddenness</strong>
+    <em>10 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="26">
+  <div class="banner"><span class="glyph">T</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Truth & Accuracy</strong>
+    <em>10 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="27">
+  <div class="banner"><span class="glyph">D</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Decrease, Reduction & Decline</strong>
+    <em>9 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="28">
+  <div class="banner"><span class="glyph">P</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Persuasion & Flattery</strong>
+    <em>9 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="29">
+  <div class="banner"><span class="glyph">R</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Relevance & Appropriateness</strong>
+    <em>9 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="30">
+  <div class="banner"><span class="glyph">H</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Harshness & Severity</strong>
+    <em>9 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="31">
+  <div class="banner"><span class="glyph">A</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Attack & Aggression</strong>
+    <em>9 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="32">
+  <div class="banner"><span class="glyph">C</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Change, Instability & Unpredictability</strong>
+    <em>9 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="33">
+  <div class="banner"><span class="glyph">P</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Preventing & Obstructing</strong>
+    <em>9 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="34">
+  <div class="banner"><span class="glyph">E</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Encouragement & Incitement</strong>
+    <em>8 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="35">
+  <div class="banner"><span class="glyph">B</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Benefit, Help & Favorable Outcomes</strong>
+    <em>8 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="36">
+  <div class="banner"><span class="glyph">S</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Sociability & Friendliness</strong>
+    <em>8 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="37">
+  <div class="banner"><span class="glyph">S</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Silent, Reserved & Shy</strong>
+    <em>8 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="38">
+  <div class="banner"><span class="glyph">D</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Deception, Trickery & Dishonesty</strong>
+    <em>8 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="39">
+  <div class="banner"><span class="glyph">B</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Boredom, Dullness & Monotony</strong>
+    <em>8 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="40">
+  <div class="banner"><span class="glyph">G</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Generosity & Charity</strong>
+    <em>8 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="41">
+  <div class="banner"><span class="glyph">L</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Laziness & Sluggishness</strong>
+    <em>8 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="42">
+  <div class="banner"><span class="glyph">E</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Excitement & Liveliness</strong>
+    <em>8 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="43">
+  <div class="banner"><span class="glyph">S</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Size: Small & Insignificant</strong>
+    <em>8 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="44">
+  <div class="banner"><span class="glyph">N</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Normalcy & Deviation</strong>
+    <em>7 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="45">
+  <div class="banner"><span class="glyph">U</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Ugliness & Unpleasantness</strong>
+    <em>7 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="46">
+  <div class="banner"><span class="glyph">A</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Arrogance & Superiority</strong>
+    <em>7 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="47">
+  <div class="banner"><span class="glyph">A</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Agreement, Harmony & Cooperation</strong>
+    <em>7 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="48">
+  <div class="banner"><span class="glyph">S</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Superficiality & Shallowness</strong>
+    <em>7 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="49">
+  <div class="banner"><span class="glyph">B</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Badness, Wickedness & Corruption</strong>
+    <em>7 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="50">
+  <div class="banner"><span class="glyph">N</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>New, Original & Innovative</strong>
+    <em>7 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="51">
+  <div class="banner"><span class="glyph">I</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Indifference & Apathy</strong>
+    <em>6 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="52">
+  <div class="banner"><span class="glyph">F</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Fear, Worry & Anxiety</strong>
+    <em>6 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="53">
+  <div class="banner"><span class="glyph">F</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Formality, Dignity & Sophistication</strong>
+    <em>6 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="54">
+  <div class="banner"><span class="glyph">G</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Government, Power & Authority</strong>
+    <em>6 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="55">
+  <div class="banner"><span class="glyph">C</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Confusion & Bewilderment</strong>
+    <em>6 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="56">
+  <div class="banner"><span class="glyph">S</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Sadness, Gloom & Grief</strong>
+    <em>6 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="57">
+  <div class="banner"><span class="glyph">S</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Stubbornness & Rigidity</strong>
+    <em>6 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="58">
+  <div class="banner"><span class="glyph">W</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Weakness & Weakening</strong>
+    <em>6 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="59">
+  <div class="banner"><span class="glyph">A</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Abundance & Plenty</strong>
+    <em>5 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="60">
+  <div class="banner"><span class="glyph">B</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Beauty & Attractiveness</strong>
+    <em>5 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="61">
+  <div class="banner"><span class="glyph">C</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Combining & Merging</strong>
+    <em>5 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="62">
+  <div class="banner"><span class="glyph">I</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Improving & Making Better</strong>
+    <em>5 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="63">
+  <div class="banner"><span class="glyph">S</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Simplicity & Plainness</strong>
+    <em>5 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="64">
+  <div class="banner"><span class="glyph">H</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Health, Vigor & Vitality</strong>
+    <em>5 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="65">
+  <div class="banner"><span class="glyph">C</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Conciseness & Brevity</strong>
+    <em>5 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="66">
+  <div class="banner"><span class="glyph">B</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Beginners, Novices & Newness</strong>
+    <em>5 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="67">
+  <div class="banner"><span class="glyph">S</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Scarcity & Lack</strong>
+    <em>5 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="68">
+  <div class="banner"><span class="glyph">S</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Slowness & Delay</strong>
+    <em>5 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="69">
+  <div class="banner"><span class="glyph">E</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Eloquence & Expressiveness</strong>
+    <em>5 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="70">
+  <div class="banner"><span class="glyph">F</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Following, Imitation & Conformity</strong>
+    <em>5 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="71">
+  <div class="banner"><span class="glyph">L</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Lasting, Permanent & Enduring</strong>
+    <em>5 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="72">
+  <div class="banner"><span class="glyph">D</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Disorder & Messiness</strong>
+    <em>5 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="73">
+  <div class="banner"><span class="glyph">C</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Clarity & Understandability</strong>
+    <em>5 words</em>
+  </div>
+</button>
+<button class="category" type="button" data-idx="74">
+  <div class="banner"><span class="glyph">P</span></div>
+  <div class="copy">
+    <span class="kicker">Word Family</span>
+    <strong>Payment, Debt & Money</strong>
+    <em>5 words</em>
+  </div>
+</button>
+</div>
+
+<div class="section-label">General Vocabulary</div>
+<div class="grid" id="generalGrid">
+<button class="category general" type="button" data-idx="75">
+  <div class="banner"><span class="glyph">§</span></div>
+  <div class="copy">
+    <span class="kicker">General Vocabulary</span>
+    <strong>General Vocabulary 1 (A–A)</strong>
+    <em>48 words</em>
+  </div>
+</button>
+<button class="category general" type="button" data-idx="76">
+  <div class="banner"><span class="glyph">§</span></div>
+  <div class="copy">
+    <span class="kicker">General Vocabulary</span>
+    <strong>General Vocabulary 2 (A–C)</strong>
+    <em>48 words</em>
+  </div>
+</button>
+<button class="category general" type="button" data-idx="77">
+  <div class="banner"><span class="glyph">§</span></div>
+  <div class="copy">
+    <span class="kicker">General Vocabulary</span>
+    <strong>General Vocabulary 3 (C–D)</strong>
+    <em>48 words</em>
+  </div>
+</button>
+<button class="category general" type="button" data-idx="78">
+  <div class="banner"><span class="glyph">§</span></div>
+  <div class="copy">
+    <span class="kicker">General Vocabulary</span>
+    <strong>General Vocabulary 4 (D–D)</strong>
+    <em>48 words</em>
+  </div>
+</button>
+<button class="category general" type="button" data-idx="79">
+  <div class="banner"><span class="glyph">§</span></div>
+  <div class="copy">
+    <span class="kicker">General Vocabulary</span>
+    <strong>General Vocabulary 5 (D–E)</strong>
+    <em>48 words</em>
+  </div>
+</button>
+<button class="category general" type="button" data-idx="80">
+  <div class="banner"><span class="glyph">§</span></div>
+  <div class="copy">
+    <span class="kicker">General Vocabulary</span>
+    <strong>General Vocabulary 6 (E–H)</strong>
+    <em>48 words</em>
+  </div>
+</button>
+<button class="category general" type="button" data-idx="81">
+  <div class="banner"><span class="glyph">§</span></div>
+  <div class="copy">
+    <span class="kicker">General Vocabulary</span>
+    <strong>General Vocabulary 7 (H–I)</strong>
+    <em>48 words</em>
+  </div>
+</button>
+<button class="category general" type="button" data-idx="82">
+  <div class="banner"><span class="glyph">§</span></div>
+  <div class="copy">
+    <span class="kicker">General Vocabulary</span>
+    <strong>General Vocabulary 8 (I–M)</strong>
+    <em>48 words</em>
+  </div>
+</button>
+<button class="category general" type="button" data-idx="83">
+  <div class="banner"><span class="glyph">§</span></div>
+  <div class="copy">
+    <span class="kicker">General Vocabulary</span>
+    <strong>General Vocabulary 9 (N–P)</strong>
+    <em>48 words</em>
+  </div>
+</button>
+<button class="category general" type="button" data-idx="84">
+  <div class="banner"><span class="glyph">§</span></div>
+  <div class="copy">
+    <span class="kicker">General Vocabulary</span>
+    <strong>General Vocabulary 10 (P–R)</strong>
+    <em>48 words</em>
+  </div>
+</button>
+<button class="category general" type="button" data-idx="85">
+  <div class="banner"><span class="glyph">§</span></div>
+  <div class="copy">
+    <span class="kicker">General Vocabulary</span>
+    <strong>General Vocabulary 11 (R–S)</strong>
+    <em>48 words</em>
+  </div>
+</button>
+<button class="category general" type="button" data-idx="86">
+  <div class="banner"><span class="glyph">§</span></div>
+  <div class="copy">
+    <span class="kicker">General Vocabulary</span>
+    <strong>General Vocabulary 12 (S–T)</strong>
+    <em>48 words</em>
+  </div>
+</button>
+<button class="category general" type="button" data-idx="87">
+  <div class="banner"><span class="glyph">§</span></div>
+  <div class="copy">
+    <span class="kicker">General Vocabulary</span>
+    <strong>General Vocabulary 13 (T–Z)</strong>
+    <em>38 words</em>
+  </div>
+</button>
+</div>
+</div>
+
+<div id="detail">
+  <button class="back-link" id="backBtn" style="border:none;background:none;cursor:pointer;font:inherit;">← All categories</button>
+  <div class="page-head">
+    <div>
+      <h2 id="catTitle"></h2>
+      <div class="count-badge" id="catCount"></div>
+    </div>
+  </div>
+
+  <h3 class="section-h">Word List</h3>
+  <div class="words" id="wordsGrid"></div>
+
+  <h3 class="section-h">Flashcards</h3>
+  <div class="fc-wrap">
+    <div class="fc-card" id="fcCard">
+      <div class="fc-inner">
+        <div class="fc-face fc-front">
+          <div class="fword" id="fcWord"></div>
+          <div class="fpos" id="fcPos"></div>
+          <div class="hint">tap to flip</div>
+        </div>
+        <div class="fc-face fc-back">
+          <div class="fdef" id="fcDef"></div>
+          <div class="fword2" id="fcWord2"></div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-controls">
+      <button class="btn" id="fcPrev">← Prev</button>
+      <button class="btn primary" id="fcFlip">Flip</button>
+      <button class="btn" id="fcNext">Next →</button>
+      <button class="btn" id="fcShuffle">Shuffle</button>
+    </div>
+    <div class="fc-progress" id="fcProgress"></div>
+  </div>
+
+  <h3 class="section-h">Matching</h3>
+  <div class="match-wrap">
+    <div>
+      <div class="match-col-title">Words</div>
+      <div id="wordCol"></div>
+    </div>
+    <div>
+      <div class="match-col-title">Definitions</div>
+      <div id="defCol"></div>
+    </div>
+  </div>
+  <div class="match-status">
+    <span id="matchStatus">Match each word to its definition.</span>
+    <button class="btn" id="newSet">New set</button>
+  </div>
+
+  <h3 class="section-h">Fill in the Blank</h3>
+  <div id="fibHost"></div>
+</div>
+</main>
+<footer class="foot">Chalandri, Athens &middot; CLC Educational Institute</footer>
+
+<script>
+const GROUPS = [{"category": "Anger & Hostility", "words": [{"w": "abhor", "p": "v", "d": "regard with disgust and hatred"}, {"w": "animus", "p": "n", "d": "hostility, ill feeling"}, {"w": "bridle", "p": "v", "d": "restrain, or show anger/resentment"}, {"w": "choleric", "p": "adj", "d": "easily angered, bad-tempered"}, {"w": "disarming", "p": "adj", "d": "removing hostility, charmingly persuasive"}, {"w": "distort", "p": "v", "d": "twist out of shape, misrepresent"}, {"w": "enmity", "p": "n", "d": "deep-seated hostility"}, {"w": "exasperated", "p": "adj", "d": "intensely irritated"}, {"w": "grate", "p": "v", "d": "make a harsh, irritating sound"}, {"w": "incense", "p": "v", "d": "make very angry"}, {"w": "indignant", "p": "adj", "d": "angry at perceived unfair treatment"}, {"w": "invidious", "p": "adj", "d": "causing resentment, unfairly discriminating"}, {"w": "irascibility", "p": "n", "d": "tendency to become easily angered"}, {"w": "irascible", "p": "adj", "d": "easily angered, quick-tempered"}, {"w": "irate", "p": "adj", "d": "extremely angry"}, {"w": "ire", "p": "n", "d": "intense anger"}, {"w": "irksome", "p": "adj", "d": "annoying, tediously irritating"}, {"w": "loathe", "p": "v", "d": "feel intense dislike, disgust"}, {"w": "nettlesome", "p": "adj", "d": "irritating, troublesome"}, {"w": "omnipresent", "p": "adj", "d": "present everywhere at once"}, {"w": "perilous", "p": "adj", "d": "full of danger"}, {"w": "placate", "p": "v", "d": "make someone less angry"}, {"w": "precipitous", "p": "adj", "d": "dangerously steep; hastily done"}, {"w": "suspect", "p": "adj", "d": "possibly false or dangerous"}, {"w": "temper", "p": "v", "d": "moderate or soften; a fit of anger"}, {"w": "tirade", "p": "n", "d": "a long, angry critical speech"}, {"w": "ubiquitous", "p": "adj", "d": "present everywhere"}, {"w": "vigilant", "p": "adj", "d": "watchful, alert to danger"}, {"w": "virulent", "p": "adj", "d": "extremely harmful, bitterly hostile"}, {"w": "wary", "p": "adj", "d": "cautious, watchful of danger"}]}, {"category": "Extravagance, Waste & Excess", "words": [{"w": "baroque", "p": "adj", "d": "highly ornate, extravagant style"}, {"w": "chauvinistic", "p": "adj", "d": "excessively loyal to one's group"}, {"w": "coddle", "p": "v", "d": "treat with excessive care"}, {"w": "decadent", "p": "adj", "d": "excessively self-indulgent in luxury"}, {"w": "exorbitant", "p": "adj", "d": "excessive, unreasonably high"}, {"w": "finicky", "p": "adj", "d": "excessively fussy about details"}, {"w": "grovel", "p": "v", "d": "act excessively humble, servile"}, {"w": "histrionic", "p": "adj", "d": "excessively theatrical or dramatic"}, {"w": "intemperance", "p": "n", "d": "excessive indulgence in appetites"}, {"w": "lavish", "p": "adj", "d": "extravagantly abundant"}, {"w": "mawkish", "p": "adj", "d": "excessively sentimental"}, {"w": "obsequious", "p": "adj", "d": "excessively eager to please"}, {"w": "pedantic", "p": "adj", "d": "excessively concerned with minor details"}, {"w": "pedantry", "p": "n", "d": "excessive concern with minor details"}, {"w": "plethora", "p": "n", "d": "excess, overabundance of something"}, {"w": "precipitance", "p": "n", "d": "excessive haste, rash suddenness"}, {"w": "prodigal", "p": "adj", "d": "wastefully extravagant, spending recklessly"}, {"w": "profligacy", "p": "n", "d": "reckless extravagance, wasteful spending"}, {"w": "profligate", "p": "adj", "d": "recklessly wasteful, licentious"}, {"w": "prurient", "p": "adj", "d": "excessively interested in sexual matters"}, {"w": "rapacious", "p": "adj", "d": "excessively greedy, grasping"}, {"w": "redundant", "p": "adj", "d": "excessively wordy, more than needed"}, {"w": "sentimental", "p": "adj", "d": "prone to excessive tender feeling"}, {"w": "subservient", "p": "adj", "d": "excessively willing to serve others"}, {"w": "surfeit", "p": "n", "d": "excessive amount of something"}, {"w": "voluble", "p": "adj", "d": "talking fluently, excessively wordy"}]}, {"category": "Disagreement, Conflict & Discord", "words": [{"w": "antagonism", "p": "n", "d": "hostility, active opposition"}, {"w": "cacophonous", "p": "adj", "d": "harshly discordant in sound"}, {"w": "cacophony", "p": "n", "d": "harsh, discordant mixture of sounds"}, {"w": "compromise", "p": "v", "d": "settle by mutual concession; a mutual settlement of a dispute"}, {"w": "contentious", "p": "adj", "d": "causing controversy, likely to argue"}, {"w": "dissension", "p": "n", "d": "disagreement causing conflict"}, {"w": "factious", "p": "adj", "d": "marked by conflict between groups"}, {"w": "fracas", "p": "n", "d": "a noisy quarrel or disturbance"}, {"w": "fractious", "p": "adj", "d": "irritable and quarrelsome"}, {"w": "gainsay", "p": "v", "d": "deny, dispute, contradict"}, {"w": "impugn", "p": "v", "d": "dispute the truth/honesty of"}, {"w": "incendiary", "p": "adj", "d": "tending to stir up conflict"}, {"w": "incontrovertible", "p": "adj", "d": "undeniable, not open to dispute"}, {"w": "mediate", "p": "v", "d": "intervene to resolve a dispute"}, {"w": "polemical", "p": "adj", "d": "strongly critical, controversial"}, {"w": "pugnacious", "p": "adj", "d": "eager to fight, quarrelsome"}, {"w": "strife", "p": "n", "d": "bitter conflict or struggle"}, {"w": "turbulent", "p": "adj", "d": "characterized by conflict, disorder"}]}, {"category": "Harm, Danger & Destruction", "words": [{"w": "aspersion", "p": "n", "d": "a false, damaging remark about someone"}, {"w": "baleful", "p": "adj", "d": "harmful or malignant in intent"}, {"w": "benign", "p": "adj", "d": "gentle, kindly, not harmful"}, {"w": "calumny", "p": "n", "d": "a false, damaging statement"}, {"w": "conflagration", "p": "n", "d": "a large, destructive fire"}, {"w": "deleterious", "p": "adj", "d": "harmful, damaging in effect"}, {"w": "heady", "p": "adj", "d": "strongly exhilarating, intoxicating"}, {"w": "impair", "p": "v", "d": "weaken or damage"}, {"w": "innocuous", "p": "adj", "d": "harmless, not offensive"}, {"w": "invasive", "p": "adj", "d": "tending to intrude, spread destructively"}, {"w": "jeopardize", "p": "v", "d": "put at risk of harm"}, {"w": "malevolent", "p": "adj", "d": "having harmful intent"}, {"w": "malign", "p": "v", "d": "speak harmful lies about"}, {"w": "noxious", "p": "adj", "d": "harmful or poisonous"}, {"w": "pernicious", "p": "adj", "d": "harmful in a gradual, subtle way"}, {"w": "perpetrate", "p": "v", "d": "carry out a harmful act"}, {"w": "ravage", "p": "v", "d": "cause severe damage to"}, {"w": "slander", "p": "n", "d": "a false spoken statement damaging reputation"}]}, {"category": "Vagueness, Ambiguity & Obscurity", "words": [{"w": "arcane", "p": "adj", "d": "mysterious, understood by few"}, {"w": "cryptic", "p": "adj", "d": "having hidden meaning, mysterious"}, {"w": "enigma", "p": "n", "d": "a puzzling, mysterious person or thing"}, {"w": "enigmatic", "p": "adj", "d": "mysterious, difficult to interpret"}, {"w": "equivocal", "p": "adj", "d": "ambiguous, open to interpretation"}, {"w": "equivocate", "p": "v", "d": "use ambiguous language, mislead"}, {"w": "equivocation", "p": "n", "d": "use of ambiguous, evasive language"}, {"w": "esoteric", "p": "adj", "d": "understood by only a few"}, {"w": "indeterminate", "p": "adj", "d": "vague, not precisely fixed"}, {"w": "nebulous", "p": "adj", "d": "vague, unclear, ill-defined"}, {"w": "numinous", "p": "adj", "d": "having a spiritual, mysterious quality"}, {"w": "obfuscate", "p": "v", "d": "make deliberately unclear"}, {"w": "obfuscation", "p": "n", "d": "deliberate act of confusing, obscuring"}, {"w": "obscure", "p": "adj", "d": "not known or discovered; to make unclear"}, {"w": "recondite", "p": "adj", "d": "obscure, little known, esoteric"}, {"w": "turbid", "p": "adj", "d": "cloudy, muddled, unclear"}, {"w": "vague", "p": "adj", "d": "unclear, lacking precise meaning"}]}, {"category": "Criticize, Scold & Condemn", "words": [{"w": "admonish", "p": "v", "d": "warn or reprimand firmly"}, {"w": "berate", "p": "v", "d": "scold or criticize angrily"}, {"w": "captious", "p": "adj", "d": "fault-finding, raising petty objections"}, {"w": "castigate", "p": "v", "d": "reprimand someone severely"}, {"w": "chastise", "p": "v", "d": "severely rebuke or reprimand"}, {"w": "decry", "p": "v", "d": "publicly denounce"}, {"w": "denounce", "p": "v", "d": "publicly condemn"}, {"w": "denunciation", "p": "n", "d": "public condemnation or accusation"}, {"w": "excoriate", "p": "v", "d": "criticize severely"}, {"w": "fulminate", "p": "v", "d": "issue loud condemnation, explode"}, {"w": "lambaste", "p": "v", "d": "criticize harshly"}, {"w": "satirical", "p": "adj", "d": "using humor to criticize vice"}, {"w": "scathing", "p": "adj", "d": "harshly critical, severely condemning"}, {"w": "upbraid", "p": "v", "d": "criticize sharply, scold"}, {"w": "vituperative", "p": "adj", "d": "harshly, bitterly condemning"}]}, {"category": "Diligence, Persistence & Effort", "words": [{"w": "assiduous", "p": "adj", "d": "diligent, hardworking, persistent"}, {"w": "dogged", "p": "adj", "d": "persistent, refusing to give up"}, {"w": "grouse", "p": "v", "d": "complain or grumble persistently"}, {"w": "indefatigable", "p": "adj", "d": "tireless, persisting without fatigue"}, {"w": "indolence", "p": "n", "d": "laziness, avoidance of effort"}, {"w": "indolent", "p": "adj", "d": "lazy, avoiding activity or effort"}, {"w": "industrious", "p": "adj", "d": "hardworking, diligent"}, {"w": "onerous", "p": "adj", "d": "burdensome, involving great effort"}, {"w": "perfunctory", "p": "adj", "d": "minimal effort, done routinely"}, {"w": "plodding", "p": "adj", "d": "slow, laborious, and dull"}, {"w": "ponderous", "p": "adj", "d": "heavy, unwieldy, laboriously dull"}, {"w": "scrupulous", "p": "adj", "d": "extremely diligent, morally careful"}, {"w": "scrupulousness", "p": "n", "d": "extreme care and moral diligence"}, {"w": "sedulous", "p": "adj", "d": "diligent, persevering in effort"}, {"w": "tenacious", "p": "adj", "d": "persistent, holding firmly"}]}, {"category": "Skill, Expertise & Proficiency", "words": [{"w": "adept", "p": "adj", "d": "very skilled, highly proficient"}, {"w": "adroit", "p": "adj", "d": "skillful, clever with hands/mind"}, {"w": "connoisseur", "p": "n", "d": "expert judge of taste"}, {"w": "cunning", "p": "adj", "d": "skilled in achieving ends by deceit; skill in deceiving others"}, {"w": "deft", "p": "adj", "d": "skillfully quick in movement"}, {"w": "fallible", "p": "adj", "d": "capable of making mistakes"}, {"w": "feasible", "p": "adj", "d": "possible, capable of being done"}, {"w": "finesse", "p": "n", "d": "skillful, adroit handling of a situation"}, {"w": "futile", "p": "adj", "d": "pointless, incapable of success"}, {"w": "permeable", "p": "adj", "d": "capable of being penetrated"}, {"w": "proficient", "p": "adj", "d": "competent, skilled at something"}, {"w": "prowess", "p": "n", "d": "skill or expertise in an activity"}, {"w": "viable", "p": "adj", "d": "capable of working successfully"}, {"w": "wily", "p": "adj", "d": "skilled at deception, crafty"}]}, {"category": "Difficulty & Ease", "words": [{"w": "abstruse", "p": "adj", "d": "difficult to understand, obscure"}, {"w": "arduous", "p": "adj", "d": "difficult, requiring great effort"}, {"w": "discomfit", "p": "v", "d": "make uneasy, disconcert"}, {"w": "entrenched", "p": "adj", "d": "firmly established, hard to change"}, {"w": "fastidious", "p": "adj", "d": "very attentive to detail, hard to please"}, {"w": "hinder", "p": "v", "d": "create difficulty, cause delay"}, {"w": "inscrutability", "p": "n", "d": "quality of being hard to interpret"}, {"w": "obstreperous", "p": "adj", "d": "noisy and hard to control"}, {"w": "opaque", "p": "adj", "d": "hard to see through or understand"}, {"w": "perseverance", "p": "n", "d": "persistence despite difficulty"}, {"w": "recourse", "p": "n", "d": "a source of help in difficulty"}, {"w": "surmount", "p": "v", "d": "overcome a difficulty or obstacle"}, {"w": "wayward", "p": "adj", "d": "difficult to control, willful"}]}, {"category": "Insult, Contempt & Disrespect", "words": [{"w": "affront", "p": "n", "d": "an open insult or offense"}, {"w": "deride", "p": "v", "d": "express contempt for, mock"}, {"w": "derision", "p": "n", "d": "ridicule, contemptuous mockery"}, {"w": "dismissive", "p": "adj", "d": "showing disregard, contemptuous rejection"}, {"w": "gibe", "p": "v", "d": "mock, taunt with sarcasm; a mocking, sarcastic remark"}, {"w": "haughty", "p": "adj", "d": "arrogantly superior, disdainful"}, {"w": "impertinent", "p": "adj", "d": "not showing proper respect, rude"}, {"w": "impudent", "p": "adj", "d": "impertinent, not showing respect"}, {"w": "insolent", "p": "adj", "d": "rudely disrespectful, arrogant"}, {"w": "lampoon", "p": "v", "d": "publicly mock or ridicule"}, {"w": "scorn", "p": "n", "d": "open contempt for something; to feel or show contempt"}, {"w": "scurvy", "p": "adj", "d": "contemptible, despicable, mean"}, {"w": "spurn", "p": "v", "d": "reject with disdain or contempt"}]}, {"category": "Calm, Peaceful & Composed", "words": [{"w": "allayed", "p": "v", "d": "eased, calmed a fear/concern"}, {"w": "equanimity", "p": "n", "d": "calmness, composure under pressure"}, {"w": "halcyon", "p": "adj", "d": "calm, peaceful, prosperous"}, {"w": "imperturbability", "p": "n", "d": "calmness, not easily disturbed"}, {"w": "imperturbable", "p": "adj", "d": "calm, unable to be upset"}, {"w": "pacify", "p": "v", "d": "calm, bring peace to"}, {"w": "placid", "p": "adj", "d": "calm, not easily upset"}, {"w": "poise", "p": "n", "d": "composure and dignity of manner"}, {"w": "quiescence", "p": "n", "d": "a state of tranquil inactivity"}, {"w": "sangfroid", "p": "n", "d": "composure under difficult circumstances"}, {"w": "serene", "p": "adj", "d": "calm, peaceful, untroubled"}, {"w": "stolid", "p": "adj", "d": "calm, showing little emotion"}, {"w": "tranquil", "p": "adj", "d": "calm, peaceful, undisturbed"}]}, {"category": "Uncertainty & Doubt", "words": [{"w": "ambivalent", "p": "adj", "d": "having mixed feelings, uncertain"}, {"w": "apocryphal", "p": "adj", "d": "of doubtful authenticity, widely circulated"}, {"w": "dispelled", "p": "v", "d": "made a doubt/feeling disappear"}, {"w": "dubious", "p": "adj", "d": "doubtful, of uncertain validity"}, {"w": "irresolute", "p": "adj", "d": "uncertain, lacking decisiveness"}, {"w": "precarious", "p": "adj", "d": "unstable, dangerously uncertain"}, {"w": "quandary", "p": "n", "d": "a state of perplexity, difficult choice"}, {"w": "sceptical", "p": "adj", "d": "doubting, questioning claims"}, {"w": "scepticism", "p": "n", "d": "doubting attitude, questioning claims"}, {"w": "skeptical", "p": "adj", "d": "doubting, questioning claims"}, {"w": "tentative", "p": "adj", "d": "uncertain, provisional, not confirmed"}, {"w": "unequivocal", "p": "adj", "d": "clear, leaving no doubt"}, {"w": "vacillate", "p": "v", "d": "waver indecisively between choices"}]}, {"category": "Claiming & Asserting", "words": [{"w": "antithesis", "p": "n", "d": "the direct opposite"}, {"w": "aver", "p": "v", "d": "assert positively, state as true"}, {"w": "canonize", "p": "v", "d": "officially declare a saint"}, {"w": "contend", "p": "v", "d": "assert; struggle to deal with"}, {"w": "depose", "p": "v", "d": "remove from a position of power"}, {"w": "dictate", "p": "v", "d": "state with authority; control"}, {"w": "dogmatic", "p": "adj", "d": "assertively laying down principles as true"}, {"w": "homogeneous", "p": "adj", "d": "uniform in composition, same kind"}, {"w": "marginalize", "p": "v", "d": "push to a position of powerlessness"}, {"w": "officious", "p": "adj", "d": "annoyingly domineering, assertive of authority"}, {"w": "oust", "p": "v", "d": "force out of a position"}, {"w": "relegate", "p": "v", "d": "assign to a lower position"}, {"w": "sinecure", "p": "n", "d": "a paid position requiring little work"}]}, {"category": "Boldness, Courage & Fearlessness", "words": [{"w": "audacious", "p": "adj", "d": "bold, daringly fearless"}, {"w": "bravado", "p": "n", "d": "bold display meant to impress"}, {"w": "chivalrous", "p": "adj", "d": "courteous, gallant especially to women"}, {"w": "daunting", "p": "adj", "d": "intimidating, discouraging"}, {"w": "deterred", "p": "v", "d": "discouraged from acting"}, {"w": "effrontery", "p": "n", "d": "shameless boldness, insolence"}, {"w": "emboldened", "p": "v", "d": "made more confident, bolder"}, {"w": "fortitude", "p": "n", "d": "courage in facing pain or adversity"}, {"w": "intrepid", "p": "adj", "d": "fearless, brave, adventurous"}, {"w": "plucky", "p": "adj", "d": "brave, showing determined courage"}, {"w": "temerity", "p": "n", "d": "reckless boldness, audacity"}, {"w": "timidity", "p": "n", "d": "lack of courage, shyness"}, {"w": "valor", "p": "n", "d": "great courage, especially in battle"}]}, {"category": "Self-Control & Restraint", "words": [{"w": "abstain", "p": "v", "d": "hold oneself back, refrain"}, {"w": "ascetic", "p": "adj", "d": "practicing strict self-denial"}, {"w": "curb", "p": "v", "d": "restrain, keep in check"}, {"w": "damp", "p": "v", "d": "deaden energy, stifle, restrain"}, {"w": "eschew", "p": "v", "d": "deliberately avoid, abstain from"}, {"w": "extravagant", "p": "adj", "d": "excessive, lacking restraint"}, {"w": "forbear", "p": "v", "d": "refrain from, hold back"}, {"w": "inhibit", "p": "v", "d": "prevent, prohibit, restrain"}, {"w": "libertine", "p": "n", "d": "one unrestrained by convention; unrestrained, especially sexually"}, {"w": "manacle", "p": "v", "d": "restrain, confine"}, {"w": "muted", "p": "adj", "d": "subdued, restrained, softened"}, {"w": "teetotaler", "p": "n", "d": "one who abstains totally from alcohol"}]}, {"category": "Happiness, Joy & Cheerfulness", "words": [{"w": "alacrity", "p": "n", "d": "eager, cheerful readiness"}, {"w": "blithe", "p": "adj", "d": "lighthearted, carefree, joyous"}, {"w": "buoyant", "p": "adj", "d": "cheerful, optimistic; able to float"}, {"w": "ebullience", "p": "n", "d": "lively enthusiasm, exuberance"}, {"w": "ebullient", "p": "adj", "d": "cheerful, full of energy"}, {"w": "elated", "p": "adj", "d": "extremely happy and excited"}, {"w": "enchant", "p": "v", "d": "fill with delight, bewitch"}, {"w": "exhilarating", "p": "adj", "d": "making one feel very happy"}, {"w": "jocund", "p": "adj", "d": "cheerful and lighthearted"}, {"w": "kindred", "p": "adj", "d": "similar in nature, related"}, {"w": "relish", "p": "v", "d": "enjoy greatly"}, {"w": "sanguine", "p": "adj", "d": "optimistic, cheerfully confident"}]}, {"category": "Easing & Soothing Distress", "words": [{"w": "cathartic", "p": "adj", "d": "providing emotional release"}, {"w": "complaisant", "p": "adj", "d": "eager to please, obliging"}, {"w": "conciliatory", "p": "adj", "d": "intended to appease, pacify"}, {"w": "console", "p": "v", "d": "comfort, ease grief or suffering"}, {"w": "eulogy", "p": "n", "d": "a speech praising someone, often deceased"}, {"w": "haven", "p": "n", "d": "a place of safety or comfort"}, {"w": "implacable", "p": "adj", "d": "unable to be appeased"}, {"w": "lull", "p": "v", "d": "calm, soothe into false security"}, {"w": "mollify", "p": "v", "d": "soothe or calm someone's anger"}, {"w": "palliative", "p": "adj", "d": "relieving symptoms without curing; something that eases without curing"}, {"w": "propitiate", "p": "v", "d": "gain favor, appease"}, {"w": "relinquish", "p": "v", "d": "give up, release control of"}]}, {"category": "Secrecy & Concealment", "words": [{"w": "abscond", "p": "v", "d": "flee secretly to avoid detection"}, {"w": "clandestine", "p": "adj", "d": "kept secret, especially illicitly"}, {"w": "cloak", "p": "v", "d": "conceal, cover something; garment used to conceal"}, {"w": "conspire", "p": "v", "d": "secretly plan an unlawful act"}, {"w": "covert", "p": "adj", "d": "secret, not openly shown"}, {"w": "dissemble", "p": "v", "d": "conceal true feelings/intentions"}, {"w": "furtive", "p": "adj", "d": "secretive, avoiding notice"}, {"w": "occult", "p": "adj", "d": "secret, supernatural, hidden from view"}, {"w": "overt", "p": "adj", "d": "done openly, not secret"}, {"w": "surreptitious", "p": "adj", "d": "secret, done without approval"}, {"w": "ulterior", "p": "adj", "d": "hidden, beyond what is stated"}]}, {"category": "Strength & Reinforcement", "words": [{"w": "amplify", "p": "v", "d": "increase in strength or volume"}, {"w": "bolster", "p": "v", "d": "support, uphold, strengthen"}, {"w": "buttress", "p": "v", "d": "support, strengthen an argument/structure"}, {"w": "consolidated", "p": "v", "d": "combined into one, strengthened"}, {"w": "debilitating", "p": "adj", "d": "weakening, sapping strength"}, {"w": "falter", "p": "v", "d": "lose strength, hesitate"}, {"w": "feeble", "p": "adj", "d": "lacking physical or moral strength"}, {"w": "invigorate", "p": "v", "d": "give strength or energy to"}, {"w": "puissance", "p": "n", "d": "power, might, great strength"}, {"w": "reinforced", "p": "v", "d": "strengthened, supported further"}, {"w": "verve", "p": "n", "d": "vigorous enthusiasm, energy"}]}, {"category": "Honesty & Sincerity", "words": [{"w": "authentic", "p": "adj", "d": "genuine, real, not copied"}, {"w": "bogus", "p": "adj", "d": "fake, not genuine"}, {"w": "candid", "p": "adj", "d": "honest, straightforward, frank"}, {"w": "candour", "p": "n", "d": "honesty, openness in expression"}, {"w": "disingenuous", "p": "adj", "d": "insincere, not candid"}, {"w": "forthright", "p": "adj", "d": "direct, straightforward, honest"}, {"w": "improbity", "p": "n", "d": "dishonesty, lack of moral integrity"}, {"w": "probity", "p": "n", "d": "honesty, strong moral integrity"}, {"w": "sham", "p": "n", "d": "something false presented as genuine"}, {"w": "spurious", "p": "adj", "d": "false, not genuine"}, {"w": "veracious", "p": "adj", "d": "truthful, habitually honest"}]}, {"category": "Complexity & Convolution", "words": [{"w": "byzantine", "p": "adj", "d": "excessively complicated, convoluted"}, {"w": "convoluted", "p": "adj", "d": "complex, intricate, hard to follow"}, {"w": "disentangle", "p": "v", "d": "free from complications, unravel"}, {"w": "florid", "p": "adj", "d": "excessively ornate, elaborately embellished"}, {"w": "grandiloquent", "p": "adj", "d": "pompous, overly elaborate speech"}, {"w": "imbroglio", "p": "n", "d": "a confusing, complicated situation"}, {"w": "intricate", "p": "adj", "d": "highly detailed, complex in structure"}, {"w": "ornate", "p": "adj", "d": "elaborately decorated"}, {"w": "ramification", "p": "n", "d": "a complex, often unwelcome consequence"}, {"w": "simplistic", "p": "adj", "d": "oversimplified, ignoring complexity"}, {"w": "tortuous", "p": "adj", "d": "full of twists, excessively complex"}]}, {"category": "Praise & Approval", "words": [{"w": "acclaim", "p": "v", "d": "praise enthusiastically and publicly; enthusiastic public praise"}, {"w": "approbation", "p": "n", "d": "formal approval or praise"}, {"w": "censure", "p": "v", "d": "express severe formal disapproval; a formal expression of disapproval"}, {"w": "countenance", "p": "v", "d": "approve or tolerate; a person's facial expression"}, {"w": "deprecate", "p": "v", "d": "express disapproval of"}, {"w": "laudable", "p": "adj", "d": "deserving praise, commendable"}, {"w": "laudatory", "p": "adj", "d": "expressing praise, complimentary"}, {"w": "reproach", "p": "v", "d": "express disapproval or disappointment; an expression of disapproval"}, {"w": "rhapsodic", "p": "adj", "d": "enthusiastically expressive, ecstatic"}, {"w": "tout", "p": "v", "d": "publicly praise or promote"}]}, {"category": "Wisdom, Intelligence & Insight", "words": [{"w": "acumen", "p": "n", "d": "sharp judgment and decision-making skill"}, {"w": "astute", "p": "adj", "d": "shrewd, perceptive judgment"}, {"w": "canny", "p": "adj", "d": "shrewd, cautious and clever"}, {"w": "erudite", "p": "adj", "d": "scholarly, deeply knowledgeable"}, {"w": "incisive", "p": "adj", "d": "sharply insightful, direct"}, {"w": "judicious", "p": "adj", "d": "having good judgment, sensible"}, {"w": "perspicacious", "p": "adj", "d": "having keen insight/judgment"}, {"w": "shrewd", "p": "adj", "d": "having sharp judgment, cleverly practical"}, {"w": "trenchant", "p": "adj", "d": "sharp, incisive, forcefully expressed"}, {"w": "vacuous", "p": "adj", "d": "lacking thought or intelligence"}]}, {"category": "Increase, Growth & Intensification", "words": [{"w": "aggrandize", "p": "v", "d": "increase in power or prestige"}, {"w": "amplified", "p": "v", "d": "increased in intensity"}, {"w": "burgeon", "p": "v", "d": "grow or increase rapidly"}, {"w": "crescendo", "p": "n", "d": "a gradual increase in intensity"}, {"w": "dilate", "p": "v", "d": "expand, widen; speak at length"}, {"w": "distend", "p": "v", "d": "swell or cause to swell"}, {"w": "distended", "p": "adj", "d": "swollen or expanded from pressure"}, {"w": "escalate", "p": "v", "d": "increase rapidly in intensity"}, {"w": "heightened", "p": "v", "d": "increased, made more intense"}, {"w": "proliferate", "p": "v", "d": "increase rapidly in number"}]}, {"category": "Openness & the Obvious", "words": [{"w": "axiom", "p": "n", "d": "self-evident truth, accepted principle"}, {"w": "axiomatic", "p": "adj", "d": "self-evident, unquestionably true"}, {"w": "conspicuous", "p": "adj", "d": "clearly visible, standing out"}, {"w": "flagrant", "p": "adj", "d": "conspicuously and shockingly bad"}, {"w": "flout", "p": "v", "d": "openly disregard a rule"}, {"w": "glaring", "p": "adj", "d": "highly noticeable, obvious and conspicuous"}, {"w": "manifest", "p": "adj", "d": "clear, obvious to see; to display or show clearly"}, {"w": "palpable", "p": "adj", "d": "obvious; able to be felt"}, {"w": "patent", "p": "adj", "d": "obvious, readily apparent"}, {"w": "transparent", "p": "adj", "d": "easily seen through, obvious"}]}, {"category": "Speed & Suddenness", "words": [{"w": "barrage", "p": "n", "d": "an overwhelming, rapid outpouring"}, {"w": "cataclysmic", "p": "adj", "d": "causing sudden, violent upheaval"}, {"w": "debacle", "p": "n", "d": "a sudden, complete disaster or failure"}, {"w": "evanescent", "p": "adj", "d": "quickly fading, vanishing soon"}, {"w": "expeditious", "p": "adj", "d": "done quickly and efficiently"}, {"w": "incursion", "p": "n", "d": "a sudden invasion or raid"}, {"w": "jabber", "p": "v", "d": "talk rapidly and incoherently"}, {"w": "resilient", "p": "adj", "d": "able to recover quickly"}, {"w": "sever", "p": "v", "d": "divide by cutting; end abruptly"}, {"w": "slapdash", "p": "adj", "d": "hasty and careless"}]}, {"category": "Truth & Accuracy", "words": [{"w": "discount", "p": "v", "d": "disregard as inaccurate/unimportant"}, {"w": "documentary", "p": "adj", "d": "consisting of factual records"}, {"w": "fidelity", "p": "n", "d": "faithfulness, loyalty, accuracy"}, {"w": "insight", "p": "n", "d": "deep, accurate understanding"}, {"w": "misnomer", "p": "n", "d": "a wrong or inaccurate name"}, {"w": "precise", "p": "adj", "d": "exact, clearly and accurately stated"}, {"w": "stringent", "p": "adj", "d": "strict, precise, rigorously controlled"}, {"w": "subtle", "p": "adj", "d": "delicate, precise, not obvious"}, {"w": "veracity", "p": "n", "d": "truthfulness, accuracy"}, {"w": "veritable", "p": "adj", "d": "real, genuinely so-called"}]}, {"category": "Decrease, Reduction & Decline", "words": [{"w": "abate", "p": "v", "d": "reduce in degree or intensity"}, {"w": "antedate", "p": "v", "d": "precede in time, be older"}, {"w": "attenuate", "p": "v", "d": "make thin or slender, reduce force"}, {"w": "curtail", "p": "v", "d": "reduce or cut short"}, {"w": "dwindle", "p": "v", "d": "shrink or diminish gradually"}, {"w": "dwindling", "p": "adj", "d": "gradually diminishing in size"}, {"w": "extenuating", "p": "adj", "d": "lessening the seriousness of an offense"}, {"w": "tarnish", "p": "v", "d": "damage reputation, diminish quality"}, {"w": "wane", "p": "v", "d": "decrease in size or power"}]}, {"category": "Persuasion & Flattery", "words": [{"w": "amenable", "p": "adj", "d": "open to suggestion, easily persuaded"}, {"w": "cajole", "p": "v", "d": "persuade through flattery, coaxing"}, {"w": "cogent", "p": "adj", "d": "clear, logical, convincing"}, {"w": "compelling", "p": "adj", "d": "convincing, evoking strong interest"}, {"w": "conclusive", "p": "adj", "d": "decisively convincing, settling an issue"}, {"w": "credible", "p": "adj", "d": "believable, convincing"}, {"w": "fawn", "p": "v", "d": "display exaggerated flattery, affection"}, {"w": "inveigle", "p": "v", "d": "persuade through deception, flattery"}, {"w": "wheedle", "p": "v", "d": "persuade through flattery or coaxing"}]}, {"category": "Relevance & Appropriateness", "words": [{"w": "apposite", "p": "adj", "d": "highly relevant, apt"}, {"w": "appropriate", "p": "adj", "d": "suitable, proper for circumstances"}, {"w": "apropos", "p": "adj", "d": "appropriate to the situation"}, {"w": "apt", "p": "adj", "d": "suitable; likely to do something"}, {"w": "extraneous", "p": "adj", "d": "irrelevant, unrelated, coming from outside"}, {"w": "facetious", "p": "adj", "d": "joking, often inappropriately"}, {"w": "felicitous", "p": "adj", "d": "well-chosen, apt, pleasing"}, {"w": "germane", "p": "adj", "d": "relevant, closely related"}, {"w": "pertinent", "p": "adj", "d": "relevant to the matter at hand"}]}, {"category": "Harshness & Severity", "words": [{"w": "asperity", "p": "n", "d": "harshness or severity of manner"}, {"w": "astringent", "p": "adj", "d": "harshly critical; sharply constricting"}, {"w": "austere", "p": "adj", "d": "severe, plain, without luxury"}, {"w": "euphemism", "p": "n", "d": "mild expression replacing a harsh one"}, {"w": "mitigate", "p": "v", "d": "make less severe, painful"}, {"w": "opprobrium", "p": "n", "d": "harsh public criticism, disgrace"}, {"w": "relent", "p": "v", "d": "become less severe, give in"}, {"w": "rigorous", "p": "adj", "d": "thorough, strict, extremely careful"}, {"w": "stark", "p": "adj", "d": "harsh, severe, unmistakably clear"}]}, {"category": "Attack & Aggression", "words": [{"w": "assail", "p": "v", "d": "attack physically or verbally"}, {"w": "belligerence", "p": "n", "d": "aggressive, hostile behavior"}, {"w": "belligerent", "p": "adj", "d": "hostile and aggressive"}, {"w": "diatribe", "p": "n", "d": "forceful, bitter verbal attack"}, {"w": "harangue", "p": "n", "d": "lengthy, aggressive speech; to deliver such a speech"}, {"w": "polemicism", "p": "n", "d": "practice of aggressive argumentation"}, {"w": "retaliate", "p": "v", "d": "attack in return for injury"}, {"w": "truculent", "p": "adj", "d": "fierce, aggressively defiant"}, {"w": "unassailable", "p": "adj", "d": "unable to be attacked or questioned"}]}, {"category": "Change, Instability & Unpredictability", "words": [{"w": "capricious", "p": "adj", "d": "impulsive, unpredictably changeable"}, {"w": "erratic", "p": "adj", "d": "inconsistent, unpredictable in behavior"}, {"w": "fickle", "p": "adj", "d": "changeable, inconstant in loyalty"}, {"w": "fungible", "p": "adj", "d": "interchangeable, substitutable"}, {"w": "labile", "p": "adj", "d": "apt to change, unstable"}, {"w": "mercurial", "p": "adj", "d": "changeable, unpredictable in mood"}, {"w": "mutable", "p": "adj", "d": "capable of change, changeable"}, {"w": "volatile", "p": "adj", "d": "unstable, prone to sudden change"}, {"w": "volatility", "p": "n", "d": "tendency to change rapidly, unstable"}]}, {"category": "Preventing & Obstructing", "words": [{"w": "counterproductive", "p": "adj", "d": "hindering, working against intended goal"}, {"w": "foil", "p": "v", "d": "prevent from succeeding"}, {"w": "forestall", "p": "v", "d": "prevent by acting first"}, {"w": "hamper", "p": "v", "d": "hinder or impede progress"}, {"w": "impede", "p": "v", "d": "delay or obstruct progress"}, {"w": "occlude", "p": "v", "d": "block or obstruct"}, {"w": "preclude", "p": "v", "d": "prevent from happening"}, {"w": "quarantine", "p": "v", "d": "isolate to prevent disease spread"}, {"w": "stymie", "p": "v", "d": "block, thwart, obstruct"}]}, {"category": "Encouragement & Incitement", "words": [{"w": "abet", "p": "v", "d": "encourage or assist, often wrongdoing"}, {"w": "agitate", "p": "v", "d": "stir up concern or trouble"}, {"w": "antagonize", "p": "v", "d": "provoke hostility in someone"}, {"w": "exhort", "p": "v", "d": "strongly urge or encourage"}, {"w": "ferment", "p": "n", "d": "a state of unrest, agitation; to excite or stir up"}, {"w": "foment", "p": "v", "d": "instigate or stir up trouble"}, {"w": "goad", "p": "v", "d": "provoke someone into action"}, {"w": "hortatory", "p": "adj", "d": "urging strongly, giving encouragement"}]}, {"category": "Benefit, Help & Favorable Outcomes", "words": [{"w": "adverse", "p": "adj", "d": "harmful, unfavorable, preventing success"}, {"w": "auspicious", "p": "adj", "d": "favorable, promising success"}, {"w": "boon", "p": "n", "d": "a timely and helpful benefit"}, {"w": "conducive", "p": "adj", "d": "making a condition likely, helpful"}, {"w": "fruitful", "p": "adj", "d": "producing good, helpful results"}, {"w": "outmoded", "p": "adj", "d": "no longer fashionable or useful"}, {"w": "propitious", "p": "adj", "d": "favorable, likely to succeed"}, {"w": "salutary", "p": "adj", "d": "producing a beneficial effect"}]}, {"category": "Sociability & Friendliness", "words": [{"w": "affable", "p": "adj", "d": "friendly, easy to talk to"}, {"w": "amicable", "p": "adj", "d": "friendly, free of discord"}, {"w": "convivial", "p": "adj", "d": "friendly, lively, fond of company"}, {"w": "cordial", "p": "adj", "d": "warm and friendly"}, {"w": "gregarious", "p": "adj", "d": "sociable, enjoys company of others"}, {"w": "hostile", "p": "adj", "d": "unfriendly, actively opposed"}, {"w": "inimical", "p": "adj", "d": "harmful, unfriendly, tending to obstruct"}, {"w": "reconcile", "p": "v", "d": "restore friendly relations"}]}, {"category": "Silent, Reserved & Shy", "words": [{"w": "aloof", "p": "adj", "d": "distant, emotionally reserved"}, {"w": "coy", "p": "adj", "d": "pretending shyness, reticent"}, {"w": "diffidence", "p": "n", "d": "shyness, lack of self-confidence"}, {"w": "diffident", "p": "adj", "d": "shy, lacking self-confidence"}, {"w": "reticent", "p": "adj", "d": "reserved, reluctant to speak"}, {"w": "retiring", "p": "adj", "d": "shy, avoiding company"}, {"w": "standoffish", "p": "adj", "d": "aloof, unfriendly, reserved"}, {"w": "taciturn", "p": "adj", "d": "reserved, saying very little"}]}, {"category": "Deception, Trickery & Dishonesty", "words": [{"w": "artifice", "p": "n", "d": "a crafty trick, deception"}, {"w": "beguile", "p": "v", "d": "charm, often in a deceptive way"}, {"w": "brazen", "p": "adj", "d": "bold and shameless"}, {"w": "chicanery", "p": "n", "d": "trickery used to deceive"}, {"w": "dupe", "p": "v", "d": "deceive or trick someone; a person easily deceived"}, {"w": "hoodwink", "p": "v", "d": "deceive using a false appearance"}, {"w": "mendacity", "p": "n", "d": "tendency to lie, dishonesty"}, {"w": "sophistic", "p": "adj", "d": "cleverly deceptive, false reasoning"}]}, {"category": "Boredom, Dullness & Monotony", "words": [{"w": "banal", "p": "adj", "d": "boring, unoriginal, commonplace"}, {"w": "derivative", "p": "adj", "d": "unoriginal, imitative of others; financial contract based on an asset"}, {"w": "insipid", "p": "adj", "d": "lacking flavor, dull, uninteresting"}, {"w": "platitude", "p": "n", "d": "an overused, unoriginal remark"}, {"w": "prolixity", "p": "n", "d": "tediously wordy speech/writing"}, {"w": "prosaic", "p": "adj", "d": "dull, ordinary, lacking imagination"}, {"w": "quotidian", "p": "adj", "d": "everyday, ordinary, commonplace"}, {"w": "tedious", "p": "adj", "d": "tiresomely long, boring"}]}, {"category": "Generosity & Charity", "words": [{"w": "beneficent", "p": "adj", "d": "doing good, generous"}, {"w": "benevolent", "p": "adj", "d": "kind, well-meaning, charitable"}, {"w": "largesse", "p": "n", "d": "generosity in giving"}, {"w": "magnanimity", "p": "n", "d": "generosity, nobility in forgiving"}, {"w": "magnanimous", "p": "adj", "d": "generous, noble in forgiving"}, {"w": "munificence", "p": "n", "d": "great generosity, lavish giving"}, {"w": "munificent", "p": "adj", "d": "extremely generous"}, {"w": "philanthropic", "p": "adj", "d": "charitable, benefiting humankind"}]}, {"category": "Laziness & Sluggishness", "words": [{"w": "dormant", "p": "adj", "d": "inactive, as if sleeping"}, {"w": "ennui", "p": "n", "d": "listlessness from lack of activity"}, {"w": "fallow", "p": "adj", "d": "unplanted, inactive"}, {"w": "lethargic", "p": "adj", "d": "lacking energy, sluggish"}, {"w": "phlegmatic", "p": "adj", "d": "calm, unemotional, sluggish temperament"}, {"w": "quiescent", "p": "adj", "d": "inactive, dormant"}, {"w": "slack", "p": "adj", "d": "negligent, careless, or sluggish"}, {"w": "torpor", "p": "n", "d": "mental or physical inactivity"}]}, {"category": "Excitement & Liveliness", "words": [{"w": "euphoric", "p": "adj", "d": "feeling intense excitement, happiness"}, {"w": "humdrum", "p": "adj", "d": "lacking excitement or variety"}, {"w": "lackluster", "p": "adj", "d": "dull, lacking brilliance or excitement"}, {"w": "mettlesome", "p": "adj", "d": "spirited, courageous"}, {"w": "mundane", "p": "adj", "d": "lacking interest or excitement"}, {"w": "pedestrian", "p": "adj", "d": "ordinary, lacking excitement or imagination"}, {"w": "sensational", "p": "adj", "d": "causing intense public excitement"}, {"w": "vivacious", "p": "adj", "d": "attractively lively and animated"}]}, {"category": "Size: Small & Insignificant", "words": [{"w": "negligible", "p": "adj", "d": "insignificant, too small to matter"}, {"w": "nominal", "p": "adj", "d": "in name only, trivial amount"}, {"w": "nugatory", "p": "adj", "d": "trifling, of no value"}, {"w": "peccadillo", "p": "n", "d": "a small, unimportant offense"}, {"w": "puerile", "p": "adj", "d": "childishly silly and trivial"}, {"w": "quibble", "p": "v", "d": "argue about a trivial matter; a trivial objection or complaint"}, {"w": "trifling", "p": "adj", "d": "of little value or importance"}, {"w": "trivial", "p": "adj", "d": "of little value or importance"}]}, {"category": "Normalcy & Deviation", "words": [{"w": "aberrant", "p": "adj", "d": "deviating from what is normal"}, {"w": "anomalous", "p": "adj", "d": "deviating from what's normal"}, {"w": "anomaly", "p": "n", "d": "a deviation from the norm"}, {"w": "canonical", "p": "adj", "d": "standard, widely accepted, authoritative"}, {"w": "eccentric", "p": "adj", "d": "unconventional, slightly odd"}, {"w": "emaciate", "p": "v", "d": "make abnormally thin, waste away"}, {"w": "heterodox", "p": "adj", "d": "unconventional, departing from accepted beliefs"}]}, {"category": "Ugliness & Unpleasantness", "words": [{"w": "assuage", "p": "v", "d": "make an unpleasant feeling less intense"}, {"w": "dissonance", "p": "n", "d": "harsh, unpleasant conflicting sounds"}, {"w": "fetid", "p": "adj", "d": "having a strong, unpleasant smell"}, {"w": "odious", "p": "adj", "d": "extremely unpleasant, repulsive"}, {"w": "predicament", "p": "n", "d": "a difficult, unpleasant situation"}, {"w": "repugnant", "p": "adj", "d": "extremely distasteful, unacceptable"}, {"w": "squalid", "p": "adj", "d": "foul, dirty, morally repulsive"}]}, {"category": "Arrogance & Superiority", "words": [{"w": "bombastic", "p": "adj", "d": "pompous, using inflated language"}, {"w": "patronize", "p": "v", "d": "treat condescendingly; support a business"}, {"w": "peremptoriness", "p": "n", "d": "imperious, commanding manner"}, {"w": "peremptory", "p": "adj", "d": "imperious, not open to refusal"}, {"w": "pomposity", "p": "n", "d": "self-important, pretentious behavior"}, {"w": "presumptuous", "p": "adj", "d": "overconfident, exceeding proper limits"}, {"w": "turgid", "p": "adj", "d": "pompous, overly ornate language; swollen, distended"}]}, {"category": "Agreement, Harmony & Cooperation", "words": [{"w": "collegial", "p": "adj", "d": "cooperative among colleagues"}, {"w": "collude", "p": "v", "d": "secretly cooperate to deceive"}, {"w": "comply", "p": "v", "d": "act in accordance with a rule"}, {"w": "concur", "p": "v", "d": "agree, cooperate, coincide"}, {"w": "consensus", "p": "n", "d": "general agreement among a group"}, {"w": "discord", "p": "n", "d": "disagreement, lack of harmony"}, {"w": "jibe", "p": "v", "d": "to be in harmony, agree"}]}, {"category": "Superficiality & Shallowness", "words": [{"w": "cursory", "p": "adj", "d": "hasty, superficial, not thorough"}, {"w": "dilettantism", "p": "n", "d": "superficial interest in a subject"}, {"w": "glib", "p": "adj", "d": "fluent but insincere/superficial"}, {"w": "meretricious", "p": "adj", "d": "superficially attractive, showy but worthless"}, {"w": "specious", "p": "adj", "d": "superficially plausible but false"}, {"w": "superficial", "p": "adj", "d": "shallow, concerned only with appearances"}, {"w": "superficiality", "p": "n", "d": "lack of depth, shallow understanding"}]}, {"category": "Badness, Wickedness & Corruption", "words": [{"w": "depravity", "p": "n", "d": "moral corruption, wickedness"}, {"w": "exorcise", "p": "v", "d": "drive out an evil influence"}, {"w": "iniquitous", "p": "adj", "d": "grossly unfair, wicked"}, {"w": "nefarious", "p": "adj", "d": "wicked, criminal in nature"}, {"w": "reprobate", "p": "n", "d": "an unprincipled, immoral person"}, {"w": "turpitude", "p": "n", "d": "depraved or wicked behavior"}, {"w": "venal", "p": "adj", "d": "open to bribery, corruptible"}]}, {"category": "New, Original & Innovative", "words": [{"w": "groundbreaking", "p": "adj", "d": "highly original, innovative"}, {"w": "hackneyed", "p": "adj", "d": "overused, lacking original thought"}, {"w": "ingenious", "p": "adj", "d": "cleverly inventive, original"}, {"w": "pristine", "p": "adj", "d": "unspoiled, in original condition"}, {"w": "slavish", "p": "adj", "d": "excessively submissive, lacking originality"}, {"w": "trite", "p": "adj", "d": "overused, lacking originality"}, {"w": "visionary", "p": "adj", "d": "imaginatively forward-thinking; a person with original, future-focused ideas"}]}, {"category": "Indifference & Apathy", "words": [{"w": "apathetic", "p": "adj", "d": "showing little interest or concern"}, {"w": "cavalier", "p": "adj", "d": "dismissive, offhand, unconcerned"}, {"w": "complacent", "p": "adj", "d": "self-satisfied, unconcerned"}, {"w": "indifferent", "p": "adj", "d": "unconcerned, having no interest"}, {"w": "nonchalant", "p": "adj", "d": "casually unconcerned"}, {"w": "philistine", "p": "n", "d": "one hostile to culture/arts; indifferent or hostile to the arts"}]}, {"category": "Fear, Worry & Anxiety", "words": [{"w": "apprehension", "p": "n", "d": "anxiety about a future event"}, {"w": "cower", "p": "v", "d": "shrink or cringe in fear"}, {"w": "distressed", "p": "adj", "d": "suffering severe worry or pain"}, {"w": "fraught", "p": "adj", "d": "filled with tension or anxiety"}, {"w": "fret", "p": "v", "d": "worry continuously"}, {"w": "qualm", "p": "n", "d": "a feeling of unease about an action"}]}, {"category": "Formality, Dignity & Sophistication", "words": [{"w": "august", "p": "adj", "d": "respected, impressive, venerable"}, {"w": "decorous", "p": "adj", "d": "dignified, proper in manner"}, {"w": "lapidary", "p": "adj", "d": "polished, precise in style"}, {"w": "naive", "p": "adj", "d": "lacking experience or sophistication"}, {"w": "sophisticated", "p": "adj", "d": "refined, having worldly experience"}, {"w": "urbane", "p": "adj", "d": "courteous, refined, and sophisticated"}]}, {"category": "Government, Power & Authority", "words": [{"w": "autocracy", "p": "n", "d": "government by one absolute ruler"}, {"w": "despotic", "p": "adj", "d": "tyrannically exercising absolute power"}, {"w": "exotic", "p": "adj", "d": "strikingly unusual, foreign"}, {"w": "hegemony", "p": "n", "d": "dominance of one group over others"}, {"w": "recalcitrant", "p": "adj", "d": "resistant to authority, uncooperative"}, {"w": "xenophobic", "p": "adj", "d": "fearing or hating foreigners"}]}, {"category": "Confusion & Bewilderment", "words": [{"w": "befuddled", "p": "adj", "d": "confused, unable to think clearly"}, {"w": "clamorous", "p": "adj", "d": "loud and confusedly noisy"}, {"w": "confound", "p": "v", "d": "confuse, mix up, baffle"}, {"w": "flummoxed", "p": "adj", "d": "completely bewildered"}, {"w": "flustered", "p": "adj", "d": "agitated, nervously confused"}, {"w": "nonplussed", "p": "adj", "d": "surprised and confused"}]}, {"category": "Sadness, Gloom & Grief", "words": [{"w": "dirge", "p": "n", "d": "a lament for the dead"}, {"w": "glum", "p": "adj", "d": "dejected, sullenly gloomy"}, {"w": "grievous", "p": "adj", "d": "causing great pain or grief"}, {"w": "lament", "p": "v", "d": "express sorrow or regret; an expression of grief"}, {"w": "lugubrious", "p": "adj", "d": "mournful, gloomy, exaggeratedly sad"}, {"w": "plaintive", "p": "adj", "d": "sounding sad and mournful"}]}, {"category": "Stubbornness & Rigidity", "words": [{"w": "doctrinaire", "p": "adj", "d": "rigidly imposing a doctrine"}, {"w": "headstrong", "p": "adj", "d": "stubbornly determined to have one's way"}, {"w": "obdurate", "p": "adj", "d": "stubbornly refusing to change"}, {"w": "obstinate", "p": "adj", "d": "stubbornly sticking to a course"}, {"w": "ossify", "p": "v", "d": "become rigid, stop changing"}, {"w": "pertinacious", "p": "adj", "d": "stubbornly persistent"}]}, {"category": "Weakness & Weakening", "words": [{"w": "enervate", "p": "v", "d": "weaken, drain of energy"}, {"w": "frailty", "p": "n", "d": "weakness, vulnerability"}, {"w": "sap", "p": "v", "d": "gradually weaken or drain"}, {"w": "tenuous", "p": "adj", "d": "weak, flimsy, barely sustained"}, {"w": "undercut", "p": "v", "d": "weaken, offer at a lower price"}, {"w": "undermine", "p": "v", "d": "weaken gradually, insidiously"}]}, {"category": "Abundance & Plenty", "words": [{"w": "abound", "p": "v", "d": "exist in large numbers"}, {"w": "copious", "p": "adj", "d": "abundant, in large quantities"}, {"w": "fecund", "p": "adj", "d": "producing abundant growth, fertile"}, {"w": "fecundity", "p": "n", "d": "fertility, capacity to produce abundantly"}, {"w": "profuse", "p": "adj", "d": "plentiful, given generously"}]}, {"category": "Beauty & Attractiveness", "words": [{"w": "aesthetic", "p": "adj", "d": "concerned with beauty, artistic; a set of principles about beauty"}, {"w": "elegant", "p": "adj", "d": "graceful, refined in style"}, {"w": "sinuous", "p": "adj", "d": "curving, winding gracefully"}, {"w": "stigmatize", "p": "v", "d": "mark as disgraceful"}, {"w": "supple", "p": "adj", "d": "flexible, moving easily and gracefully"}]}, {"category": "Combining & Merging", "words": [{"w": "aggregate", "p": "v", "d": "gather together into a whole; a whole formed from smaller parts"}, {"w": "amalgamate", "p": "v", "d": "mix, merge, combine into one"}, {"w": "coalesce", "p": "v", "d": "come together, unite into one"}, {"w": "complementary", "p": "adj", "d": "combining well to enhance"}, {"w": "consolidate", "p": "v", "d": "combine into a single, stronger whole"}]}, {"category": "Improving & Making Better", "words": [{"w": "ameliorate", "p": "v", "d": "make a bad situation better"}, {"w": "amend", "p": "v", "d": "make minor changes to improve"}, {"w": "burnish", "p": "v", "d": "polish; improve or perfect"}, {"w": "edify", "p": "v", "d": "instruct so as to improve morally"}, {"w": "refine", "p": "v", "d": "improve by making precise"}]}, {"category": "Simplicity & Plainness", "words": [{"w": "artless", "p": "adj", "d": "natural, simple, without deception"}, {"w": "elementary", "p": "adj", "d": "basic, introductory"}, {"w": "rudimentary", "p": "adj", "d": "basic, not fully developed"}, {"w": "spartan", "p": "adj", "d": "simple, austere, without luxury"}, {"w": "unadorned", "p": "adj", "d": "plain, without decoration"}]}, {"category": "Health, Vigor & Vitality", "words": [{"w": "boisterous", "p": "adj", "d": "noisy, energetic, rowdy"}, {"w": "languish", "p": "v", "d": "lose vitality; suffer neglect"}, {"w": "robust", "p": "adj", "d": "strong, healthy, vigorous"}, {"w": "salubrious", "p": "adj", "d": "promoting health and well-being"}, {"w": "vigor", "p": "n", "d": "active strength, energy, vitality"}]}, {"category": "Conciseness & Brevity", "words": [{"w": "brevity", "p": "n", "d": "shortness, concise use of words"}, {"w": "concision", "p": "n", "d": "brevity, conciseness of expression"}, {"w": "laconic", "p": "adj", "d": "using very few words"}, {"w": "succinct", "p": "adj", "d": "brief and clearly expressed"}, {"w": "terse", "p": "adj", "d": "brief and to the point"}]}, {"category": "Beginners, Novices & Newness", "words": [{"w": "callow", "p": "adj", "d": "inexperienced and immature"}, {"w": "fledgling", "p": "adj", "d": "new and inexperienced; a beginner"}, {"w": "inchoate", "p": "adj", "d": "just begun, not fully formed"}, {"w": "nascent", "p": "adj", "d": "just coming into existence"}, {"w": "neophyte", "p": "n", "d": "a beginner, newcomer"}]}, {"category": "Scarcity & Lack", "words": [{"w": "dearth", "p": "n", "d": "scarcity, lack of something"}, {"w": "lax", "p": "adj", "d": "insufficiently strict, careless"}, {"w": "paucity", "p": "n", "d": "small amount, scarcity of something"}, {"w": "scant", "p": "adj", "d": "barely sufficient, meager"}, {"w": "scanty", "p": "adj", "d": "barely sufficient, meager in amount"}]}, {"category": "Slowness & Delay", "words": [{"w": "dilatory", "p": "adj", "d": "causing delay, slow to act"}, {"w": "languid", "p": "adj", "d": "slow, lacking energy or interest"}, {"w": "repercussion", "p": "n", "d": "an unintended, delayed consequence"}, {"w": "summarily", "p": "adv", "d": "immediately, without ceremony or delay"}, {"w": "tardy", "p": "adj", "d": "late, delayed, slow to act"}]}, {"category": "Eloquence & Expressiveness", "words": [{"w": "effusive", "p": "adj", "d": "overly expressive, gushing emotion"}, {"w": "eloquent", "p": "adj", "d": "fluent and persuasive in speech"}, {"w": "pithy", "p": "adj", "d": "concise and forcefully expressive"}, {"w": "seminal", "p": "adj", "d": "highly influential, foundational"}, {"w": "woeful", "p": "adj", "d": "expressive of sorrow, deplorable"}]}, {"category": "Following, Imitation & Conformity", "words": [{"w": "emulate", "p": "v", "d": "strive to match or imitate"}, {"w": "mimic", "p": "v", "d": "imitate closely, often for mockery"}, {"w": "naturalistic", "p": "adj", "d": "realistic, imitating nature closely"}, {"w": "pastiche", "p": "n", "d": "a work imitating other styles"}, {"w": "travesty", "p": "n", "d": "a distorted, grotesque imitation"}]}, {"category": "Lasting, Permanent & Enduring", "words": [{"w": "enduring", "p": "adj", "d": "lasting, continuing over a long time"}, {"w": "inveterate", "p": "adj", "d": "long-standing, deeply rooted habit"}, {"w": "momentary", "p": "adj", "d": "lasting only a moment"}, {"w": "stoic", "p": "adj", "d": "enduring hardship without complaint; person who suppresses emotion"}, {"w": "transitory", "p": "adj", "d": "not permanent, brief"}]}, {"category": "Disorder & Messiness", "words": [{"w": "frenetic", "p": "adj", "d": "fast and chaotic"}, {"w": "hodgepodge", "p": "n", "d": "confused mixture of things"}, {"w": "slovenly", "p": "adj", "d": "untidy and careless"}, {"w": "turbulence", "p": "n", "d": "violent disorder or commotion"}, {"w": "welter", "p": "n", "d": "a confused jumble, chaotic mass"}]}, {"category": "Clarity & Understandability", "words": [{"w": "limpid", "p": "adj", "d": "clear, transparent, easily understood"}, {"w": "lucid", "p": "adj", "d": "clear, easily understood"}, {"w": "opacity", "p": "n", "d": "lack of clarity, hard to understand"}, {"w": "pellucid", "p": "adj", "d": "clear, transparent, easily understood"}, {"w": "perspicuity", "p": "n", "d": "clarity of expression, easily understood"}]}, {"category": "Payment, Debt & Money", "words": [{"w": "mercenary", "p": "adj", "d": "motivated solely by money"}, {"w": "miserly", "p": "adj", "d": "extremely reluctant to spend"}, {"w": "parsimonious", "p": "adj", "d": "unwilling to spend money"}, {"w": "spendthrift", "p": "n", "d": "one who spends money wastefully"}, {"w": "swindle", "p": "v", "d": "cheat someone out of money"}]}, {"category": "General Vocabulary 1 (A–A)", "words": [{"w": "abeyance", "p": "n", "d": "temporary suspension or inactivity"}, {"w": "abide", "p": "v", "d": "tolerate; remain, continue in a state"}, {"w": "abject", "p": "adj", "d": "utterly miserable, extremely degraded"}, {"w": "abjure", "p": "v", "d": "formally renounce a belief/claim"}, {"w": "abreast", "p": "adj", "d": "side by side; up to date"}, {"w": "abridge", "p": "v", "d": "shorten or condense a written work"}, {"w": "abrogate", "p": "v", "d": "formally repeal or abolish"}, {"w": "abscission", "p": "n", "d": "the act of cutting off"}, {"w": "abstract", "p": "adj", "d": "theoretical, not concrete"}, {"w": "accentuate", "p": "v", "d": "make more noticeable or prominent"}, {"w": "accessible", "p": "adj", "d": "easy to approach or understand"}, {"w": "acolyte", "p": "n", "d": "devoted follower or assistant"}, {"w": "acquiesce", "p": "v", "d": "accept reluctantly, without protest"}, {"w": "acquisitive", "p": "adj", "d": "eager to gain possessions"}, {"w": "acrimonious", "p": "adj", "d": "bitter and sharp-tongued"}, {"w": "acuity", "p": "n", "d": "sharpness of thought or perception"}, {"w": "adhere", "p": "v", "d": "stay attached, remain devoted"}, {"w": "adulterate", "p": "v", "d": "make impure by adding substances"}, {"w": "advocate", "p": "v", "d": "publicly support a cause; a person who supports a cause"}, {"w": "affectation", "p": "n", "d": "artificial behavior meant to impress"}, {"w": "affinity", "p": "n", "d": "natural liking or attraction"}, {"w": "aghast", "p": "adj", "d": "filled with horror or shock"}, {"w": "alienate", "p": "v", "d": "cause to feel isolated, estranged"}, {"w": "alleviate", "p": "v", "d": "make a problem less severe"}, {"w": "allusive", "p": "adj", "d": "containing indirect references"}, {"w": "altruistic", "p": "adj", "d": "selflessly concerned for others"}, {"w": "amorphous", "p": "adj", "d": "without clear shape or form"}, {"w": "amortize", "p": "v", "d": "gradually pay off a debt"}, {"w": "anachronistic", "p": "adj", "d": "belonging to the wrong time period"}, {"w": "analogous", "p": "adj", "d": "comparable, similar in certain respects"}, {"w": "anarchy", "p": "n", "d": "a state of lawlessness, no authority"}, {"w": "animosity", "p": "n", "d": "strong hostility or dislike"}, {"w": "anoint", "p": "v", "d": "formally consecrate, choose officially"}, {"w": "antipathy", "p": "n", "d": "a deep-seated dislike or aversion"}, {"w": "apathy", "p": "n", "d": "lack of interest or concern"}, {"w": "apogee", "p": "n", "d": "the highest point, culmination"}, {"w": "apologist", "p": "n", "d": "one who defends a cause"}, {"w": "appease", "p": "v", "d": "pacify by meeting demands"}, {"w": "appreciable", "p": "adj", "d": "significant enough to be noticed"}, {"w": "apprise", "p": "v", "d": "inform, give notice to"}, {"w": "arbitrary", "p": "adj", "d": "based on random choice, not reason"}, {"w": "archaic", "p": "adj", "d": "very old-fashioned, no longer used"}, {"w": "archetype", "p": "n", "d": "original model, typical example"}, {"w": "ardent", "p": "adj", "d": "passionate, enthusiastic"}, {"w": "arresting", "p": "adj", "d": "strikingly attention-grabbing"}, {"w": "articulate", "p": "adj", "d": "able to express oneself clearly; to express clearly"}, {"w": "ascend", "p": "v", "d": "move or slope upward"}, {"w": "ascertain", "p": "v", "d": "find out for certain"}]}, {"category": "General Vocabulary 2 (A–C)", "words": [{"w": "ascribe", "p": "v", "d": "attribute to a cause"}, {"w": "aseptic", "p": "adj", "d": "free from infection; without emotion"}, {"w": "assertive", "p": "adj", "d": "confidently forceful in manner"}, {"w": "augment", "p": "v", "d": "make greater, more intense"}, {"w": "authoritarian", "p": "adj", "d": "demanding strict obedience to authority"}, {"w": "autocratic", "p": "adj", "d": "ruling with absolute, unchecked power"}, {"w": "autonomous", "p": "adj", "d": "self-governing, functioning independently"}, {"w": "autonomy", "p": "n", "d": "self-governance, independence"}, {"w": "auxiliary", "p": "adj", "d": "providing supplementary support"}, {"w": "avarice", "p": "n", "d": "extreme greed for wealth"}, {"w": "avaricious", "p": "adj", "d": "greedy for wealth"}, {"w": "aversion", "p": "n", "d": "strong dislike or reluctance"}, {"w": "avid", "p": "adj", "d": "keenly, urgently eager"}, {"w": "balanced", "p": "adj", "d": "fair, giving equal weight"}, {"w": "banish", "p": "v", "d": "send away, expel officially"}, {"w": "barren", "p": "adj", "d": "unable to produce, sterile"}, {"w": "base", "p": "adj", "d": "morally low, without decency"}, {"w": "bawdy", "p": "adj", "d": "humorously indecent, sexually crude"}, {"w": "belated", "p": "adj", "d": "coming later than expected"}, {"w": "belie", "p": "v", "d": "give a false impression of"}, {"w": "bellicose", "p": "adj", "d": "eager to fight, warlike"}, {"w": "beneficence", "p": "n", "d": "act of doing good, kindness"}, {"w": "bereft", "p": "adj", "d": "deprived of, lacking something"}, {"w": "betray", "p": "v", "d": "be disloyal, reveal unintentionally"}, {"w": "biased", "p": "adj", "d": "unfairly favoring one side"}, {"w": "blemish", "p": "n", "d": "flaw, imperfection, mark"}, {"w": "boorish", "p": "adj", "d": "rude and bad-mannered"}, {"w": "brook", "p": "v", "d": "tolerate, put up with"}, {"w": "bucolic", "p": "adj", "d": "relating to pleasant rural life"}, {"w": "callous", "p": "adj", "d": "insensitive to others' feelings"}, {"w": "capitulate", "p": "v", "d": "surrender, give up resistance"}, {"w": "cardinal", "p": "adj", "d": "of chief importance, fundamental"}, {"w": "caricature", "p": "n", "d": "an exaggerated, mocking depiction"}, {"w": "catalyst", "p": "n", "d": "something that accelerates change"}, {"w": "categorical", "p": "adj", "d": "absolute, without exception or qualification"}, {"w": "caustic", "p": "adj", "d": "sarcastically bitter, corrosive"}, {"w": "cease", "p": "v", "d": "stop, come to an end"}, {"w": "cerebral", "p": "adj", "d": "relating to intellect, not emotion"}, {"w": "chagrin", "p": "n", "d": "annoyance/embarrassment at failing"}, {"w": "champion", "p": "v", "d": "support and argue for a cause"}, {"w": "chary", "p": "adj", "d": "cautious, wary of risk"}, {"w": "cherish", "p": "v", "d": "care for tenderly, hold dear"}, {"w": "churlish", "p": "adj", "d": "rude in a mean way"}, {"w": "circumlocution", "p": "n", "d": "roundabout, indirect way of speaking"}, {"w": "circumscribe", "p": "v", "d": "restrict, limit narrowly"}, {"w": "circumspect", "p": "adj", "d": "cautious, wary of consequences"}, {"w": "circumspection", "p": "n", "d": "caution, careful consideration"}, {"w": "clangor", "p": "n", "d": "loud, resonant metallic noise"}]}, {"category": "General Vocabulary 3 (C–D)", "words": [{"w": "clangorous", "p": "adj", "d": "making a loud, ringing noise"}, {"w": "clinch", "p": "v", "d": "secure or settle decisively"}, {"w": "coda", "p": "n", "d": "a concluding summary or passage"}, {"w": "coercion", "p": "n", "d": "persuasion by force or threats"}, {"w": "cogitate", "p": "v", "d": "think deeply about something"}, {"w": "coherence", "p": "n", "d": "logical connection, consistency"}, {"w": "coin", "p": "v", "d": "invent a new word or phrase"}, {"w": "collaborate", "p": "v", "d": "work jointly with others"}, {"w": "collegiate", "p": "adj", "d": "relating to college or university"}, {"w": "comity", "p": "n", "d": "mutual courtesy between nations"}, {"w": "commence", "p": "v", "d": "to begin"}, {"w": "commensurate", "p": "adj", "d": "proportionate, matching in degree"}, {"w": "commiserate", "p": "v", "d": "express sympathy for misfortune"}, {"w": "competent", "p": "adj", "d": "having necessary ability/skill"}, {"w": "condone", "p": "v", "d": "forgive an offense without protest"}, {"w": "congenial", "p": "adj", "d": "pleasant due to shared interests"}, {"w": "conjectural", "p": "adj", "d": "based on guesswork"}, {"w": "considered", "p": "adj", "d": "carefully thought through"}, {"w": "construe", "p": "v", "d": "interpret in a particular way"}, {"w": "contempt", "p": "n", "d": "feeling something is beneath consideration"}, {"w": "contravene", "p": "v", "d": "act against a rule/law"}, {"w": "contretemps", "p": "n", "d": "awkward, embarrassing incident"}, {"w": "contrite", "p": "adj", "d": "feeling remorseful, penitent"}, {"w": "convalescent", "p": "adj", "d": "recovering from illness"}, {"w": "conventional", "p": "adj", "d": "following accepted standards, ordinary"}, {"w": "conversance", "p": "n", "d": "familiarity, close knowledge of a subject"}, {"w": "conviction", "p": "n", "d": "a firmly held belief"}, {"w": "convoke", "p": "v", "d": "call a group together, summon"}, {"w": "corporeal", "p": "adj", "d": "relating to the physical body"}, {"w": "correlate", "p": "v", "d": "have a mutual relationship"}, {"w": "corroborate", "p": "v", "d": "support with evidence, confirm"}, {"w": "corrugated", "p": "adj", "d": "bent into folds or ridges"}, {"w": "cosmopolitan", "p": "adj", "d": "familiar with many cultures/countries"}, {"w": "covet", "p": "v", "d": "yearn to possess something"}, {"w": "crass", "p": "adj", "d": "crude, gross, unrefined"}, {"w": "craven", "p": "adj", "d": "cowardly, lacking courage"}, {"w": "credulous", "p": "adj", "d": "too willing to believe, gullible"}, {"w": "crestfallen", "p": "adj", "d": "sad and disappointed"}, {"w": "croon", "p": "v", "d": "sing or speak softly"}, {"w": "cumbersome", "p": "adj", "d": "awkward, burdensome to handle"}, {"w": "curative", "p": "adj", "d": "able to cure, healing"}, {"w": "curmudgeon", "p": "n", "d": "a bad-tempered person"}, {"w": "dawdle", "p": "v", "d": "waste time, move slowly"}, {"w": "debunk", "p": "v", "d": "expose as false"}, {"w": "decipher", "p": "v", "d": "figure out the meaning of"}, {"w": "decisive", "p": "adj", "d": "resolute, settling an issue firmly"}, {"w": "decorum", "p": "n", "d": "behavior fitting good taste"}, {"w": "default", "p": "n", "d": "failure to meet an obligation; to fail to fulfil an obligation"}]}, {"category": "General Vocabulary 4 (D–D)", "words": [{"w": "defend", "p": "v", "d": "argue in support of, protect"}, {"w": "deference", "p": "n", "d": "respectful submission to another"}, {"w": "deflect", "p": "v", "d": "turn aside, avoid addressing directly"}, {"w": "deify", "p": "v", "d": "worship or regard as a god"}, {"w": "deliberate", "p": "adj", "d": "carefully considered, done intentionally"}, {"w": "delineate", "p": "v", "d": "describe or portray precisely"}, {"w": "delusion", "p": "n", "d": "false belief despite contrary evidence"}, {"w": "demur", "p": "v", "d": "raise objections, show reluctance"}, {"w": "deportment", "p": "n", "d": "a person's behavior or manners"}, {"w": "desiccate", "p": "v", "d": "remove moisture, dry thoroughly"}, {"w": "desultory", "p": "adj", "d": "lacking plan, disconnected, random"}, {"w": "detente", "p": "n", "d": "easing of strained relations"}, {"w": "deviate", "p": "v", "d": "depart from an established course"}, {"w": "dichotomy", "p": "n", "d": "a division into two contrasting parts"}, {"w": "didactic", "p": "adj", "d": "intended to instruct, often moralizing"}, {"w": "diffuse", "p": "adj", "d": "spread out, wordy, unfocused; to spread out over an area"}, {"w": "digression", "p": "n", "d": "a departure from the main topic"}, {"w": "dilettante", "p": "n", "d": "dabbler, amateur without depth"}, {"w": "diminutive", "p": "adj", "d": "extremely, unusually small"}, {"w": "din", "p": "n", "d": "a loud, confused noise"}, {"w": "disabuse", "p": "v", "d": "free someone from a mistaken belief"}, {"w": "disbelieve", "p": "v", "d": "refuse to accept as true"}, {"w": "discernible", "p": "adj", "d": "able to be perceived, noticed"}, {"w": "discreet", "p": "adj", "d": "careful to avoid embarrassment"}, {"w": "discrepancy", "p": "n", "d": "inconsistency between facts or claims"}, {"w": "discrete", "p": "adj", "d": "separate, distinct, individually identifiable"}, {"w": "disdain", "p": "n", "d": "feeling something is unworthy of respect; to regard as unworthy"}, {"w": "disinclination", "p": "n", "d": "reluctance, unwillingness to do something"}, {"w": "disinterested", "p": "adj", "d": "impartial, not personally biased"}, {"w": "disparate", "p": "adj", "d": "fundamentally different, distinct"}, {"w": "dispassionate", "p": "adj", "d": "not influenced by emotion"}, {"w": "dispense", "p": "v", "d": "distribute or provide"}, {"w": "disperse", "p": "v", "d": "spread over a wide area"}, {"w": "disseminate", "p": "v", "d": "spread widely, distribute information"}, {"w": "dissent", "p": "v", "d": "hold differing opinions; a difference of opinion"}, {"w": "dissident", "p": "n", "d": "one who opposes official policy; opposing official policy or doctrine"}, {"w": "distill", "p": "v", "d": "extract the essential meaning"}, {"w": "diverge", "p": "v", "d": "turn aside, split from a path"}, {"w": "divergent", "p": "adj", "d": "developing in different directions"}, {"w": "divestiture", "p": "n", "d": "act of stripping away property"}, {"w": "divided", "p": "adj", "d": "split, disagreeing among group"}, {"w": "divorced", "p": "adj", "d": "separated or disconnected from"}, {"w": "divulge", "p": "v", "d": "reveal private, sensitive information"}, {"w": "doff", "p": "v", "d": "take off, remove clothing"}, {"w": "dowdy", "p": "adj", "d": "unfashionable, drab in appearance"}, {"w": "droll", "p": "adj", "d": "amusing in an odd way"}, {"w": "duplicitous", "p": "adj", "d": "deceitful, double-dealing"}, {"w": "duplicity", "p": "n", "d": "deceitfulness, double-dealing"}]}, {"category": "General Vocabulary 5 (D–E)", "words": [{"w": "duress", "p": "n", "d": "force used to compel action"}, {"w": "echelon", "p": "n", "d": "a level or rank in a group"}, {"w": "eclectic", "p": "adj", "d": "drawing from diverse sources"}, {"w": "eclipse", "p": "v", "d": "surpass in importance"}, {"w": "economy", "p": "n", "d": "careful, sparing use of resources"}, {"w": "efficacious", "p": "adj", "d": "effective, producing desired result"}, {"w": "egregious", "p": "adj", "d": "outstandingly bad, shocking"}, {"w": "egress", "p": "n", "d": "the act of going out, an exit"}, {"w": "elicit", "p": "v", "d": "draw out a response"}, {"w": "elitist", "p": "adj", "d": "believing in rule by select group; one who believes elite should rule"}, {"w": "elucidate", "p": "v", "d": "make clear, explain"}, {"w": "embellish", "p": "v", "d": "decorate; add fictitious detail"}, {"w": "empirical", "p": "adj", "d": "based on observation, not theory"}, {"w": "encroach", "p": "v", "d": "intrude gradually on territory/rights"}, {"w": "encyclopedic", "p": "adj", "d": "comprehensive, very broad in knowledge"}, {"w": "endemic", "p": "adj", "d": "regularly found in a particular area"}, {"w": "endow", "p": "v", "d": "provide with a quality or income"}, {"w": "engender", "p": "v", "d": "give rise to, cause"}, {"w": "enthrall", "p": "v", "d": "captivate someone's attention completely"}, {"w": "entitled", "p": "adj", "d": "believing oneself deserving of privileges"}, {"w": "entreat", "p": "v", "d": "ask someone earnestly, beg"}, {"w": "ephemeral", "p": "adj", "d": "short-lived, lasting briefly"}, {"w": "equitable", "p": "adj", "d": "fair and impartial"}, {"w": "eradicate", "p": "v", "d": "destroy completely, eliminate"}, {"w": "estimable", "p": "adj", "d": "worthy of great respect"}, {"w": "estranged", "p": "adj", "d": "no longer close, alienated"}, {"w": "evade", "p": "v", "d": "escape or avoid cleverly"}, {"w": "evasive", "p": "adj", "d": "avoiding direct answers, elusive"}, {"w": "evenhanded", "p": "adj", "d": "fair, treating all equally"}, {"w": "evocative", "p": "adj", "d": "bringing strong images/feelings to mind"}, {"w": "evoke", "p": "v", "d": "bring to mind, call forth"}, {"w": "exacerbate", "p": "v", "d": "make a bad situation worse"}, {"w": "exacerbated", "p": "v", "d": "made worse"}, {"w": "exacting", "p": "adj", "d": "making great demands, strict"}, {"w": "exculpate", "p": "v", "d": "show someone is not guilty"}, {"w": "exhaustive", "p": "adj", "d": "thorough, covering all aspects"}, {"w": "exhaustiveness", "p": "n", "d": "thoroughness, covering all aspects"}, {"w": "exigent", "p": "adj", "d": "urgent, demanding immediate action"}, {"w": "exonerate", "p": "v", "d": "absolve from blame or wrongdoing"}, {"w": "expatiate", "p": "v", "d": "speak or write in detail"}, {"w": "expedient", "p": "adj", "d": "convenient, practical though possibly improper"}, {"w": "expedite", "p": "v", "d": "speed up a process"}, {"w": "explicable", "p": "adj", "d": "able to be explained"}, {"w": "explicit", "p": "adj", "d": "fully and clearly expressed"}, {"w": "exploitative", "p": "adj", "d": "taking unfair advantage of"}, {"w": "extant", "p": "adj", "d": "still existing, not extinct"}, {"w": "extempore", "p": "adj", "d": "done with little or no preparation"}, {"w": "extemporize", "p": "v", "d": "speak without preparation"}]}, {"category": "General Vocabulary 6 (E–H)", "words": [{"w": "extrapolate", "p": "v", "d": "infer from known data"}, {"w": "fabricate", "p": "v", "d": "invent falsely; construct"}, {"w": "fallacious", "p": "adj", "d": "based on flawed, unsound logic"}, {"w": "fallacy", "p": "n", "d": "mistaken belief, flawed reasoning"}, {"w": "fanciful", "p": "adj", "d": "imaginative but unrealistic"}, {"w": "fatuous", "p": "adj", "d": "complacently foolish or silly"}, {"w": "feckless", "p": "adj", "d": "lacking effectiveness, irresponsible"}, {"w": "fecklessness", "p": "n", "d": "lack of effectiveness, irresponsibility"}, {"w": "feign", "p": "v", "d": "pretend to feel or be"}, {"w": "feint", "p": "n", "d": "a deceptive, misleading action"}, {"w": "fervent", "p": "adj", "d": "intensely passionate"}, {"w": "fervid", "p": "adj", "d": "intensely passionate, fervent"}, {"w": "fervor", "p": "n", "d": "intense warmth of feeling"}, {"w": "fervour", "p": "n", "d": "intense passion or enthusiasm"}, {"w": "fester", "p": "v", "d": "worsen, especially through neglect"}, {"w": "figurative", "p": "adj", "d": "metaphorical, not literal"}, {"w": "flag", "p": "v", "d": "fall off in energy, droop"}, {"w": "flamboyant", "p": "adj", "d": "showy, attracting attention"}, {"w": "fledge", "p": "v", "d": "raise a young bird until it can fly"}, {"w": "fluke", "p": "n", "d": "a stroke of good luck"}, {"w": "foolhardy", "p": "adj", "d": "recklessly, foolishly bold"}, {"w": "foreseeable", "p": "adj", "d": "able to be predicted"}, {"w": "forsake", "p": "v", "d": "abandon or give up entirely"}, {"w": "fortuitous", "p": "adj", "d": "happening by chance, luckily"}, {"w": "frequent", "p": "v", "d": "visit a place often"}, {"w": "fringe", "p": "n", "d": "a margin, outer edge"}, {"w": "frivolous", "p": "adj", "d": "lacking serious purpose or value"}, {"w": "frugality", "p": "n", "d": "careful, economical use of resources"}, {"w": "fulcrum", "p": "n", "d": "pivot point; central essential point"}, {"w": "functional", "p": "adj", "d": "practical, serving a purpose"}, {"w": "gaffe", "p": "n", "d": "embarrassing unintentional remark"}, {"w": "galvanize", "p": "v", "d": "shock or excite into action"}, {"w": "gambol", "p": "v", "d": "frolic, skip about playfully"}, {"w": "garrulous", "p": "adj", "d": "excessively talkative"}, {"w": "gauche", "p": "adj", "d": "lacking social grace, awkward"}, {"w": "gawky", "p": "adj", "d": "awkward and ungainly"}, {"w": "gist", "p": "n", "d": "the central point or essence"}, {"w": "gossamer", "p": "adj", "d": "extremely light, delicate, sheer"}, {"w": "gratify", "p": "v", "d": "give pleasure or satisfaction to"}, {"w": "gratuitous", "p": "adj", "d": "uncalled for, without good reason"}, {"w": "grievance", "p": "n", "d": "a real or imagined wrong causing complaint"}, {"w": "grudging", "p": "adj", "d": "reluctant, given unwillingly"}, {"w": "gullible", "p": "adj", "d": "easily persuaded, credulous"}, {"w": "hallmark", "p": "n", "d": "a distinguishing feature or mark of quality"}, {"w": "haphazard", "p": "adj", "d": "lacking order, random"}, {"w": "hapless", "p": "adj", "d": "unfortunate, unlucky"}, {"w": "harbinger", "p": "n", "d": "a sign of what's coming"}, {"w": "harrow", "p": "v", "d": "disturb or torment deeply"}]}, {"category": "General Vocabulary 7 (H–I)", "words": [{"w": "harrowing", "p": "adj", "d": "extremely distressing, disturbing"}, {"w": "heed", "p": "v", "d": "pay close attention to"}, {"w": "heterogeneous", "p": "adj", "d": "diverse, composed of dissimilar parts"}, {"w": "hyperbole", "p": "n", "d": "extreme exaggeration for effect"}, {"w": "hysterical", "p": "adj", "d": "deriving from uncontrolled emotion"}, {"w": "iconoclastic", "p": "adj", "d": "challenging cherished beliefs"}, {"w": "idiosyncratic", "p": "adj", "d": "peculiar to an individual"}, {"w": "idyll", "p": "n", "d": "a carefree, romantic experience or scene"}, {"w": "illusory", "p": "adj", "d": "based on illusion, unreal"}, {"w": "immaculate", "p": "adj", "d": "perfectly clean, free of flaws"}, {"w": "imminent", "p": "adj", "d": "about to happen very soon"}, {"w": "immure", "p": "v", "d": "confine, imprison"}, {"w": "immutable", "p": "adj", "d": "unchanging, fixed forever"}, {"w": "impartial", "p": "adj", "d": "unbiased, fair to all"}, {"w": "impartiality", "p": "n", "d": "fairness, lack of bias"}, {"w": "impassive", "p": "adj", "d": "showing no emotion, unmoved"}, {"w": "impecunious", "p": "adj", "d": "having little or no money"}, {"w": "imperious", "p": "adj", "d": "domineering, expecting obedience"}, {"w": "impermeable", "p": "adj", "d": "not allowing passage through"}, {"w": "impetuosity", "p": "n", "d": "acting hastily without careful thought"}, {"w": "impetuous", "p": "adj", "d": "acting hastily, without thought"}, {"w": "implicit", "p": "adj", "d": "implied, not directly stated"}, {"w": "implosion", "p": "n", "d": "a forceful inward collapse"}, {"w": "impromptu", "p": "adj", "d": "done on the spur of the moment"}, {"w": "improvise", "p": "v", "d": "create/perform without preparation"}, {"w": "inadvertent", "p": "adj", "d": "accidental, unintentional"}, {"w": "inborn", "p": "adj", "d": "existing from birth, innate"}, {"w": "incessant", "p": "adj", "d": "continuing without pause"}, {"w": "incidental", "p": "adj", "d": "occurring by chance, secondary"}, {"w": "incipient", "p": "adj", "d": "beginning to exist, in early stages"}, {"w": "inclined", "p": "adj", "d": "having a tendency toward something"}, {"w": "inclusive", "p": "adj", "d": "including everyone, not excluding"}, {"w": "incongruous", "p": "adj", "d": "out of place, not fitting"}, {"w": "incredulous", "p": "adj", "d": "unwilling or unable to believe"}, {"w": "indecorous", "p": "adj", "d": "not in good taste"}, {"w": "indelible", "p": "adj", "d": "impossible to remove or erase"}, {"w": "indictment", "p": "n", "d": "a formal accusation of wrongdoing"}, {"w": "indigence", "p": "n", "d": "a state of poverty, lacking means"}, {"w": "indigenous", "p": "adj", "d": "native to, naturally occurring in a region"}, {"w": "indiscriminate", "p": "adj", "d": "done without careful distinction"}, {"w": "indispensable", "p": "adj", "d": "absolutely necessary"}, {"w": "indomitable", "p": "adj", "d": "unable to be defeated"}, {"w": "ineluctable", "p": "adj", "d": "unable to be avoided"}, {"w": "inform", "p": "v", "d": "shape or influence character of"}, {"w": "ingenuous", "p": "adj", "d": "innocent, naive, unsuspecting"}, {"w": "ingrained", "p": "adj", "d": "deeply rooted, firmly established"}, {"w": "ingrate", "p": "n", "d": "an ungrateful person"}, {"w": "innovative", "p": "adj", "d": "introducing new ideas/methods"}]}, {"category": "General Vocabulary 8 (I–M)", "words": [{"w": "inquisitive", "p": "adj", "d": "curious, eager for knowledge"}, {"w": "inscrutable", "p": "adj", "d": "impossible to understand or interpret"}, {"w": "insular", "p": "adj", "d": "narrow-minded, ignorant of other cultures"}, {"w": "insularity", "p": "n", "d": "narrow-mindedness from isolation"}, {"w": "interchangeable", "p": "adj", "d": "able to be exchanged for each other"}, {"w": "intermittent", "p": "adj", "d": "occurring at irregular intervals"}, {"w": "intertwined", "p": "adj", "d": "twisted together, closely linked"}, {"w": "intimate", "p": "v", "d": "imply or hint at"}, {"w": "intransigent", "p": "adj", "d": "unwilling to compromise"}, {"w": "intrigue", "p": "v", "d": "arouse curiosity or interest"}, {"w": "intrinsic", "p": "adj", "d": "belonging naturally, essential"}, {"w": "inundate", "p": "v", "d": "flood, overwhelm"}, {"w": "inviolate", "p": "adj", "d": "free from injury, sacred"}, {"w": "ironclad", "p": "adj", "d": "impossible to change, very strict"}, {"w": "irreverent", "p": "adj", "d": "lacking respect for serious things"}, {"w": "itinerant", "p": "adj", "d": "traveling from place to place"}, {"w": "jejune", "p": "adj", "d": "naive, simplistic, lacking substance"}, {"w": "jettison", "p": "v", "d": "discard, abandon something no longer needed"}, {"w": "jocular", "p": "adj", "d": "given to playful joking"}, {"w": "lambent", "p": "adj", "d": "softly glowing, flickering light"}, {"w": "latitude", "p": "n", "d": "freedom of action or thought"}, {"w": "levity", "p": "n", "d": "humor, lightheartedness in a serious context"}, {"w": "levy", "p": "v", "d": "impose and collect officially"}, {"w": "liability", "p": "n", "d": "a disadvantage; legal responsibility"}, {"w": "lionize", "p": "v", "d": "give great public attention to"}, {"w": "loquacious", "p": "adj", "d": "very talkative"}, {"w": "loquacity", "p": "n", "d": "tendency to talk a great deal"}, {"w": "lucrative", "p": "adj", "d": "producing much profit"}, {"w": "macabre", "p": "adj", "d": "disturbing, concerned with death"}, {"w": "magisterial", "p": "adj", "d": "authoritative, commanding manner"}, {"w": "malfeasance", "p": "n", "d": "wrongdoing by a public official"}, {"w": "malleable", "p": "adj", "d": "easily shaped or influenced"}, {"w": "mediocre", "p": "adj", "d": "average, not very good"}, {"w": "meritorious", "p": "adj", "d": "deserving reward or praise"}, {"w": "metaphorical", "p": "adj", "d": "involving figurative comparison"}, {"w": "meticulous", "p": "adj", "d": "extremely careful and precise"}, {"w": "minute", "p": "adj", "d": "extremely small"}, {"w": "misanthrope", "p": "n", "d": "one who hates or distrusts humankind"}, {"w": "misanthropic", "p": "adj", "d": "hating or distrusting humankind"}, {"w": "miscreant", "p": "n", "d": "a person who behaves badly"}, {"w": "modest", "p": "adj", "d": "unassuming, humble"}, {"w": "modish", "p": "adj", "d": "fashionable, stylish"}, {"w": "monotonous", "p": "adj", "d": "dull, repetitious, lacking variety"}, {"w": "mordant", "p": "adj", "d": "sharply critical, biting in tone"}, {"w": "morose", "p": "adj", "d": "sullen, ill-tempered"}, {"w": "motivated", "p": "adj", "d": "driven, having strong reason"}, {"w": "mutiny", "p": "n", "d": "open rebellion against authority; to rebel against authority"}, {"w": "myopic", "p": "adj", "d": "short-sighted, lacking foresight"}]}, {"category": "General Vocabulary 9 (N–P)", "words": [{"w": "nabob", "p": "n", "d": "a wealthy, prominent person"}, {"w": "nadir", "p": "n", "d": "the lowest point"}, {"w": "negligent", "p": "adj", "d": "failing to take proper care"}, {"w": "neutralize", "p": "v", "d": "counteract, make ineffective"}, {"w": "nimble", "p": "adj", "d": "quick and agile in movement"}, {"w": "noble", "p": "adj", "d": "having admired, fine qualities"}, {"w": "nuance", "p": "n", "d": "subtle distinction or shade of meaning"}, {"w": "nuanced", "p": "adj", "d": "having subtle shades of meaning"}, {"w": "nullify", "p": "v", "d": "make legally void, cancel"}, {"w": "obeisance", "p": "n", "d": "a gesture of deference or respect"}, {"w": "oblivious", "p": "adj", "d": "unaware of what's happening"}, {"w": "obsolete", "p": "adj", "d": "no longer in use, outdated"}, {"w": "obviate", "p": "v", "d": "remove the need for"}, {"w": "obviated", "p": "v", "d": "made unnecessary, removed the need"}, {"w": "ominous", "p": "adj", "d": "suggesting something bad will happen"}, {"w": "ostentatious", "p": "adj", "d": "showy, meant to impress"}, {"w": "ostracize", "p": "v", "d": "exclude someone from a group"}, {"w": "outlandish", "p": "adj", "d": "bizarre, unfamiliar"}, {"w": "outstrip", "p": "v", "d": "surpass, exceed"}, {"w": "painstaking", "p": "adj", "d": "done with great care"}, {"w": "panacea", "p": "n", "d": "solution for all problems"}, {"w": "panache", "p": "n", "d": "flamboyant style or confidence"}, {"w": "paradigmatic", "p": "adj", "d": "serving as a typical model"}, {"w": "paradox", "p": "n", "d": "a seemingly contradictory but possibly true statement"}, {"w": "paradoxical", "p": "adj", "d": "seemingly self-contradictory"}, {"w": "paragon", "p": "n", "d": "a perfect model of excellence"}, {"w": "parochial", "p": "adj", "d": "narrow in outlook or scope"}, {"w": "parsimony", "p": "n", "d": "extreme frugality, stinginess"}, {"w": "partial", "p": "adj", "d": "favoring one side; incomplete"}, {"w": "partiality", "p": "n", "d": "bias, favoritism toward one side"}, {"w": "partisan", "p": "adj", "d": "biased, favoring one side; strong supporter of a party"}, {"w": "peculiar", "p": "adj", "d": "strange, unusual"}, {"w": "penchant", "p": "n", "d": "strong liking, habitual inclination"}, {"w": "pensive", "p": "adj", "d": "deeply thoughtful, reflective"}, {"w": "penurious", "p": "adj", "d": "extremely poor, stingy"}, {"w": "perennial", "p": "adj", "d": "enduring, recurring again and again"}, {"w": "perfidy", "p": "n", "d": "deceitfulness, treachery"}, {"w": "peripheral", "p": "adj", "d": "of secondary importance"}, {"w": "perpetuate", "p": "v", "d": "make something continue indefinitely"}, {"w": "perspicuous", "p": "adj", "d": "clearly expressed, easy to understand"}, {"w": "pervasive", "p": "adj", "d": "spread throughout, widespread"}, {"w": "petulant", "p": "adj", "d": "irritable, childishly sulky"}, {"w": "pious", "p": "adj", "d": "devoutly religious"}, {"w": "piquant", "p": "adj", "d": "pleasantly sharp in taste/interest"}, {"w": "pith", "p": "n", "d": "the essential, core substance"}, {"w": "placebo", "p": "n", "d": "substance with no therapeutic effect"}, {"w": "plagiarism", "p": "n", "d": "copying another's work as own"}, {"w": "plastic", "p": "adj", "d": "easily shaped or influenced"}]}, {"category": "General Vocabulary 10 (P–R)", "words": [{"w": "plasticity", "p": "n", "d": "capacity to be shaped or molded"}, {"w": "pliant", "p": "adj", "d": "bending easily, yielding to influence"}, {"w": "ploy", "p": "n", "d": "a tactic to gain advantage"}, {"w": "poignant", "p": "adj", "d": "deeply moving, evoking sadness"}, {"w": "polarize", "p": "v", "d": "split into opposing groups"}, {"w": "polymath", "p": "n", "d": "a person of wide knowledge"}, {"w": "portend", "p": "v", "d": "be a sign of coming events"}, {"w": "pragmatic", "p": "adj", "d": "practical, dealing with things sensibly"}, {"w": "precipitate", "p": "v", "d": "bring about abruptly, prematurely"}, {"w": "precocious", "p": "adj", "d": "advanced in ability at young age"}, {"w": "precursor", "p": "n", "d": "something that comes before, a forerunner"}, {"w": "predilection", "p": "n", "d": "a preference or special liking"}, {"w": "premeditate", "p": "v", "d": "plan an action in advance"}, {"w": "prescient", "p": "adj", "d": "having foresight, predicting future"}, {"w": "pretentious", "p": "adj", "d": "trying to seem more important"}, {"w": "prevaricate", "p": "v", "d": "speak evasively, lie"}, {"w": "prime", "p": "adj", "d": "of the best quality; to prepare something in advance"}, {"w": "proclivity", "p": "n", "d": "a natural tendency toward something"}, {"w": "prodigious", "p": "adj", "d": "impressively great in size"}, {"w": "profound", "p": "adj", "d": "very deep, far-reaching"}, {"w": "profundity", "p": "n", "d": "great depth of understanding"}, {"w": "prolific", "p": "adj", "d": "highly productive, producing much"}, {"w": "prolix", "p": "adj", "d": "tediously long-winded"}, {"w": "prologue", "p": "n", "d": "an introduction to a literary work"}, {"w": "promulgate", "p": "v", "d": "officially announce, put into effect"}, {"w": "pronounced", "p": "adj", "d": "strongly marked, very noticeable"}, {"w": "propagate", "p": "v", "d": "spread and promote widely"}, {"w": "propensity", "p": "n", "d": "a natural inclination or tendency"}, {"w": "prophetic", "p": "adj", "d": "accurately predicting future events"}, {"w": "propriety", "p": "n", "d": "conformity to accepted behavior standards"}, {"w": "providential", "p": "adj", "d": "occurring at a fortunate time"}, {"w": "provincial", "p": "adj", "d": "narrow-minded, from limited experience"}, {"w": "provocative", "p": "adj", "d": "causing a strong reaction"}, {"w": "proxy", "p": "n", "d": "a person authorized to act for another"}, {"w": "prudent", "p": "adj", "d": "careful, sensible in decisions"}, {"w": "punctilious", "p": "adj", "d": "showing great attention to detail"}, {"w": "punctiliousness", "p": "n", "d": "meticulous attention to detail/formality"}, {"w": "pusillanimous", "p": "adj", "d": "cowardly, lacking courage"}, {"w": "quash", "p": "v", "d": "reject or void, especially by force"}, {"w": "quirky", "p": "adj", "d": "unusual in an appealing way"}, {"w": "quixotic", "p": "adj", "d": "extremely idealistic, unrealistic"}, {"w": "radical", "p": "adj", "d": "advocating extreme, fundamental change"}, {"w": "rambling", "p": "adj", "d": "lengthy, wandering, lacking clear direction"}, {"w": "rampant", "p": "adj", "d": "widespread, unchecked"}, {"w": "rarefy", "p": "v", "d": "make thinner, less dense"}, {"w": "rational", "p": "adj", "d": "based on clear thought, reason"}, {"w": "recant", "p": "v", "d": "formally withdraw a prior statement"}, {"w": "recluse", "p": "n", "d": "a person who avoids others"}]}, {"category": "General Vocabulary 11 (R–S)", "words": [{"w": "recrudescent", "p": "adj", "d": "breaking out again after dormancy"}, {"w": "rectitude", "p": "n", "d": "moral integrity, correctness of behavior"}, {"w": "recumbent", "p": "adj", "d": "lying down, reclining"}, {"w": "redoubtable", "p": "adj", "d": "formidable, inspiring respect"}, {"w": "refulgent", "p": "adj", "d": "radiant, shining brilliantly"}, {"w": "refute", "p": "v", "d": "prove a statement wrong"}, {"w": "regress", "p": "v", "d": "return to an earlier, worse state"}, {"w": "reiterate", "p": "v", "d": "repeat for emphasis"}, {"w": "remedial", "p": "adj", "d": "intended to correct a deficiency"}, {"w": "remote", "p": "adj", "d": "distant, isolated"}, {"w": "remuneration", "p": "n", "d": "payment for work or service"}, {"w": "render", "p": "v", "d": "cause to become; provide"}, {"w": "renege", "p": "v", "d": "go back on a promise"}, {"w": "renounce", "p": "v", "d": "formally give up a claim/belief"}, {"w": "rent", "p": "adj", "d": "torn apart, violently split"}, {"w": "repertoire", "p": "n", "d": "the range of skills or works available"}, {"w": "replenish", "p": "v", "d": "fill up again"}, {"w": "repudiate", "p": "v", "d": "refuse to accept, deny validity"}, {"w": "requite", "p": "v", "d": "repay, make return for"}, {"w": "resolute", "p": "adj", "d": "firmly determined"}, {"w": "restive", "p": "adj", "d": "impatient, unable to keep still"}, {"w": "rhapsody", "p": "n", "d": "an expression of intense enthusiasm"}, {"w": "rhetoric", "p": "n", "d": "persuasive, sometimes empty language"}, {"w": "rift", "p": "n", "d": "a break or split in relations"}, {"w": "rigor", "p": "n", "d": "extreme thoroughness and care"}, {"w": "risible", "p": "adj", "d": "laughable, provoking laughter"}, {"w": "rue", "p": "v", "d": "regret deeply, feel remorse for"}, {"w": "ruminate", "p": "v", "d": "think deeply about something"}, {"w": "sadistic", "p": "adj", "d": "deriving pleasure from others' pain"}, {"w": "sagacious", "p": "adj", "d": "having keen judgment and wisdom"}, {"w": "sanctimonious", "p": "adj", "d": "showing false moral superiority"}, {"w": "sanction", "p": "n", "d": "official approval, or a penalty; to officially approve or penalize"}, {"w": "savant", "p": "n", "d": "a learned, wise person"}, {"w": "schism", "p": "n", "d": "a split between opposing groups"}, {"w": "scintillating", "p": "adj", "d": "brilliant, sparkling with wit"}, {"w": "scotch", "p": "v", "d": "put an end to, suppress"}, {"w": "sentient", "p": "adj", "d": "conscious, able to perceive feelings"}, {"w": "serendipitous", "p": "adj", "d": "occurring by fortunate accident"}, {"w": "shirk", "p": "v", "d": "avoid a duty or task"}, {"w": "shrill", "p": "adj", "d": "high-pitched, piercing in sound"}, {"w": "skirt", "p": "v", "d": "go around; avoid dealing with"}, {"w": "skittish", "p": "adj", "d": "easily frightened, nervous"}, {"w": "skullduggery", "p": "n", "d": "underhanded, unscrupulous behavior"}, {"w": "slight", "p": "v", "d": "treat with discourteous inattention"}, {"w": "sluggish", "p": "adj", "d": "slow-moving, lacking energy"}, {"w": "soliloquy", "p": "n", "d": "speaking one's thoughts aloud alone"}, {"w": "somatic", "p": "adj", "d": "relating to the body"}, {"w": "somnolent", "p": "adj", "d": "sleepy, drowsy"}]}, {"category": "General Vocabulary 12 (S–T)", "words": [{"w": "sophistry", "p": "n", "d": "clever but misleading reasoning"}, {"w": "soporific", "p": "adj", "d": "tending to induce sleep"}, {"w": "sordid", "p": "adj", "d": "morally degrading, dirty"}, {"w": "sound", "p": "adj", "d": "valid, logically well-founded"}, {"w": "sparse", "p": "adj", "d": "thinly scattered, scant"}, {"w": "speculative", "p": "adj", "d": "based on guesswork, not confirmed"}, {"w": "sporadic", "p": "adj", "d": "occurring occasionally, irregularly"}, {"w": "squander", "p": "v", "d": "waste resources carelessly"}, {"w": "squelch", "p": "v", "d": "suppress or silence completely"}, {"w": "staid", "p": "adj", "d": "sedate, serious, unadventurous"}, {"w": "stalwart", "p": "adj", "d": "strong, staunchly loyal"}, {"w": "stanch", "p": "v", "d": "stop the flow of something"}, {"w": "steadfast", "p": "adj", "d": "firmly loyal, unwavering"}, {"w": "stern", "p": "adj", "d": "serious and strict in manner"}, {"w": "stilted", "p": "adj", "d": "stiff, unnatural, formal manner"}, {"w": "stinting", "p": "adj", "d": "giving or using sparingly"}, {"w": "subjective", "p": "adj", "d": "based on personal opinion"}, {"w": "subordinate", "p": "adj", "d": "lower in rank or importance"}, {"w": "subside", "p": "v", "d": "sink lower, become less agitated"}, {"w": "substantiate", "p": "v", "d": "provide evidence to support"}, {"w": "subsume", "p": "v", "d": "include within a larger category"}, {"w": "subvert", "p": "v", "d": "undermine an established system"}, {"w": "superfluous", "p": "adj", "d": "unnecessary, more than needed"}, {"w": "superlative", "p": "adj", "d": "of the highest quality, best"}, {"w": "supersede", "p": "v", "d": "replace, take the place of"}, {"w": "supplant", "p": "v", "d": "replace, especially by force"}, {"w": "supplicate", "p": "v", "d": "beg earnestly and humbly"}, {"w": "synoptic", "p": "adj", "d": "giving a general overview/summary"}, {"w": "tacit", "p": "adj", "d": "understood without being stated"}, {"w": "tact", "p": "n", "d": "sensitivity in dealing with others"}, {"w": "tangential", "p": "adj", "d": "only slightly related, digressive"}, {"w": "tangible", "p": "adj", "d": "perceptible by touch; clear"}, {"w": "tantalizing", "p": "adj", "d": "tempting but out of reach"}, {"w": "tantamount", "p": "adj", "d": "equivalent in effect to"}, {"w": "tempestuous", "p": "adj", "d": "stormy, turbulent, passionate"}, {"w": "temporal", "p": "adj", "d": "relating to time; worldly"}, {"w": "tenable", "p": "adj", "d": "defensible, able to be maintained"}, {"w": "tenacity", "p": "n", "d": "persistence, firm determination"}, {"w": "tendentious", "p": "adj", "d": "biased, pushing a viewpoint"}, {"w": "tepid", "p": "adj", "d": "lukewarm, showing little enthusiasm"}, {"w": "thorough", "p": "adj", "d": "complete, careful, detailed"}, {"w": "timorous", "p": "adj", "d": "easily frightened, timid"}, {"w": "torrid", "p": "adj", "d": "intensely hot; passionate"}, {"w": "tractability", "p": "n", "d": "capacity to be easily led, taught"}, {"w": "tractable", "p": "adj", "d": "easily controlled or managed"}, {"w": "transcend", "p": "v", "d": "go beyond the limits of"}, {"w": "transcendent", "p": "adj", "d": "surpassing ordinary limits, exceptional"}, {"w": "transgression", "p": "n", "d": "an act violating a law/rule"}]}, {"category": "General Vocabulary 13 (T–Z)", "words": [{"w": "transgressions", "p": "n", "d": "violations of a law/moral code"}, {"w": "transient", "p": "adj", "d": "temporary, passing quickly"}, {"w": "treatise", "p": "n", "d": "formal written work on a subject"}, {"w": "tribute", "p": "n", "d": "a demonstration of gratitude or respect"}, {"w": "umbrage", "p": "n", "d": "offense, annoyance"}, {"w": "unalloyed", "p": "adj", "d": "complete and pure, unqualified"}, {"w": "unanimous", "p": "adj", "d": "fully agreed upon by all"}, {"w": "underscore", "p": "v", "d": "emphasize the importance of"}, {"w": "understated", "p": "adj", "d": "subtle, not exaggerated"}, {"w": "universal", "p": "adj", "d": "applicable everywhere, to all cases"}, {"w": "unprecedented", "p": "adj", "d": "never done or known before"}, {"w": "unqualified", "p": "adj", "d": "complete, without reservation"}, {"w": "unscrupulous", "p": "adj", "d": "without moral principles"}, {"w": "unseemly", "p": "adj", "d": "improper for the circumstances"}, {"w": "untenable", "p": "adj", "d": "indefensible, unable to be maintained"}, {"w": "utilitarian", "p": "adj", "d": "designed for practical use"}, {"w": "utterly", "p": "adv", "d": "completely, totally"}, {"w": "validate", "p": "v", "d": "confirm, prove to be true"}, {"w": "vanquish", "p": "v", "d": "defeat thoroughly"}, {"w": "vapid", "p": "adj", "d": "lacking interest, life, or spirit"}, {"w": "venerate", "p": "v", "d": "regard with great respect"}, {"w": "veneration", "p": "n", "d": "deep respect and reverence"}, {"w": "verbose", "p": "adj", "d": "using too many words"}, {"w": "verisimilar", "p": "adj", "d": "appearing to be true or real"}, {"w": "verisimilitude", "p": "n", "d": "the appearance of being true"}, {"w": "versatile", "p": "adj", "d": "able to adapt to many functions"}, {"w": "vexation", "p": "n", "d": "the state of being annoyed"}, {"w": "viscid", "p": "adj", "d": "sticky, adhesive, thick in consistency"}, {"w": "vitality", "p": "n", "d": "the state of being strong, active"}, {"w": "vitiate", "p": "v", "d": "spoil or impair the quality of"}, {"w": "vivid", "p": "adj", "d": "producing powerful, clear mental images"}, {"w": "vociferous", "p": "adj", "d": "loud and vehement in expressing views"}, {"w": "warmonger", "p": "n", "d": "one who advocates for war"}, {"w": "weary", "p": "adj", "d": "extremely tired"}, {"w": "whimsical", "p": "adj", "d": "playfully quaint, fanciful"}, {"w": "yield", "p": "v", "d": "give way, produce; surrender"}, {"w": "zealous", "p": "adj", "d": "filled with passionate enthusiasm"}, {"w": "zenith", "p": "n", "d": "the highest point, peak"}]}];
+function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function sample(arr,n){return shuffle(arr).slice(0,n);}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+const gridEl = document.getElementById('grid');
+const detailEl = document.getElementById('detail');
+
+document.querySelectorAll('.category').forEach(btn => {
+  btn.addEventListener('click', () => openCategory(parseInt(btn.dataset.idx, 10)));
+});
+document.getElementById('backBtn').addEventListener('click', () => {
+  detailEl.classList.remove('open');
+  gridEl.classList.remove('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+function filterCards(q){
+  q = q.toLowerCase().trim();
+  document.querySelectorAll('.category').forEach(c => {
+    const name = c.querySelector('strong').textContent.toLowerCase();
+    c.style.display = (!q || name.includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('.section-label').forEach(lbl => {
+    const grid = lbl.nextElementSibling;
+    const anyVisible = [...grid.children].some(c => c.style.display !== 'none');
+    lbl.style.display = anyVisible ? '' : 'none';
+    grid.style.display = anyVisible ? '' : 'none';
+  });
+}
+
+function openCategory(idx){
+  const g = GROUPS[idx];
+  document.getElementById('catTitle').textContent = g.category;
+  document.getElementById('catCount').textContent = g.words.length + ' words';
+
+  renderWordList(g);
+  renderFlashcards(g);
+  renderMatching(g);
+  renderFib(g);
+
+  gridEl.classList.add('hidden');
+  detailEl.classList.add('open');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ---- word list ----
+function renderWordList(g){
+  const grid = document.getElementById('wordsGrid');
+  grid.innerHTML = '';
+  g.words.forEach(w => {
+    const el = document.createElement('article');
+    el.innerHTML = `<strong>${esc(w.w)}<span class="pos">${esc(w.p)}</span></strong><span class="def">${esc(w.d.charAt(0).toUpperCase()+w.d.slice(1))}</span>`;
+    grid.appendChild(el);
+  });
+}
+
+// ---- flashcards ----
+let fcDeck = [], fcPos = 0, fcFlipped = false;
+function renderFlashcards(g){
+  fcDeck = shuffle(g.words); fcPos = 0; fcFlipped = false;
+  const cardEl = document.getElementById('fcCard');
+  cardEl.classList.remove('flipped');
+  cardEl.onclick = flipCard;
+  document.getElementById('fcFlip').onclick = (e)=>{e.stopPropagation();flipCard();};
+  document.getElementById('fcPrev').onclick = (e)=>{e.stopPropagation();fcPos=(fcPos-1+fcDeck.length)%fcDeck.length;fcFlipped=false;showCard();};
+  document.getElementById('fcNext').onclick = (e)=>{e.stopPropagation();fcPos=(fcPos+1)%fcDeck.length;fcFlipped=false;showCard();};
+  document.getElementById('fcShuffle').onclick = (e)=>{e.stopPropagation();fcDeck=shuffle(fcDeck);fcPos=0;fcFlipped=false;showCard();};
+  showCard();
+}
+function flipCard(){
+  fcFlipped = !fcFlipped;
+  document.getElementById('fcCard').classList.toggle('flipped', fcFlipped);
+}
+function showCard(){
+  const w = fcDeck[fcPos];
+  document.getElementById('fcWord').textContent = w.w;
+  document.getElementById('fcPos').textContent = w.p;
+  document.getElementById('fcDef').textContent = w.d.charAt(0).toUpperCase()+w.d.slice(1);
+  document.getElementById('fcWord2').textContent = w.w + ' (' + w.p + ')';
+  document.getElementById('fcCard').classList.remove('flipped');
+  document.getElementById('fcProgress').textContent = `Card ${fcPos+1} of ${fcDeck.length}`;
+}
+
+// ---- matching ----
+function renderMatching(g){
+  const setSize = Math.min(8, g.words.length);
+  document.getElementById('newSet').onclick = () => buildRound(g, setSize);
+  buildRound(g, setSize);
+}
+function buildRound(g, setSize){
+  const chosen = sample(g.words, setSize);
+  const words = shuffle(chosen);
+  const defs = shuffle(chosen);
+  let selectedWord = null, selectedDef = null, matchedCount = 0, wrongCount = 0;
+
+  const wordCol = document.getElementById('wordCol');
+  const defCol = document.getElementById('defCol');
+  wordCol.innerHTML = ''; defCol.innerHTML = '';
+  document.getElementById('matchStatus').textContent = 'Match each word to its definition.';
+
+  words.forEach(w => {
+    const el = document.createElement('div');
+    el.className = 'match-item word';
+    el.textContent = w.w;
+    el.onclick = () => {
+      if(el.classList.contains('done')) return;
+      wordCol.querySelectorAll('.match-item').forEach(x=>x.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedWord = {id:w.w, el};
+      tryMatch();
+    };
+    wordCol.appendChild(el);
+  });
+  defs.forEach(w => {
+    const el = document.createElement('div');
+    el.className = 'match-item def';
+    el.textContent = w.d.charAt(0).toUpperCase()+w.d.slice(1);
+    el.onclick = () => {
+      if(el.classList.contains('done')) return;
+      defCol.querySelectorAll('.match-item').forEach(x=>x.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedDef = {id:w.w, el};
+      tryMatch();
+    };
+    defCol.appendChild(el);
+  });
+
+  function tryMatch(){
+    if(!selectedWord || !selectedDef) return;
+    if(selectedWord.id === selectedDef.id){
+      selectedWord.el.classList.remove('selected');
+      selectedDef.el.classList.remove('selected');
+      selectedWord.el.classList.add('correct','done');
+      selectedDef.el.classList.add('correct','done');
+      matchedCount++;
+    } else {
+      selectedWord.el.classList.add('wrong');
+      selectedDef.el.classList.add('wrong');
+      wrongCount++;
+      const sw = selectedWord, sd = selectedDef;
+      setTimeout(()=>{
+        sw.el.classList.remove('wrong','selected');
+        sd.el.classList.remove('wrong','selected');
+      }, 350);
+    }
+    selectedWord = null; selectedDef = null;
+    const status = document.getElementById('matchStatus');
+    if(matchedCount === setSize){
+      status.textContent = `All ${setSize} matched! Mistakes: ${wrongCount}.`;
+    } else {
+      status.textContent = `Matched ${matchedCount} of ${setSize} — mistakes: ${wrongCount}`;
+    }
+  }
+}
+
+// ---- fill in the blank ----
+function renderFib(g){
+  const host = document.getElementById('fibHost');
+  const qCount = Math.min(10, g.words.length);
+  let qi = 0, score = 0, answered = false, questions = [];
+
+  function start(){
+    questions = shuffle(g.words).slice(0, qCount);
+    qi = 0; score = 0;
+    renderQ();
+  }
+  function renderQ(){
+    const q = questions[qi];
+    const distractPool = g.words.filter(w => w.w !== q.w);
+    const distractors = sample(distractPool, Math.min(3, distractPool.length));
+    const options = shuffle([q, ...distractors]);
+    answered = false;
+    host.innerHTML = `
+      <div class="fib-wrap">
+        <div class="fib-q-count">Question ${qi+1} of ${questions.length}</div>
+        <div class="fib-sentence">Which word means: <b class="blank">"${esc(q.d)}"</b>?</div>
+        <div class="fib-options" id="fibOpts"></div>
+        <div class="fib-footer">
+          <span class="score-pill" id="fibScore">Score: ${score} / ${qi}</span>
+          <button class="btn primary" id="fibNext" style="display:none;">Next →</button>
+        </div>
+      </div>`;
+    const opts = document.getElementById('fibOpts');
+    options.forEach(o => {
+      const el = document.createElement('div');
+      el.className = 'fib-opt';
+      el.textContent = o.w + ' (' + o.p + ')';
+      el.onclick = () => {
+        if(answered) return;
+        answered = true;
+        opts.querySelectorAll('.fib-opt').forEach(x=>x.classList.add('disabled'));
+        if(o.w === q.w){
+          el.classList.add('correct');
+          score++;
+        } else {
+          el.classList.add('wrong');
+          opts.querySelectorAll('.fib-opt').forEach(x=>{ if(x.textContent.startsWith(q.w+' ')) x.classList.add('correct'); });
+        }
+        document.getElementById('fibScore').textContent = `Score: ${score} / ${qi+1}`;
+        const nextBtn = document.getElementById('fibNext');
+        nextBtn.style.display = 'inline-block';
+        nextBtn.textContent = (qi === questions.length-1) ? 'See results' : 'Next →';
+        nextBtn.onclick = () => {
+          qi++;
+          if(qi >= questions.length){
+            host.innerHTML = `
+              <div class="done-banner">
+                <div class="big">${score} / ${questions.length}</div>
+                <p>Fill-in-the-blank complete for &ldquo;${esc(g.category)}.&rdquo;</p>
+                <button class="btn primary" id="fibRestart">Try again</button>
+              </div>`;
+            document.getElementById('fibRestart').onclick = start;
+          } else {
+            renderQ();
+          }
+        };
+      };
+      opts.appendChild(el);
+    });
+  }
+  start();
+}
+</script>
+</body>
+</html>
