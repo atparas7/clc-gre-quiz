@@ -129,7 +129,7 @@ footer.credit{
         <div class="rule"></div>
         <h2>Sign in to continue</h2>
         <p>GRE prep program — Verbal Reasoning, Quantitative Reasoning &amp; Analytical Writing.</p>
-        <input type="text" id="login-name" placeholder="Full name" autocomplete="off">
+        <input type="text" id="login-name" placeholder="First and last name (e.g. Maria Papadopoulou)" autocomplete="off">
         <input type="text" id="login-section" placeholder="Class / Τμήμα" autocomplete="off">
         <input type="password" id="login-pass" placeholder="Password" autocomplete="off">
         <div class="error-text" id="login-error"></div>
@@ -372,20 +372,55 @@ const LOGIN_PASSWORD = "clcgre26";
 let currentStudentName = "";
 let currentStudentSection = "";
 
+/* CLC: accept only real-looking full names (first + last, Greek or Latin letters) */
+function clcCheckName(raw){
+  var name = String(raw == null ? '' : raw).normalize('NFC').replace(/[\s ]+/g, ' ').trim();
+  var bad = function(msg){ return {ok:false, msg:msg}; };
+  if(!name) return bad('Please enter your full name (first and last name).');
+  if(name.length > 60) return bad('That name is too long — please enter just your first and last name.');
+  var parts = name.split(' ');
+  if(parts.length < 2) return bad('Please enter BOTH your first name and your last name.');
+  if(parts.length > 4) return bad('Please enter just your first and last name.');
+  var blocked = ['test','testing','tester','asdf','asd','qwe','qwerty','abc','abcd','xyz','unknown','anonymous','anon','name','firstname','lastname','surname','student','admin','user','guest','none','null','nobody','someone',
+                 'τεστ','δοκιμη','ονομα','επωνυμο','μαθητης','μαθητρια','ανωνυμος','κανενας','χχχ'];
+  var partRe = /^\p{L}+(?:['’\-]\p{L}+)*$/u;
+  for(var i = 0; i < parts.length; i++){
+    var p = parts[i];
+    if(!partRe.test(p)) return bad('Your name can contain only letters (a hyphen or apostrophe is fine) — no numbers, dots or symbols.');
+    var letters = p.replace(/['’\-]/g, '');
+    if(letters.length < 2) return bad('Please write your names in full, not initials.');
+    var greek = /\p{Script=Greek}/u.test(letters), latin = /\p{Script=Latin}/u.test(letters);
+    if(!greek && !latin) return bad('Please write your name in Greek or Latin (English) letters.');
+    if(greek && latin) return bad('Please do not mix Greek and English letters in the same name.');
+    if(/(\p{L})\1\1/iu.test(letters)) return bad('That does not look like a real name — please type your actual first and last name.');
+    var norm = function(w){ return w.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ς/g, 'σ'); };
+    if(blocked.map(norm).indexOf(norm(letters)) !== -1) return bad('That does not look like a real name — please type your actual first and last name.');
+    if(new Set(letters.toLowerCase()).size === 1) return bad('That does not look like a real name — please type your actual first and last name.');
+  }
+  var loc = /\p{Script=Greek}/u.test(name) ? 'el' : 'en';
+  var tidy = parts.map(function(p){
+    if(p !== p.toLocaleLowerCase(loc) && p !== p.toLocaleUpperCase(loc)) return p;           // mixed case (McDonald): keep as typed
+    return p.toLocaleLowerCase(loc).replace(/(^|['’\-])(\p{L})/gu, function(m, s, c){ return s + c.toLocaleUpperCase(loc); });
+  }).join(' ');
+  return {ok:true, name:tidy};
+}
 function handleLogin(){
   const name = document.getElementById('login-name').value.trim();
   const section = document.getElementById('login-section').value.trim();
   const val = document.getElementById('login-pass').value;
 
-  if(!name){
-    document.getElementById('login-error').textContent = 'Please enter your full name.';
+  const nameCheck = clcCheckName(name);
+  if(!nameCheck.ok){
+    document.getElementById('login-error').textContent = nameCheck.msg;
+    document.getElementById('login-name').focus();
     return;
   }
   if(val !== LOGIN_PASSWORD){
     document.getElementById('login-error').textContent = 'Wrong password — check with your teacher.';
     return;
   }
-  currentStudentName = name;
+  currentStudentName = nameCheck.name;
+  document.getElementById('login-name').value = nameCheck.name;
   currentStudentSection = section;
   document.getElementById('login-error').textContent = '';
   go('screen-welcome');

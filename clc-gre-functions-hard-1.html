@@ -198,14 +198,53 @@ const REPORT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxeqNLSGf1Wd
 const TEST_NAME = "Functions (Hard)";
 let studentName = "";
 let studentSection = "";
+/* CLC: accept only real-looking full names (first + last, Greek or Latin letters) */
+function clcCheckName(raw){
+  var name = String(raw == null ? '' : raw).normalize('NFC').replace(/[\s ]+/g, ' ').trim();
+  var bad = function(msg){ return {ok:false, msg:msg}; };
+  if(!name) return bad('Please enter your full name (first and last name).');
+  if(name.length > 60) return bad('That name is too long — please enter just your first and last name.');
+  var parts = name.split(' ');
+  if(parts.length < 2) return bad('Please enter BOTH your first name and your last name.');
+  if(parts.length > 4) return bad('Please enter just your first and last name.');
+  var blocked = ['test','testing','tester','asdf','asd','qwe','qwerty','abc','abcd','xyz','unknown','anonymous','anon','name','firstname','lastname','surname','student','admin','user','guest','none','null','nobody','someone',
+                 'τεστ','δοκιμη','ονομα','επωνυμο','μαθητης','μαθητρια','ανωνυμος','κανενας','χχχ'];
+  var partRe = /^\p{L}+(?:['’\-]\p{L}+)*$/u;
+  for(var i = 0; i < parts.length; i++){
+    var p = parts[i];
+    if(!partRe.test(p)) return bad('Your name can contain only letters (a hyphen or apostrophe is fine) — no numbers, dots or symbols.');
+    var letters = p.replace(/['’\-]/g, '');
+    if(letters.length < 2) return bad('Please write your names in full, not initials.');
+    var greek = /\p{Script=Greek}/u.test(letters), latin = /\p{Script=Latin}/u.test(letters);
+    if(!greek && !latin) return bad('Please write your name in Greek or Latin (English) letters.');
+    if(greek && latin) return bad('Please do not mix Greek and English letters in the same name.');
+    if(/(\p{L})\1\1/iu.test(letters)) return bad('That does not look like a real name — please type your actual first and last name.');
+    var norm = function(w){ return w.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ς/g, 'σ'); };
+    if(blocked.map(norm).indexOf(norm(letters)) !== -1) return bad('That does not look like a real name — please type your actual first and last name.');
+    if(new Set(letters.toLowerCase()).size === 1) return bad('That does not look like a real name — please type your actual first and last name.');
+  }
+  var loc = /\p{Script=Greek}/u.test(name) ? 'el' : 'en';
+  var tidy = parts.map(function(p){
+    if(p !== p.toLocaleLowerCase(loc) && p !== p.toLocaleUpperCase(loc)) return p;           // mixed case (McDonald): keep as typed
+    return p.toLocaleLowerCase(loc).replace(/(^|['’\-])(\p{L})/gu, function(m, s, c){ return s + c.toLocaleUpperCase(loc); });
+  }).join(' ');
+  return {ok:true, name:tidy};
+}
 (function initStudentInfo(){
   const params = new URLSearchParams(window.location.search);
-  studentName = (params.get('name') || '').trim();
   studentSection = (params.get('section') || '').trim();
-  if(!studentName){
-    studentName = (prompt("Enter your full name:") || "Unknown").trim();
-    studentSection = (prompt("Enter your class/section (τμήμα):") || "").trim();
+  var nameCheck = clcCheckName(params.get('name'));
+  if(!nameCheck.ok){
+    var ask = "Enter your full name (first and last name):";
+    if((params.get('name') || '').trim()) ask = nameCheck.msg + "\n\n" + ask;
+    while(true){
+      nameCheck = clcCheckName(prompt(ask));
+      if(nameCheck.ok) break;
+      ask = nameCheck.msg + "\n\nEnter your full name (first and last name):";
+    }
+    if(!studentSection) studentSection = (prompt("Enter your class/section (τμήμα):") || "").trim();
   }
+  studentName = nameCheck.name;
   const introEl = document.getElementById('introScreen');
   if(introEl){
     const tag = document.createElement('div');
