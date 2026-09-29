@@ -368,7 +368,76 @@ function go(id){
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
 }
-const LOGIN_PASSWORD = "clcgre26";
+/* ===== Weekly rotating password =====
+   The password changes automatically every Monday at 00:00 (Athens time) and cycles through
+   the 12 passwords on the teacher's schedule. Only SHA-256 fingerprints are stored here,
+   never the passwords themselves. Week 0 starts on Monday 2026-10-05. */
+const PASSWORD_SALT = "clc-gre-weekly-v1:";
+const PASSWORD_HASHES = [
+  "04ef99a86a97a7d44f630ef04e89a552f3f7df651c348a7b7ff252302bc96386",
+  "605a5733802770cd482febd0ac554feefcc57443bcb331605dd5db13a540db85",
+  "6c5ef42e41b0e6763308b85295242ce5fc777387397379aa20c21f497a77d3b7",
+  "d24f753a065b047313715649e47b6ade1c56643b86dbd162ddf131c02033412c",
+  "33b4bdeb804d143e14ac788d7dc19edde46128a09cb3f987f7ca8327fe443f0a",
+  "4d02f12b75825c78471fc0e7eb35c802d5b1241a4ba67eccc0f1791a3ba9c369",
+  "bf631d5b513aaa41cf0c26da1a49a1793133dfdcb5e306db1f46a5f148f104d1",
+  "47c42b21eb0f55c9b0dbb9a7c84cbe06f75fc3f8789587c2a61943b1e391303b",
+  "d3abe874e18e836760dacce7c2846112cc6fb7d5e8b9c53c1da66f5b28f304a0",
+  "1e0d607e1f1ee170ce88ad4073da0f6a1f56e5f7bf5136721f5eecfdb4132f56",
+  "a3fea2faaed01fd6c0366c74ba2def77266c12a5374b6b178eed498a93dbd0c4",
+  "ac62fd9a6a43d75c887b4385205d4407927a63e4db401441c02e22d6e892345a"
+];
+const ROTATION_START = "2026-10-05";          // a Monday
+const PRE_ROTATION_PASSWORD_HASH = "9361840badb529913c3559c35fa2123f55d0c914d654fe39e3acb9d564aba8ac";    // password in use before rotation starts
+
+function sha256Hex(ascii){
+  function rr(v, n){ return (v >>> n) | (v << (32 - n)); }
+  var K = [], H = [], isComposite = {};
+  for (var c = 2, n = 0; n < 64; c++){
+    if (!isComposite[c]){
+      for (var i = 0; i < 313; i += c) isComposite[i] = c;
+      if (n < 8) H[n] = (Math.pow(c, 1/2) * 4294967296) | 0;
+      K[n++] = (Math.pow(c, 1/3) * 4294967296) | 0;
+    }
+  }
+  var bytes = unescape(encodeURIComponent(ascii)), words = [], len = bytes.length * 8;
+  bytes += '\x80';
+  while (bytes.length % 64 - 56) bytes += '\x00';
+  for (i = 0; i < bytes.length; i++) words[i >> 2] |= bytes.charCodeAt(i) << ((3 - i) % 4) * 8;
+  words[words.length] = (len / 4294967296) | 0; words[words.length] = len;
+  for (var j = 0; j < words.length;){
+    var w = words.slice(j, j += 16), old = H.slice(0);
+    for (i = 0; i < 64; i++){
+      var w15 = w[i - 15], w2 = w[i - 2], a = H[0], e = H[4];
+      var t1 = H[7] + (rr(e, 6) ^ rr(e, 11) ^ rr(e, 25)) + ((e & H[5]) ^ (~e & H[6])) + K[i] +
+        (w[i] = i < 16 ? w[i] : (w[i - 16] + (rr(w15, 7) ^ rr(w15, 18) ^ (w15 >>> 3)) + w[i - 7] + (rr(w2, 17) ^ rr(w2, 19) ^ (w2 >>> 10))) | 0);
+      var t2 = (rr(a, 2) ^ rr(a, 13) ^ rr(a, 22)) + ((a & H[1]) ^ (a & H[2]) ^ (H[1] & H[2]));
+      H = [(t1 + t2) | 0].concat(H); H[4] = (H[4] + t1) | 0; H.length = 8;
+    }
+    for (i = 0; i < 8; i++) H[i] = (H[i] + old[i]) | 0;
+  }
+  var out = '';
+  for (i = 0; i < 8; i++) for (var b = 3; b + 1; b--){ var x = (H[i] >> (b * 8)) & 255; out += (x < 16 ? '0' : '') + x.toString(16); }
+  return out;
+}
+
+function athensDateParts(now){
+  var f = new Intl.DateTimeFormat('en-CA', {timeZone: 'Europe/Athens', year: 'numeric', month: '2-digit', day: '2-digit'});
+  var p = {}; f.formatToParts(now || new Date()).forEach(function(x){ p[x.type] = x.value; });
+  return [+p.year, +p.month, +p.day];
+}
+function currentWeekIndex(now){            // weeks since ROTATION_START, counted in Athens time
+  var d = athensDateParts(now), s = ROTATION_START.split('-').map(Number);
+  var days = Math.round((Date.UTC(d[0], d[1] - 1, d[2]) - Date.UTC(s[0], s[1] - 1, s[2])) / 86400000);
+  return Math.floor(days / 7);
+}
+function isValidPassword(input, now){
+  var typed = String(input || '').trim().toLowerCase();
+  if (!typed) return false;
+  var w = currentWeekIndex(now);
+  if (w < 0) return sha256Hex(PASSWORD_SALT + typed) === PRE_ROTATION_PASSWORD_HASH;
+  return sha256Hex(PASSWORD_SALT + typed) === PASSWORD_HASHES[w % PASSWORD_HASHES.length];
+}
 let currentStudentName = "";
 let currentStudentSection = "";
 
@@ -415,8 +484,8 @@ function handleLogin(){
     document.getElementById('login-name').focus();
     return;
   }
-  if(val !== LOGIN_PASSWORD){
-    document.getElementById('login-error').textContent = 'Wrong password — check with your teacher.';
+  if(!isValidPassword(val)){
+    document.getElementById('login-error').textContent = 'Wrong password. The password changes every Monday — ask your teacher for this week\'s password.';
     return;
   }
   currentStudentName = nameCheck.name;
