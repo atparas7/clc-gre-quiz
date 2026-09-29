@@ -633,12 +633,41 @@ function updateProgress() {
   document.getElementById('progressLabel').textContent = answered + ' / ' + test.questions.length + ' answered';
 }
 
-function normalizeNumeric(s) { return String(s).trim().toLowerCase().replace(/\s+/g,'').replace(/€|\$/g,''); }
-function checkNumeric(userVal, correctVal) {
+/* CLC fix: strict answer checking. Old version used parseFloat, which accepted "1" for 1/16, "6" for 6√2, "100" for 100π,
+   and rejected valid forms such as -1.5 for -3/2 or 13,500 for 13500. */
+function normalizeNumeric(s) {
+  return String(s).trim().toLowerCase()
+    .replace(/\s+/g,'').replace(/€|\$|%/g,'')
+    .replace(/[−–—]/g,'-')           // unicode minus / dashes -> '-'
+    .replace(/<=/g,'≤').replace(/>=/g,'≥')
+    .replace(/pi/g,'π').replace(/[*·×]/g,'')
+    .replace(/sqrt\(?(\d+)\)?/g,'√$1')
+    .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, ch => '^' + '⁰¹²³⁴⁵⁶⁷⁸⁹'.indexOf(ch));
+}
+function numericValue(s) {                         // plain number (thousands commas allowed) or a/b fraction; otherwise NaN
+  if (/^[-+]?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g,'');
+  if (/^[-+]?(\d+\.?\d*|\.\d+)$/.test(s)) return parseFloat(s);
+  const m = s.match(/^([-+]?(?:\d+\.?\d*|\.\d+))\/([-+]?(?:\d+\.?\d*|\.\d+))$/);
+  if (m && parseFloat(m[2]) !== 0) return parseFloat(m[1]) / parseFloat(m[2]);
+  return NaN;
+}
+function checkNumeric(userVal, correctVal, q) {
   const u = normalizeNumeric(userVal), c = normalizeNumeric(correctVal);
+  if (u === '') return false;
   if (u === c) return true;
-  const uf = parseFloat(u), cf = parseFloat(c);
-  if (!isNaN(uf) && !isNaN(cf) && u.indexOf('/') === -1 && u.indexOf(',') === -1) return Math.abs(uf-cf) < 0.02;
+  const strip = s => s.replace(/^\((.*)\)$/,'$1');  // (15,27) == 15,27
+  if (strip(u) === strip(c)) return true;
+  const cv = numericValue(c);
+  let uv = numericValue(u);
+  if (isNaN(uv) && !isNaN(cv)) { const m = u.match(/^([-+]?[\d.,\/]+)(?:[a-z]+|[a-z]*\^?[23]|°)$/); if (m) uv = numericValue(m[1]); } // accepts units: 4hours, 210km, 150cm^2, 60°
+  if (isNaN(uv) || isNaN(cv)) return false;          // e.g. "6" vs "6√2", "100" vs "100π": never equal
+  const prompt = (q && q.prompt ? String(q.prompt) : '').toLowerCase();
+  if (c.indexOf('/') !== -1 && /lowest terms/.test(prompt) && u.indexOf('/') === -1) return false; // asked explicitly for a fraction in lowest terms
+  if (Math.abs(uv - cv) < 1e-9) return true;
+  if (/round|nearest|approximately|decimal place/.test(prompt)) {  // rounded answers: accept within half a unit of the key's last digit
+    const dec = (c.split('.')[1] || '').length;
+    return Math.abs(uv - cv) <= 0.5 * Math.pow(10, -dec) + 1e-9;
+  }
   return false;
 }
 
@@ -670,7 +699,7 @@ function renderResults() {
     let isCorrect = false, userAnswerText = '(no answer)';
     if (q.type === 'numeric') {
       userAnswerText = (val === undefined || val === '') ? '(no answer)' : val;
-      isCorrect = val !== undefined && val !== '' && checkNumeric(val, q.correct);
+      isCorrect = val !== undefined && val !== '' && checkNumeric(val, q.correct, q);
     } else {
       if (val !== undefined) {
         const idx = parseInt(val, 10);

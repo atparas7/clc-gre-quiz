@@ -814,6 +814,22 @@ function finishSection(){
   }
 }
 
+/* CLC fix: compare numeric-entry answers by value (accepts 5/2 = 10/4 = 2.5, commas, $ sign, unicode minus) */
+function clcToNumber(str){
+  if(str === null || str === undefined) return NaN;
+  const s = String(str).replace(/[\s,]/g,'').replace(/[−–]/g,'-').replace(/^\$|\$$/g,'');
+  if(s === '' || !/^[-+]?(\d+\.?\d*|\.\d+)$/.test(s)) return NaN;
+  return parseFloat(s);
+}
+function fracEquals(ans, q){
+  if(!ans) return false;
+  let numStr = String(ans.num === undefined ? '' : ans.num), denStr = String(ans.den === undefined ? '' : ans.den).trim();
+  if(denStr === '' && numStr.indexOf('/') !== -1){ const p = numStr.split('/'); if(p.length !== 2) return false; numStr = p[0]; denStr = p[1]; }
+  const n = clcToNumber(numStr), d = denStr === '' ? 1 : clcToNumber(denStr);
+  const cn = clcToNumber(q.correctNum), cd = (q.correctDen === undefined || String(q.correctDen).trim() === '') ? 1 : clcToNumber(q.correctDen);
+  if(isNaN(n) || isNaN(d) || d === 0 || isNaN(cn) || isNaN(cd) || cd === 0) return false;
+  return Math.abs(n/d - cn/cd) < 1e-9;
+}
 function calculateScore(qArray, ansArray){
   let c = 0;
   qArray.forEach((q,i)=>{
@@ -821,9 +837,9 @@ function calculateScore(qArray, ansArray){
     if(q.type==='mc' || q.type==='qc'){
       if(ans === q.correct) c++;
     } else if(q.type==='ms'){
-      if(Array.isArray(ans) && ans.sort().join(',') === q.correct.sort().join(',')) c++;
+      if(Array.isArray(ans) && [...ans].sort((a,b)=>a-b).join(',') === [...q.correct].sort((a,b)=>a-b).join(',')) c++;
     } else if(q.type==='fraction'){
-      if(ans && ans.num === q.correctNum && (ans.den === q.correctDen || (q.correctDen==='1' && ans.den===''))) c++;
+      if(fracEquals(ans, q)) c++;
     }
   });
   return c;
@@ -881,12 +897,12 @@ function renderReviewBlock(qArray, ansArray, prefix){
       if(ans !== null) yourAnsStr = '('+String.fromCharCode(65+ans)+') '+q.choices[ans];
     } else if(q.type==='ms'){
       if(Array.isArray(ans)){
-        isCorrect = (ans.sort().join(',') === q.correct.sort().join(','));
+        isCorrect = ([...ans].sort((a,b)=>a-b).join(',') === [...q.correct].sort((a,b)=>a-b).join(','));
         yourAnsStr = ans.map(idx => q.choices[idx]).join(', ');
       }
     } else if(q.type==='fraction'){
       if(ans){
-        isCorrect = (ans.num === q.correctNum && (ans.den === q.correctDen || (q.correctDen==='1' && ans.den==='')));
+        isCorrect = fracEquals(ans, q);
         yourAnsStr = ans.num + (ans.den ? ' / ' + ans.den : '');
       }
     }

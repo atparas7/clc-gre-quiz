@@ -232,11 +232,11 @@ const SEC1_QUESTIONS = [
     prompt: "Let \\(n\\) be a positive integer such that \\(n^3\\) is a multiple of \\(24\\).",
     choices: ["Quantity A is greater.", "Quantity B is greater.", "The two quantities are equal.", "The relationship cannot be determined from the information given."],
     table: { qA: "The greatest common divisor of \\(n\\) and \\(24\\)", qB: "6" },
-    correct: 0, answer: "Quantity A is greater.",
+    correct: 3, answer: "The relationship cannot be determined from the information given.",
     rule: "Prime factorization of 24 is \\(2^3 \\times 3^1\\). For \\(n^3\\) to be a multiple of 24, \\(n\\) must contain factors of 2 and 3.",
-    tip: "Since \\(n^3\\) is a multiple of \\(2^3 \\times 3\\), \\(n\\) must be a multiple of \\(2 \\times 3 = 6\\). Therefore, \\(\\gcd(n, 24)\\) must be at least 6, and since \\(n\\) can be a larger multiple, Quantity A can exceed 6.",
-    trap: "Assuming \\(n = 6\\) uniquely rather than looking at general common divisors.",
-    fastest: "Deduce that \\(n\\) is a multiple of 6, making the GCD at least 6."
+    tip: "Since \\(n^3\\) is a multiple of \\(2^3 \\times 3\\), \\(n\\) must be a multiple of 6. If \\(n = 6\\) (note \\(6^3 = 216 = 24 \\times 9\\)), \\(\\gcd(6, 24) = 6\\), so the quantities are equal. If \\(n = 12\\), \\(\\gcd(12, 24) = 12\\), so Quantity A is greater.",
+    trap: "Assuming Quantity A must exceed 6 — the smallest allowed value, \\(n = 6\\), makes the two quantities equal.",
+    fastest: "Test \\(n = 6\\) (equal) and \\(n = 12\\) (A greater): two different outcomes, so the answer is (D)."
   },
   {
     id: "s1_q2", skill: "Combinatorics", type: "mc",
@@ -282,9 +282,9 @@ const SEC1_QUESTIONS = [
     id: "s1_q6", skill: "Number Properties", type: "mc",
     prompt: "What is the units digit of \\(7^{2026}\\)?",
     choices: ["1", "3", "7", "9", "5"],
-    correct: 1, answer: "3",
+    correct: 3, answer: "9",
     rule: "Units digits of powers of 7 repeat in a 4-step cycle: \\(7, 9, 3, 1\\).",
-    tip: "Divide the exponent by 4: \\(2026 \\div 4 = 506\\) with a remainder of 2. The 2nd number in the cycle is 9? Wait: \\(7^1=7, 7^2=9, 7^3=3, 7^4=1\\). Remainder 2 corresponds to 9.",
+    tip: "Divide the exponent by 4: \\(2026 \\div 4 = 506\\) remainder 2. Cycle: \\(7^1=7, 7^2=9, 7^3=3, 7^4=1\\). Remainder 2 corresponds to 9.",
     trap: "Miscalculating the remainder cycle index.",
     fastest: "\\(2026 \\equiv 2 \\pmod 4\\), so units digit is 9."
   },
@@ -356,10 +356,10 @@ const SEC2_HARD = [
   { id: "s2h_q3", skill: "Advanced Algebra", type: "fraction", prompt: "If \\(x^2 - 3x + 1 = 0\\), what is \\(x^2 + \\frac{1}{x^2}\\)? Write as a fraction over 1.", correctNum: "7", correctDen: "1", answer: "7/1", rule: "Divide equation by \\(x\\) to get \\(x + \\frac{1}{x} = 3\\), then square both sides.", tip: "\\((x + 1/x)^2 = 3^2 \\implies x^2 + 2 + 1/x^2 = 9 \\implies x^2 + 1/x^2 = 7\\).", trap: "Squaring terms incorrectly.", fastest: "\\(3^2 - 2 = 7\\)." },
   { id: "s2h_q4", skill: "Functions", type: "mc", prompt: "If \\(f(x) = \\frac{e^x - e^{-x}}{2}\\), what is \\(f^{-1}(x)\\)?", choices: ["\\(\\ln(x + \\sqrt{x^2+1})\\)", "\\(\\ln(x - \\sqrt{x^2+1})\\)", "\\(\\frac{1}{2}\\ln x\\)", "\\(e^x - 1\\)", "\\(\\ln x\\)"], correct: 0, answer: "\\(\\ln(x + \\sqrt{x^2+1})\\)", rule: "Set \\(y = \\sinh(x)\\) and solve for \\(x\\) using quadratic formula on \\(e^x\\).", tip: "Multiply by \\(2e^x\\) to form a quadratic in \\(e^x\\) and solve via logarithms.", trap: "Failing to choose the correct positive branch for exponentials.", fastest: "Standard inverse hyperbolic sine identity." },
   { id: "s2h_q5", skill: "Geometry", type: "qc", prompt: "A right circular cone has height \\(4\\) and base radius \\(3\\).", choices: ["Quantity A is greater.", "Quantity B is greater.", "The two quantities are equal.", "The relationship cannot be determined from the information given."], table: { qA: "Total surface area of the cone", qB: "24\\(\\pi\\)" }, correct: 2, answer: "The two quantities are equal.", rule: "Slant height \\(l = \\sqrt{3^2 + 4^2} = 5\\). Surface Area = \\(\\pi r l + \\pi r^2\\).", tip: "Lateral area \\(15\\pi\\) + base \\(9\\pi\\) = \\(24\\pi\\), making them equal.", trap: "Forgetting to add the base area to the lateral area.", fastest: "Area = \\(15\\pi + 9\\pi = 24\\pi\\), matching Quantity B." },
-  { id: "s2h_q6", skill: "Number Properties", type: "mc", prompt: "What is the units digit of \\(3^{2026} + 7^{2026}\\)?", choices: ["0", "2", "4", "6", "8"], correct: 1, answer: "2", rule: "Find units digits of each term independently using cycle lengths.", tip: "Units digit of \\(3^{2026}\\) is 9. Units digit of \\(7^{2026}\\) is 9. Sum = \\(9 + 9 = 18\\), so units digit is 2.", trap: "Adding the exponents instead of finding individual units digits.", fastest: "Sum of units digits \\(9 + 9 = 18\\) ends in 2." },
+  { id: "s2h_q6", skill: "Number Properties", type: "mc", prompt: "What is the units digit of \\(3^{2026} + 7^{2026}\\)?", choices: ["0", "2", "4", "6", "8"], correct: 4, answer: "8", rule: "Find units digits of each term independently using cycle lengths.", tip: "Units digit of \\(3^{2026}\\) is 9. Units digit of \\(7^{2026}\\) is 9. Sum = \\(9 + 9 = 18\\), so the units digit is 8.", trap: "Adding the exponents instead of finding individual units digits.", fastest: "Sum of units digits \\(9 + 9 = 18\\) ends in 8." },
   { id: "s2h_q7", skill: "Combinatorics", type: "fraction", prompt: "In a group of 10 people, how many ways can a subcommittee of 3 people be chosen if two specific people refuse to serve together? Write as fraction.", correctNum: "112", correctDen: "1", answer: "112/1", rule: "Total subcommittees minus those containing both specific people.", tip: "Total = \\(\\binom{10}{3} = 120\\). Subcommittees with both = \\(\\binom{8}{1} = 8\\). \\(120 - 8 = 112\\).", trap: "Subtracting incorrectly.", fastest: "\\(120 - 8 = 112\\)." },
   { id: "s2h_q8", skill: "Advanced Algebra", type: "mc", prompt: "If \\(x^3 - 6x^2 + 11x - 6 = 0\\), what is the product of the two larger roots?", choices: ["2", "3", "6", "11", "18"], correct: 2, answer: "6", rule: "Factor polynomial using root theorem: roots are 1, 2, 3.", tip: "The roots are 1, 2, and 3. The two larger roots are 2 and 3, whose product is \\(2 \\times 3 = 6\\).", trap: "Multiplying all three roots instead of the two larger ones.", fastest: "Roots are 1, 2, 3. Product of 2 and 3 is 6." },
-  { id: "s2h_q9", skill: "Functions", type: "mc", prompt: "What is the period of the function \\(f(x) = \\sin(3x) + \\cos(5x)\\)?", choices: ["\\(\\frac{2\\pi}{15}\\)", "\\(\\frac{2\\pi}{5}\\)", "\\(\\frac{2\\pi}{3}\\)", "\\(2\\pi\\)", "\\(6\\pi\\)"], correct: 4, answer: "\\(6\\pi\\)", rule: "Period of sum of periodic functions is the least common multiple of their individual periods.", tip: "Periods are \\(2\\pi/3\\) and \\(2\\pi/5\\). LCM of individual periods is \\(6\\pi\\).", trap: "Taking the minimum period instead of the LCM.", fastest: "LCM of individual periods is \\(6\\pi\\)." },
+  { id: "s2h_q9", skill: "Functions", type: "mc", prompt: "What is the period of the function \\(f(x) = \\sin(3x) + \\cos(5x)\\)?", choices: ["\\(\\frac{2\\pi}{15}\\)", "\\(\\frac{2\\pi}{5}\\)", "\\(\\frac{2\\pi}{3}\\)", "\\(2\\pi\\)", "\\(6\\pi\\)"], correct: 3, answer: "\\(2\\pi\\)", rule: "Period of sum of periodic functions is the least common multiple of their individual periods.", tip: "Periods are \\(2\\pi/3\\) and \\(2\\pi/5\\). The smallest \\(T\\) that is a whole-number multiple of both is \\(2\\pi\\) (\\(= 3 \\times 2\\pi/3 = 5 \\times 2\\pi/5\\)).", trap: "Taking the minimum period instead of the LCM.", fastest: "LCM of \\(2\\pi/3\\) and \\(2\\pi/5\\) is \\(2\\pi\\)." },
   { id: "s2h_q10", skill: "Geometry", type: "qc", prompt: "A triangle has side lengths 7, 24, and 25.", choices: ["Quantity A is greater.", "Quantity B is greater.", "The two quantities are equal.", "The relationship cannot be determined from the information given."], table: { qA: "Area of the triangle", qB: "84" }, correct: 2, answer: "The two quantities are equal.", rule: "Verify right triangle via Pythagorean theorem: \\(7^2 + 24^2 = 49 + 576 = 625 = 25^2\\). Area = \\(\\frac{1}{2}ab\\).", tip: "Area = \\(\\frac{1}{2} \\times 7 \\times 24 = 7 \\times 12 = 84\\).", trap: "Using Heron's formula unnecessarily when it's a right triangle.", fastest: "Area = \\(7 \\times 12 = 84\\)." },
   { id: "s2h_q11", skill: "Number Properties", type: "mc", prompt: "Which of the following is equal to \\(10!\\)?", choices: ["\\(2^8 \\times 3^4 \\times 5^2 \\times 7\\)", "\\(2^7 \\times 3^3 \\times 5^2 \\times 7\\)", "\\(2^8 \\times 3^4 \\times 5 \\times 7\\)", "\\(2^4 \\times 3^2 \\times 5 \\times 7\\)", "\\(2^9 \\times 3^4 \\times 5^2 \\times 7\\)"], correct: 0, answer: "\\(2^8 \\times 3^4 \\times 5^2 \\times 7\\)", rule: "Legendre's formula for prime factorials.", tip: "Count powers of 2, 3, 5, 7 in \\(10!\\): 2s = \\(5+2+1=8\\), 3s = \\(3+1=4\\), 5s = \\(2\\), 7s = \\(1\\).", trap: "Miscounting factors of 2.", fastest: "Sum prime factor multiplicities up to 10." },
   { id: "s2h_q12", skill: "Combinatorics", type: "mc", prompt: "How many anagrams can be formed from the word \\(\\text{MATHEMATICS}\\)?", choices: ["\\(\\frac{11!}{2!2!2!}\\)", "\\(\\frac{11!}{2!2!}\\)", "\\(11!\\)", "\\(\\frac{11!}{4!}\\)", "\\(\\frac{11!}{3!2!}\\)"], correct: 0, answer: "\\(\\frac{11!}{2!2!2!}\\)", rule: "Permutations with indistinguishable items: \\(\\frac{n!}{n_1! n_2! \\dots n_k!}\\).", tip: "Total letters = 11. Repeats: M(2), A(2), T(2).", trap: "Forgetting to divide by factorials of repeated letters.", fastest: "Identify repetitions: M, A, T each appear twice." },
@@ -378,7 +378,7 @@ const SEC2_MEDIUM = [
   { id: "s2m_q7", skill: "Word Problems", type: "mc", prompt: "A shirt costs $40 after a 20% discount. What was the original price?", choices: ["$45", "$48", "$50", "$52", "$60"], correct: 2, answer: "$50", rule: "Sale price equals \\(80\\)% of original price.", tip: "\\(0.80 \\times P = 40 \\implies P = 50\\).", trap: "Adding 20% to $40.", fastest: "\\(40 / 0.8 = 50\\)." },
   { id: "s2m_q8", skill: "Coordinate Geometry", type: "qc", prompt: "Point \\(A\\) is at \\((0,0)\\) and point \\(B\\) is at \\((3,4)\\).", choices: ["Quantity A is greater.", "Quantity B is greater.", "The two quantities are equal.", "The relationship cannot be determined from the information given."], table: { qA: "Distance between \\(A\\) and \\(B\\)", qB: "5" }, correct: 2, answer: "The two quantities are equal.", rule: "Distance formula: \\(\\sqrt{(x_2-x_1)^2 + (y_2-y_1)^2}\\).", tip: "\\(\\sqrt{3^2 + 4^2} = \\sqrt{25} = 5\\).", trap: "Adding coordinates instead of squares.", fastest: "Classic 3-4-5 right triangle." },
   { id: "s2m_q9", skill: "Probability", type: "fraction", prompt: "A fair 6-sided die is rolled. What is the probability of rolling an even number or a number greater than 4? Write as fraction.", correctNum: "2", correctDen: "3", answer: "2/3", rule: "Count favorable outcomes: \\(\\{2, 4, 6, 5\\}\\) -> size 4 out of 6.", tip: "Favorable outcomes \\(\\{2,4,5,6\\}\\) = 4, so \\(4/6 = 2/3\\).", trap: "Double counting outcomes like 6.", fastest: "Favorable outcomes \\(\\{2,4,5,6\\}\\) = 4, so \\(4/6 = 2/3\\)." },
-  { id: "s2m_q10", skill: "Polynomials", type: "mc", prompt: "If \\((x-2)(x+3) = x^2 + bx + c\\), what is the value of \\(b + c\\)?", choices: ["-7", "-5", "-1", "1", "5"], correct: 0, answer: "-7", rule: "Expand binomial product.", tip: "\\(x^2 + x - 6 \\implies b = 1, c = -6 \\implies b + c = 1 + (-6) = -7\\).", trap: "Sign errors during expansion.", fastest: "\\(1 + (-6) = -7\\)." },
+  { id: "s2m_q10", skill: "Polynomials", type: "mc", prompt: "If \\((x-2)(x+3) = x^2 + bx + c\\), what is the value of \\(b + c\\)?", choices: ["-7", "-5", "-1", "1", "5"], correct: 1, answer: "-5", rule: "Expand binomial product.", tip: "\\((x-2)(x+3) = x^2 + x - 6 \\implies b = 1, c = -6 \\implies b + c = 1 + (-6) = -5\\).", trap: "Sign errors during expansion.", fastest: "\\(1 + (-6) = -5\\)." },
   { id: "s2m_q11", skill: "Averages", type: "mc", prompt: "The average of 4 numbers is 15. If a 5th number 25 is added, what is the new average?", choices: ["16", "17", "18", "19", "20"], correct: 1, answer: "17", rule: "New average = Total sum / 5.", tip: "Total sum 85 divided by 5 equals 17.", trap: "Averaging 15 and 25 directly.", fastest: "Total sum 85 divided by 5 equals 17." },
   { id: "s2m_q12", skill: "Inequalities", type: "mc", prompt: "If \\(-3x + 2 < 11\\), what is the range of \\(x\\)?", choices: ["\\(x > -3\\)", "\\(x < -3\\)", "\\(x > 3\\)", "\\(x < 3\\)", "\\(x > -5\\)"], correct: 0, answer: "\\(x > -3\\)", rule: "Isolate \\(x\\), reversing inequality sign when dividing by a negative number.", tip: "\\(-3x < 9 \\implies x > -3\\).", trap: "Forgetting to flip the inequality sign when dividing by -3.", fastest: "Divide by -3 and reverse sign." },
   { id: "s2m_q13", skill: "Geometry", type: "fraction", prompt: "What is the radius of a circle with circumference \\(10\\pi\\)? Write as a fraction over 1.", correctNum: "5", correctDen: "1", answer: "5/1", rule: "Circumference \\(C = 2\\pi r\\).", tip: "\\(r = 10\\pi / 2\\pi = 5\\).", trap: "Confusing radius and diameter.", fastest: "\\(r = 10\\pi / 2\\pi = 5\\)." },
@@ -396,7 +396,7 @@ const SEC2_EASY = [
   { id: "s2e_q7", skill: "Basic Arithmetic", type: "mc", prompt: "What is \\((-3) \\times (-4) + 5\\)?", choices: ["-17", "-7", "7", "12", "17"], correct: 4, answer: "17", rule: "Negative times negative is positive.", tip: "\\((-3) \\times (-4) = 12 \\implies 12 + 5 = 17\\).", trap: "Keeping the product negative.", fastest: "12 + 5 = 17." },
   { id: "s2e_q8", skill: "Decimals", type: "mc", prompt: "What is \\(3.5 + 2.25\\)?", choices: ["5.50", "5.75", "6.00", "6.25", "6.50"], correct: 1, answer: "5.75", rule: "Align decimal points.", tip: "\\(3.50 + 2.25 = 5.75\\).", trap: "Decimal alignment error.", fastest: "3.5 + 2.25 = 5.75." },
   { id: "s2e_q9", skill: "Exponents", type: "mc", prompt: "What is \\(3^3\\)?", choices: ["6", "9", "18", "27", "81"], correct: 3, answer: "27", rule: "Multiply base by itself 3 times.", tip: "\\(3 \\times 3 \\times 3 = 27\\).", trap: "Multiplying base by exponent \\(3 \\times 3 = 9\\).", fastest: "3 cubed is 27." },
-  { id: "s2e_q10", skill: "Ratios", type: "fraction", prompt: "Simplify the ratio \\(12:18\\) as a fraction over 1.", correctNum: "2", correctDen: "3", answer: "2/3", rule: "Divide both numbers by their greatest common divisor (6).", tip: "\\(12 \\div 6 = 2\\), \\(18 \\div 6 = 3\\).", trap: "Incomplete simplification.", fastest: "Cancel common factor 6 to get 2/3." },
+  { id: "s2e_q10", skill: "Ratios", type: "fraction", prompt: "Simplify the ratio \\(12:18\\) and write it as a fraction.", correctNum: "2", correctDen: "3", answer: "2/3", rule: "Divide both numbers by their greatest common divisor (6).", tip: "\\(12 \\div 6 = 2\\), \\(18 \\div 6 = 3\\).", trap: "Incomplete simplification.", fastest: "Cancel common factor 6 to get 2/3." },
   { id: "s2e_q11", skill: "Inequalities", type: "mc", prompt: "If \\(2x > 10\\), which of the following is true?", choices: ["\\(x > 5\\)", "\\(x < 5\\)", "\\(x > 20\\)", "\\(x < 20\\)", "\\(x = 5\\)"], correct: 0, answer: "\\(x > 5\\)", rule: "Divide both sides by 2.", tip: "\\(x > 10 / 2 \\implies x > 5\\).", trap: "Reversing inequality direction unnecessarily.", fastest: "Divide 10 by 2." },
   { id: "s2e_q12", skill: "Geometry", type: "mc", prompt: "What is the perimeter of a rectangle with length 8 and width 5?", choices: ["13", "21", "26", "40", "48"], correct: 2, answer: "26", rule: "Perimeter = \\(2(l + w)\\).", tip: "\\(2(8 + 5) = 2(13) = 26\\).", trap: "Multiplying length and width instead of adding.", fastest: "Sum of all sides: \\(8+8+5+5 = 26\\)." },
   { id: "s2e_q13", skill: "Word Problems", type: "mc", prompt: "John has 15 apples and gives 4 to Mary. Then he buys 6 more. How many apples does John have?", choices: ["11", "15", "17", "21", "25"], correct: 2, answer: "17", rule: "Perform sequential addition and subtraction.", tip: "\\(15 - 4 = 11 \\implies 11 + 6 = 17\\).", trap: "Forgetting the final addition step.", fastest: "15 - 4 + 6 = 17." },
@@ -598,6 +598,22 @@ function finishSection(){
   }
 }
 
+/* CLC fix: compare numeric-entry answers by value (accepts 5/2 = 10/4 = 2.5, commas, $ sign, unicode minus) */
+function clcToNumber(str){
+  if(str === null || str === undefined) return NaN;
+  const s = String(str).replace(/[\s,]/g,'').replace(/[−–]/g,'-').replace(/^\$|\$$/g,'');
+  if(s === '' || !/^[-+]?(\d+\.?\d*|\.\d+)$/.test(s)) return NaN;
+  return parseFloat(s);
+}
+function fracEquals(ans, q){
+  if(!ans) return false;
+  let numStr = String(ans.num === undefined ? '' : ans.num), denStr = String(ans.den === undefined ? '' : ans.den).trim();
+  if(denStr === '' && numStr.indexOf('/') !== -1){ const p = numStr.split('/'); if(p.length !== 2) return false; numStr = p[0]; denStr = p[1]; }
+  const n = clcToNumber(numStr), d = denStr === '' ? 1 : clcToNumber(denStr);
+  const cn = clcToNumber(q.correctNum), cd = (q.correctDen === undefined || String(q.correctDen).trim() === '') ? 1 : clcToNumber(q.correctDen);
+  if(isNaN(n) || isNaN(d) || d === 0 || isNaN(cn) || isNaN(cd) || cd === 0) return false;
+  return Math.abs(n/d - cn/cd) < 1e-9;
+}
 function calculateScore(qArray, ansArray){
   let c = 0;
   qArray.forEach((q,i)=>{
@@ -605,9 +621,9 @@ function calculateScore(qArray, ansArray){
     if(q.type==='mc' || q.type==='qc'){
       if(ans === q.correct) c++;
     } else if(q.type==='ms'){
-      if(Array.isArray(ans) && ans.sort().join(',') === q.correct.sort().join(',')) c++;
+      if(Array.isArray(ans) && [...ans].sort((a,b)=>a-b).join(',') === [...q.correct].sort((a,b)=>a-b).join(',')) c++;
     } else if(q.type==='fraction'){
-      if(ans && ans.num === q.correctNum && (ans.den === q.correctDen || (q.correctDen==='1' && ans.den===''))) c++;
+      if(fracEquals(ans, q)) c++;
     }
   });
   return c;
@@ -665,12 +681,12 @@ function renderReviewBlock(qArray, ansArray, prefix){
       if(ans !== null) yourAnsStr = '('+String.fromCharCode(65+ans)+') '+q.choices[ans];
     } else if(q.type==='ms'){
       if(Array.isArray(ans)){
-        isCorrect = (ans.sort().join(',') === q.correct.sort().join(','));
+        isCorrect = ([...ans].sort((a,b)=>a-b).join(',') === [...q.correct].sort((a,b)=>a-b).join(','));
         yourAnsStr = ans.map(idx => q.choices[idx]).join(', ');
       }
     } else if(q.type==='fraction'){
       if(ans){
-        isCorrect = (ans.num === q.correctNum && (ans.den === q.correctDen || (q.correctDen==='1' && ans.den==='')));
+        isCorrect = fracEquals(ans, q);
         yourAnsStr = ans.num + (ans.den ? ' / ' + ans.den : '');
       }
     }

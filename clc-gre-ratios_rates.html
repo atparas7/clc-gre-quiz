@@ -209,7 +209,7 @@ const SEC1_QUESTIONS = [
   { id: "s1_q7", skill: "Discounts", type: "mc", prompt: "An item originally priced at $120 is marked down by 15%. What is the sale price?", choices: ["$98", "$102", "$105", "$108", "$110"], correct: 1, answer: "$102", rule: "Sale price = 120 × (1 - 0.15) = 120 × 0.85 = 102.", tip: "10% is 12, 5% is 6, total discount = 18.", trap: "Subtracting 15 directly from 120.", fastest: "120 × 0.85 = 102." },
   { id: "s1_q8", skill: "Rates", type: "mc", prompt: "Pipe A can fill a tank in 4 hours, and Pipe B can fill it in 6 hours. How long will it take both pipes together?", choices: ["2.0 hours", "2.4 hours", "2.8 hours", "3.0 hours", "3.5 hours"], correct: 1, answer: "2.4 hours", rule: "Combined rate = 1/4 + 1/6 = 5/12 tank/hour. Time = 12/5 = 2.4 hours.", tip: "Use reciprocal rates.", trap: "Averaging 4 and 6 to get 5.", fastest: "(4 × 6) / (4 + 6) = 2.4." },
   { id: "s1_q9", skill: "Percentages", type: "mc", prompt: "A population increases from 50,000 to 57,000. What is the percent increase?", choices: ["12%", "14%", "15%", "16%", "20%"], correct: 1, answer: "14%", rule: "Percent change = (57000 - 50000) / 50000 = 7000 / 50000 = 0.14 = 14%.", tip: "Difference divided by original.", trap: "Dividing by the new population.", fastest: "7 / 50 = 14 / 100 = 14%." },
-  { id: "s1_q10", skill: "Ratios", type: "mc", prompt: "The ratio of red marbles to blue marbles is 5:3. If there are 72 marbles in total, how many are red?", choices: ["27", "30", "40", "45", "48"], correct: 2, answer: "45", rule: "Total parts = 5 + 3 = 8. Each part = 72 / 8 = 9. Red = 5 × 9 = 45.", tip: "Divide total by sum of ratio parts.", trap: "Multiplying by 3 instead of 5.", fastest: "5/8 × 72 = 45." },
+  { id: "s1_q10", skill: "Ratios", type: "mc", prompt: "The ratio of red marbles to blue marbles is 5:3. If there are 72 marbles in total, how many are red?", choices: ["27", "30", "40", "45", "48"], correct: 3, answer: "45", rule: "Total parts = 5 + 3 = 8. Each part = 72 / 8 = 9. Red = 5 × 9 = 45.", tip: "Divide total by sum of ratio parts.", trap: "Multiplying by 3 instead of 5.", fastest: "5/8 × 72 = 45." },
   { id: "s1_q11", skill: "Discounts", type: "mc", prompt: "A jacket sells for $68 after a 15% discount. What was the original price?", choices: ["$75", "$80", "$85", "$90", "$95"], correct: 1, answer: "$80", rule: "Original × 0.85 = 68 => Original = 68 / 0.85 = 80.", tip: "Sale price represents 85% of original.", trap: "Taking 15% of 68 and adding it.", fastest: "68 / 0.85 = 80." },
   { id: "s1_q12", skill: "Rates", type: "mc", prompt: "If a machine produces 120 items in 15 minutes, how many items does it produce in 1 hour?", choices: ["360", "400", "450", "480", "500"], correct: 3, answer: "480", rule: "1 hour = 60 minutes (4 blocks of 15 mins). 120 × 4 = 480.", tip: "Scale time units directly.", trap: "Multiplying by 60 instead of 4.", fastest: "120 × (60 / 15) = 480." }
 ];
@@ -226,10 +226,10 @@ const SEC2_HARD = [
   { id: "s2h_q8", skill: "Rates", type: "mc", prompt: "A pool fills in 6 hours with pump A and empties in 9 hours with pump B. If both operate, how long to fill?", choices: ["12 hours", "15 hours", "18 hours", "20 hours", "24 hours"], correct: 2, answer: "18 hours", rule: "Net rate = 1/6 - 1/9 = 1/18 tank/hour. Time = 18 hours.", tip: "Subtract opposing rates.", trap: "Adding pump B rate instead of subtracting.", fastest: "(6 × 9) / (9 - 6) = 18." },
   { id: "s2h_q9", skill: "Percentages", type: "mc", prompt: "In a class, 60% are girls. If 20% of the girls and 50% of the boys wear glasses, what percentage of the class wears glasses?", choices: ["30%", "32%", "35%", "38%", "40%"], correct: 1, answer: "32%", rule: "(0.60 × 0.20) + (0.40 × 0.50) = 0.12 + 0.20 = 0.32 (32%).", tip: "Break down by subgroups.", trap: "Averaging 20% and 50% to get 35%.", fastest: "12 + 20 = 32%." },
   { id: "s2h_q10", skill: "Ratios", type: "mc", prompt: "The ratio of cats to dogs is 4:5. When 6 more cats arrive, the ratio becomes 1:1. How many total animals initially?", choices: ["45", "54", "60", "72", "81"], correct: 1, answer: "54", rule: "Let cats=4x, dogs=5x. (4x+6)/5x = 1/1 => 4x+6 = 5x => x=6. Total = 9x = 54.", tip: "Set up algebraic equation from ratio.", trap: "Ignoring variable scaling.", fastest: "9 × 6 = 54." },
-  { id: "s2h_q11", skill: "Discounts", type: "mc", prompt: "Item A is $100 with 30% discount. Item B is $150 with 40% discount. Combined final price?", choices: ["$150", "$155", "$160", "$165", "$170"], correct: 0, answer: "$150", rule: "Price A = 70. Price B = 90. Total = 70 + 90 = 150.", tip: "Calculate each item separately.", trap: "Averaging percentages.", fastest: "70 + 90 = 150." },
+  { id: "s2h_q11", skill: "Discounts", type: "mc", prompt: "Item A is $100 with 30% discount. Item B is $150 with 40% discount. Combined final price?", choices: ["$150", "$155", "$160", "$165", "$170"], correct: 2, answer: "$160", rule: "Price A = 100 × 0.70 = 70. Price B = 150 × 0.60 = 90. Total = 70 + 90 = 160.", tip: "Calculate each item separately.", trap: "Averaging percentages.", fastest: "70 + 90 = 160." },
   { id: "s2h_q12", skill: "Rates", type: "mc", prompt: "A runner covers 4 miles at 8 mph and returns along the same route at 12 mph. What is the average speed?", choices: ["9.6 mph", "10.0 mph", "10.4 mph", "9.8 mph", "10.5 mph"], correct: 0, answer: "9.6 mph", rule: "Harmonic mean formula: 2xy / (x+y) = (2 × 8 × 12) / (8 + 12) = 192 / 20 = 9.6.", tip: "Average speed for equal distances is harmonic mean.", trap: "Simple average of 8 and 12 (10).", fastest: "192 / 20 = 9.6." },
   { id: "s2h_q13", skill: "Percentages", type: "mc", prompt: "If x is 150% of y, what percent of x is y?", choices: ["50%", "66.7%", "75%", "80%", "60%"], correct: 1, answer: "66.7%", rule: "x = 1.5y => y/x = 1/1.5 = 2/3 = 66.7%.", tip: "Invert the relationship ratio.", trap: "Answering 50% because of the 50 difference.", fastest: "100 / 1.5 = 66.7%." },
-  { id: "s2h_q14", skill: "Ratios", type: "mc", prompt: "Alloy X has copper and zinc in 3:2 ratio, Alloy Y in 4:1. Equal quantities are melted together. New ratio of copper to zinc?", choices: ["7:3", "13:7", "11:9", "12:5", "9:4"], correct: 1, answer: "13:7", rule: "Alloy X: 3/5 Cu, 2/5 Zn. Alloy Y: 4/5 Cu, 1/5 Zn. Sum Cu = 3/5 + 4/5 = 7/5. Sum Zn = 2/5 + 1/5 = 3/5... Wait, let's normalize parts: X is 3+2=5 parts, Y is 4+1=5 parts. Cu = 3+4=7, Zn = 2+1=3? Wait: X(3,2), Y(4,1) -> Cu = 3/5 + 4/5 = 7/5? Let's use 10 units total: X gives 6 Cu, 4 Zn. Y gives 8 Cu, 2 Zn. Total Cu = 14, Zn = 6. Ratio 14:6 = 7:3? Wait, let's check standard calculation: Cu = 3/5 + 4/5 = 7/5; Zn = 2/5 + 1/5 = 3/5. Ratio = 7:3. Let's make answer 7:3.", tip: "Sum normalized fractions.", trap: "Adding ratios directly without equal mass assumption.", fastest: "Sum of fractions: 7/5 to 3/5 -> 7:3." },
+  { id: "s2h_q14", skill: "Ratios", type: "mc", prompt: "Alloy X has copper and zinc in 3:2 ratio, Alloy Y in 4:1. Equal quantities are melted together. New ratio of copper to zinc?", choices: ["7:3", "13:7", "11:9", "12:5", "9:4"], correct: 0, answer: "7:3", rule: "Take 10 kg of each alloy. X gives 6 kg Cu and 4 kg Zn; Y gives 8 kg Cu and 2 kg Zn. Total Cu = 14, Zn = 6, so the ratio is 14:6 = 7:3.", tip: "Sum normalized fractions.", trap: "Adding ratios directly without equal mass assumption.", fastest: "Sum of fractions: 7/5 to 3/5 -> 7:3." },
   { id: "s2h_q15", skill: "Rates", type: "mc", prompt: "A car travels half a journey at 40 mph and the other half at 60 mph. Average speed?", choices: ["48 mph", "50 mph", "52 mph", "45 mph", "55 mph"], correct: 0, answer: "48 mph", rule: "Harmonic mean: (2 × 40 × 60) / (40 + 60) = 4800 / 100 = 48.", tip: "Equal distance implies harmonic mean.", trap: "Simple average (50).", fastest: "4800 / 100 = 48." }
 ];
 
@@ -284,7 +284,7 @@ function startSection(secNum){
   } else {
     let s1Score = 0;
     for(let i=0; i<SEC1_QUESTIONS.length; i++){
-      if(answersSec1[i] === SEC1_QUESTIONS[i].correct) s1Score++;
+      if(rrIsCorrect(SEC1_QUESTIONS[i], answersSec1[i])) s1Score++;
     }
     activeQuestions = (s1Score >= 8) ? SEC2_HARD : SEC2_EASY;
     secondsRemaining = extendedTime ? 1950 : 1560; // 26 mins = 1560s (+25% = 1950s)[cite: 1]
@@ -418,6 +418,29 @@ function jumpTo(i){
   renderQuestion();
 }
 
+/* CLC fix: compare numeric-entry answers by value (accepts 5/2 = 10/4 = 2.5, commas, $ sign, unicode minus) */
+function clcToNumber(str){
+  if(str === null || str === undefined) return NaN;
+  const s = String(str).replace(/[\s,]/g,'').replace(/[−–]/g,'-').replace(/^\$|\$$/g,'');
+  if(s === '' || !/^[-+]?(\d+\.?\d*|\.\d+)$/.test(s)) return NaN;
+  return parseFloat(s);
+}
+function fracEquals(ans, q){
+  if(!ans) return false;
+  let numStr = String(ans.num === undefined ? '' : ans.num), denStr = String(ans.den === undefined ? '' : ans.den).trim();
+  if(denStr === '' && numStr.indexOf('/') !== -1){ const p = numStr.split('/'); if(p.length !== 2) return false; numStr = p[0]; denStr = p[1]; }
+  const n = clcToNumber(numStr), d = denStr === '' ? 1 : clcToNumber(denStr);
+  const cn = clcToNumber(q.correctNum), cd = (q.correctDen === undefined || String(q.correctDen).trim() === '') ? 1 : clcToNumber(q.correctDen);
+  if(isNaN(n) || isNaN(d) || d === 0 || isNaN(cn) || isNaN(cd) || cd === 0) return false;
+  return Math.abs(n/d - cn/cd) < 1e-9;
+}
+function rrIsCorrect(q, a){
+  if(q.type === 'fraction'){
+    if(typeof a !== 'string' || a === '/' ) return false;
+    const i = a.indexOf('/'); return fracEquals({num: a.slice(0,i), den: a.slice(i+1)}, q);
+  }
+  return a === q.correct;
+}
 function handleSectionEnd(){
   clearInterval(timerInterval);
   if(currentSection === 1){
@@ -425,7 +448,7 @@ function handleSectionEnd(){
     document.getElementById('transScreen').style.display = 'block';
     let s1Score = 0;
     for(let i=0; i<SEC1_QUESTIONS.length; i++){
-      if(answersSec1[i] === SEC1_QUESTIONS[i].correct) s1Score++;
+      if(rrIsCorrect(SEC1_QUESTIONS[i], answersSec1[i])) s1Score++;
     }
     document.getElementById('transMessage').innerText = `You scored ${s1Score}/12 in Section 1. Section 2 difficulty has been adjusted accordingly.`;
   } else {
@@ -439,10 +462,10 @@ function showResults(){
   document.getElementById('timerDisplay').style.display = 'none';
 
   let s1Score = 0;
-  SEC1_QUESTIONS.forEach((q, i) => { if(answersSec1[i] === q.correct) s1Score++; });
+  SEC1_QUESTIONS.forEach((q, i) => { if(rrIsCorrect(q, answersSec1[i])) s1Score++; });
 
   let s2Score = 0;
-  activeQuestions.forEach((q, i) => { if(answersSec2[i] === q.correct) s2Score++; });
+  activeQuestions.forEach((q, i) => { if(rrIsCorrect(q, answersSec2[i])) s2Score++; });
 
   let totalScore = s1Score + s2Score;
   let maxScore = SEC1_QUESTIONS.length + activeQuestions.length;
@@ -465,7 +488,7 @@ function showResults(){
   html += `<h3>Section 1</h3>`;
   SEC1_QUESTIONS.forEach((q, i) => {
     const userA = answersSec1[i];
-    const isCorr = userA === q.correct;
+    const isCorr = rrIsCorrect(q, userA);
     const userAnsText = q.type === 'mc' ? (userA !== null ? q.choices[userA] : 'No Answer') : (userA || 'No Answer');
     html += buildReviewCard(q, i+1, isCorr, userAnsText);
   });
@@ -473,7 +496,7 @@ function showResults(){
   html += `<h3>Section 2</h3>`;
   activeQuestions.forEach((q, i) => {
     const userA = answersSec2[i];
-    const isCorr = userA === q.correct;
+    const isCorr = rrIsCorrect(q, userA);
     const userAnsText = q.type === 'mc' ? (userA !== null ? q.choices[userA] : 'No Answer') : (userA || 'No Answer');
     html += buildReviewCard(q, i+1, isCorr, userAnsText);
   });

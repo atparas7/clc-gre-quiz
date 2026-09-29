@@ -1023,7 +1023,7 @@ function buildRound(g, setSize){
       if(el.classList.contains('done')) return;
       wordCol.querySelectorAll('.match-item').forEach(x=>x.classList.remove('selected'));
       el.classList.add('selected');
-      selectedWord = {id:w.w, el};
+      selectedWord = {id:w.w, d:w.d, el};
       tryMatch();
     };
     wordCol.appendChild(el);
@@ -1036,7 +1036,7 @@ function buildRound(g, setSize){
       if(el.classList.contains('done')) return;
       defCol.querySelectorAll('.match-item').forEach(x=>x.classList.remove('selected'));
       el.classList.add('selected');
-      selectedDef = {id:w.w, el};
+      selectedDef = {id:w.w, d:w.d, el};
       tryMatch();
     };
     defCol.appendChild(el);
@@ -1044,7 +1044,7 @@ function buildRound(g, setSize){
 
   function tryMatch(){
     if(!selectedWord || !selectedDef) return;
-    if(selectedWord.id === selectedDef.id){
+    if(selectedWord.id === selectedDef.id || selectedWord.d === selectedDef.d){
       selectedWord.el.classList.remove('selected');
       selectedDef.el.classList.remove('selected');
       selectedWord.el.classList.add('correct','done');
@@ -1083,7 +1083,7 @@ function renderFib(g){
   }
   function renderQ(){
     const q = questions[qi];
-    const distractPool = g.words.filter(w => w.w !== q.w);
+    const distractPool = g.words.filter(w => w.w !== q.w && w.d !== q.d);
     const distractors = sample(distractPool, Math.min(3, distractPool.length));
     const options = shuffle([q, ...distractors]);
     answered = false;
