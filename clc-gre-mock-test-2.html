@@ -938,7 +938,7 @@ function renderQuestion(){
   } else if(q.type === 'num'){
     body += '<div class="qprompt">' + q.prompt + '</div>';
     const val = answers[currentIdx] || '';
-    body += '<div style="margin-top:10px;"><input type="text" inputmode="decimal" class="num-input" id="numOnly" placeholder="Answer" value="' + escAttr(val) + '" oninput="updateNum()"><div style="font-size:12px;color:#666;margin-top:6px;">Enter a number (integer or decimal; a minus sign is allowed).</div></div>';
+    body += '<div style="margin-top:10px;"><input type="text" inputmode="decimal" class="num-input" id="numOnly" placeholder="Answer" value="' + escAttr(val) + '" oninput="updateNum()"><div style="font-size:12px;color:#666;margin-top:6px;">Enter a number (integer, decimal or fraction such as 35/2; a minus sign is allowed).</div></div>';
   } else if(q.type === 'fraction'){
     body += '<div class="qprompt">' + q.prompt + '</div>';
     const val = answers[currentIdx] || {num:'', den:''};
@@ -1024,9 +1024,11 @@ function finishSection(timeUp){
 
 function toNumber(str){
   if(str === null || str === undefined) return NaN;
-  const s = String(str).replace(/,/g,'').replace(/−/g,'-').trim();
-  if(s === '' || !/^[-+]?(\d+\.?\d*|\.\d+)$/.test(s)) return NaN;
-  return parseFloat(s);
+  const s = String(str).replace(/[,\s]/g,'').replace(/[−–]/g,'-').replace(/^\$|\$$/g,'');
+  if(/^[-+]?(\d+\.?\d*|\.\d+)$/.test(s)) return parseFloat(s);
+  const m = s.match(/^([-+]?(?:\d+\.?\d*|\.\d+))\/([-+]?(?:\d+\.?\d*|\.\d+))$/);   // fraction typed in one box, e.g. 35/2
+  if(m && parseFloat(m[2]) !== 0) return parseFloat(m[1]) / parseFloat(m[2]);
+  return NaN;
 }
 function isCorrectAnswer(q, ans){
   if(q.type==='mc' || q.type==='qc') return ans === q.correct;
@@ -1035,7 +1037,7 @@ function isCorrectAnswer(q, ans){
   if(q.type==='fraction'){
     if(!ans) return false;
     const n = toNumber(ans.num), d = ans.den === '' ? 1 : toNumber(ans.den);
-    const cn = parseFloat(q.correctNum), cd = parseFloat(q.correctDen);
+    const cn = toNumber(q.correctNum), cd = (q.correctDen === undefined || String(q.correctDen).trim() === '') ? 1 : toNumber(q.correctDen);
     return !isNaN(n) && !isNaN(d) && d !== 0 && Math.abs(n/d - cn/cd) < 1e-9;
   }
   return false;

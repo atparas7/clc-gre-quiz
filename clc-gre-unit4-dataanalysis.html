@@ -662,7 +662,6 @@ function checkNumeric(userVal, correctVal, q) {
   if (isNaN(uv) && !isNaN(cv)) { const m = u.match(/^([-+]?[\d.,\/]+)(?:[a-z]+|[a-z]*\^?[23]|°)$/); if (m) uv = numericValue(m[1]); } // accepts units: 4hours, 210km, 150cm^2, 60°
   if (isNaN(uv) || isNaN(cv)) return false;          // e.g. "6" vs "6√2", "100" vs "100π": never equal
   const prompt = (q && q.prompt ? String(q.prompt) : '').toLowerCase();
-  if (c.indexOf('/') !== -1 && /lowest terms/.test(prompt) && u.indexOf('/') === -1) return false; // asked explicitly for a fraction in lowest terms
   if (Math.abs(uv - cv) < 1e-9) return true;
   if (/round|nearest|approximately|decimal place/.test(prompt)) {  // rounded answers: accept within half a unit of the key's last digit
     const dec = (c.split('.')[1] || '').length;

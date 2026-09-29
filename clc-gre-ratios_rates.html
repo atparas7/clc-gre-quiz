@@ -437,7 +437,7 @@ function fracEquals(ans, q){
 function rrIsCorrect(q, a){
   if(q.type === 'fraction'){
     if(typeof a !== 'string' || a === '/' ) return false;
-    const i = a.indexOf('/'); return fracEquals({num: a.slice(0,i), den: a.slice(i+1)}, q);
+    const i = a.lastIndexOf('/'); return fracEquals({num: a.slice(0,i), den: a.slice(i+1)}, q);
   }
   return a === q.correct;
 }
