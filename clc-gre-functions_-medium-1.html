@@ -1259,5 +1259,24 @@ function calcCmd(btn){
 </script>
 <!--CLC-EXPORT-END-->
 
+<!--CLC-LEAVE-GUARD-START-->
+<script>
+/* Tests now open in the same tab as the home page. If a student presses the browser's ← (or closes the tab)
+   in the middle of a test, ask first — the answers of this test are not kept until it is finished. */
+(function(){
+  function visible(id){ var e = document.getElementById(id); return !!(e && e.offsetParent !== null); }
+  function inProgress(){
+    try{ if (typeof state !== "undefined" && state && state.screen) return ["section","sectionReview","routing"].indexOf(state.screen) > -1 && !state.finished; }catch(e){}
+    return visible("testScreen") || visible("transScreen");
+  }
+  window.addEventListener("beforeunload", function(e){
+    if (!inProgress()) return;
+    e.preventDefault(); e.returnValue = "";
+    return "";
+  });
+  window.CLCInProgress = inProgress;
+})();
+</script>
+<!--CLC-LEAVE-GUARD-END-->
 </body>
 </html>
