@@ -2,372 +2,353 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>CLC GRE Practice</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="clc-logo.png">
 <style>
-:root{
-  --paper:#F6F1E7;
-  --paper-alt:#EEE6D3;
-  --ink:#1C2541;
-  --ink-soft:#4A4A45;
-  --burgundy:#7A2039;
-  --burgundy-dark:#59172A;
-  --brass:#A9803F;
-  --brass-soft:#D9C9A3;
-  --sage:#5C7A5B;
-  --rule:#D8CCAE;
-  --white:#FFFDF8;
-  --danger:#9A3B2E;
-}
-*{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
-body{
-  background:var(--paper);
-  color:var(--ink-soft);
-  font-family:'Inter',sans-serif;
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-}
-h1,h2,h3,h4{
-  font-family:'Source Serif 4',serif;
-  color:var(--ink);
-  margin:0 0 .3em 0;
-  font-weight:600;
-  letter-spacing:.2px;
-}
-p{line-height:1.55;}
-button,a.ledger-item{font-family:'Inter',sans-serif;cursor:pointer;}
-:focus-visible{outline:2px solid var(--burgundy);outline-offset:2px;}
+  :root{
+    --ink:#141a2b;
+    --paper:#ffffff;
+    --surface:#f7f8fa;
+    --muted:#5b6472;
+    --line:#e2e5eb;
+    --accent:#a9781f;
+    --accent-soft:#f6ecd8;
+    --english:#7b3f61;
+    --english-soft:#f4e9ee;
+    --practice:#1f6f78;
+    --practice-soft:#e7f2f1;
+    --full:#3a4f8a;
+    --full-soft:#eaeef8;
+    --shadow: 0 1px 2px rgba(20,26,43,.06), 0 8px 24px rgba(20,26,43,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root[data-theme="dark"]{
+      --ink:#e7ebf3; --paper:#0d121e; --surface:#161e30; --muted:#9aa5b8; --line:#2a3550;
+      --accent:#e4bb6c; --accent-soft:#2c2413;
+      --english:#e19bbb; --english-soft:#2a1f28;
+      --practice:#6fd0d8; --practice-soft:#122a2b;
+      --full:#8fa3e0; --full-soft:#1c2340;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#e7ebf3; --paper:#0d121e; --surface:#161e30; --muted:#9aa5b8; --line:#2a3550;
+    --accent:#e4bb6c; --accent-soft:#2c2413;
+    --english:#e19bbb; --english-soft:#2a1f28;
+    --practice:#6fd0d8; --practice-soft:#122a2b;
+    --full:#8fa3e0; --full-soft:#1c2340;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Inter',-apple-system,system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Fraunces',Georgia,'Times New Roman',serif; text-wrap:balance;}
+  .mono{font-family:'IBM Plex Mono','Courier New',monospace; font-variant-numeric:tabular-nums;}
+  button{font-family:inherit;}
+  #app{max-width:720px; margin:0 auto; min-height:100%; display:flex; flex-direction:column; padding:0 16px;}
+  .topbar{
+    position:sticky; top:env(safe-area-inset-top,0px); z-index:20;
+    background:var(--paper); border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:10px; padding:14px 0; margin:0 -16px; padding-left:16px; padding-right:16px;
+  }
+  .backbtn{
+    border:none; background:var(--surface); color:var(--ink); width:36px; height:36px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:var(--shadow); flex-shrink:0;
+    font-size:16px;
+  }
+  .backbtn:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  .topbar h1{font-size:18px; margin:0; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .topbar-logo{width:26px; height:26px; object-fit:contain; flex-shrink:0;}
+  main{flex:1; padding:20px 0 48px;}
+  .eyebrow{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; margin:0 0 6px;}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:20px; box-shadow:var(--shadow); margin-bottom:14px;}
+  .tile{
+    display:flex; align-items:center; gap:14px; width:100%; text-align:left; background:var(--surface);
+    border:1px solid var(--line); border-radius:16px; padding:18px; cursor:pointer; box-shadow:var(--shadow);
+    margin-bottom:12px; transition:transform .12s ease;
+  }
+  .tile:hover{transform:translateY(-1px);}
+  .tile .icon{width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:21px; flex-shrink:0;}
+  .tile .body{flex:1; min-width:0;}
+  .tile .body strong{display:block; font-size:17px; margin-bottom:2px;}
+  .tile .body span{display:block; font-size:13px; color:var(--muted); line-height:1.4;}
+  .tile .chev{color:var(--muted); font-size:18px; flex-shrink:0;}
+  .section-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
+  @media (max-width:480px){.section-grid{grid-template-columns:1fr 1fr 1fr; gap:8px;}}
+  .section-grid.grid-4{grid-template-columns:repeat(4,1fr);}
+  @media (max-width:720px){.section-grid.grid-4{grid-template-columns:1fr 1fr;}}
+  .tile-col{
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px;
+    background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:20px 10px;
+    cursor:pointer; box-shadow:var(--shadow); transition:transform .12s ease;
+  }
+  .tile-col:hover{transform:translateY(-2px);}
+  .tile-col .icon{width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:4px;}
+  .tile-col strong{font-size:14.5px;}
+  .tile-col span{font-size:11.5px; color:var(--muted); line-height:1.3;}
+  @media (max-width:380px){
+    .tile-col{padding:14px 6px;}
+    .tile-col strong{font-size:13px;}
+    .tile-col span{font-size:10.5px;}
+  }
+  .btn{border:none; border-radius:12px; padding:13px 20px; font-size:15px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; width:100%;}
+  .btn.primary{background:var(--ink); color:var(--paper);}
+  .btn.ghost{background:var(--surface); color:var(--ink); border:1px solid var(--line);}
+  .btn.gold{background:var(--accent); color:#fff;}
+  .field{width:100%; padding:13px 14px; border-radius:12px; border:1px solid var(--line); background:var(--surface); color:var(--ink); font-size:15px; margin-bottom:12px;}
+  .subject-strip{height:4px; border-radius:4px 4px 0 0; margin:-20px -20px 16px;}
+  .empty{text-align:center; color:var(--muted); padding:36px 16px; font-size:14px; line-height:1.6;}
+  .empty .big{font-size:32px; margin-bottom:10px;}
+  footer.foot{text-align:center; color:var(--muted); font-size:12.5px; padding:20px 0 8px;}
+  .badge{display:inline-block; font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; letter-spacing:.02em;}
+  .badge.easy{background:#e5f3ec; color:#2f7d5a;}
+  .badge.medium{background:var(--accent-soft); color:var(--accent);}
+  .badge.hard{background:#fbe9e7; color:#b4433a;}
+  :root[data-theme="dark"] .badge.easy{background:#102a1f; color:#69cd9c;}
+  :root[data-theme="dark"] .badge.hard{background:#2c1714; color:#e88478;}
+  .progress-dots{display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap;}
+  .progress-dots span{width:20px; height:6px; border-radius:4px; background:var(--line);}
+  .progress-dots span.done{background:var(--ink);}
+  .progress-dots span.current{background:var(--accent);}
+  .passage{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:16px; font-size:15px; line-height:1.65;}
+  .qstem{font-size:16px; line-height:1.55; margin:0 0 16px; font-weight:600;}
+  .choice{
+    display:flex; align-items:flex-start; gap:12px; width:100%; text-align:left; background:var(--surface);
+    border:1.5px solid var(--line); border-radius:12px; padding:14px; margin-bottom:10px; cursor:pointer; font-size:15px; line-height:1.4;
+  }
+  .choice .letter{width:26px; height:26px; border-radius:8px; background:var(--paper); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; font-family:'IBM Plex Mono',monospace;}
+  .choice.correct{border-color:#2f7d5a; background:#e5f3ec;}
+  .choice.correct .letter{background:#2f7d5a; color:#fff;}
+  .choice.incorrect{border-color:#b4433a; background:#fbe9e7;}
+  .choice.incorrect .letter{background:#b4433a; color:#fff;}
+  :root[data-theme="dark"] .choice.correct{border-color:#69cd9c; background:#102a1f;}
+  :root[data-theme="dark"] .choice.correct .letter{background:#69cd9c; color:#0d121e;}
+  :root[data-theme="dark"] .choice.incorrect{border-color:#e88478; background:#2c1714;}
+  :root[data-theme="dark"] .choice.incorrect .letter{background:#e88478; color:#2c1714;}
+  .explain-panel{border:1px solid var(--line); border-radius:14px; padding:16px; margin:6px 0 16px; background:var(--surface);}
+  .explain-panel .row2{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
+  .explain-panel .verdict{font-weight:700; font-size:14px;}
+  .explain-panel .verdict.ok{color:#2f7d5a;}
+  .explain-panel .verdict.no{color:#b4433a;}
+  .explain-block{margin-bottom:10px; font-size:13.5px; line-height:1.55;}
+  .explain-block b{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:2px; font-weight:700;}
+  .poe-item{font-size:13px; line-height:1.5; margin-bottom:6px; padding-left:4px;}
+  .score-hero{text-align:center; padding:28px 20px; border-radius:18px; background:var(--accent-soft); border:1px solid var(--line); margin-bottom:16px;}
+  .score-hero .num{font-family:'Fraunces',serif; font-size:44px; font-weight:700; line-height:1; color:var(--accent);}
+  .score-hero .lbl{color:var(--muted); font-size:13px; margin-top:6px;}
+  .slideshow{border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#111; margin-bottom:12px;}
+  .slideshow img{display:block; width:100%; height:auto;}
+  .slideshow-bar{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px;}
+  .slideshow-bar .navbtn{
+    border:none; background:var(--surface); color:var(--ink); width:40px; height:40px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:var(--shadow); font-size:18px; flex-shrink:0;
+  }
+  .slideshow-bar .navbtn:disabled{opacity:.35; cursor:not-allowed;}
+  .slideshow-bar .count{font-size:13px; color:var(--muted); font-family:'IBM Plex Mono',monospace;}
 
-.app{max-width:900px;margin:0 auto;padding:0 20px;}
-.screen{display:none;min-height:100vh;padding:36px 0 60px;}
-.screen.active{display:block;}
+  .signin-card{
+    max-width:400px; margin:48px auto; background:#faf6ec; border:1px solid #e7ddc7;
+    border-radius:4px; padding:40px 36px 36px; text-align:center; box-shadow:var(--shadow);
+  }
+  .signin-logo{width:88px; height:auto; margin:0 auto 14px; display:block;}
+  .signin-brand{font-family:'Fraunces',Georgia,serif; font-size:20px; font-weight:400; color:#2b2f3a; margin:0 0 14px;}
+  .signin-brand b{font-weight:700;}
+  .signin-divider{width:46px; height:2px; background:#a8822f; margin:0 auto 22px;}
+  .signin-title{font-size:24px; margin:0 0 10px; color:#1c2340;}
+  .signin-sub{color:#6b6f78; font-size:14px; line-height:1.55; max-width:300px; margin:0 auto 24px;}
+  .signin-row2{display:flex; gap:10px;}
+  .signin-row2 .field{flex:1;}
+  .signin-card .field{background:#fff; border:1px solid #d9d2bd; color:#1c2340;}
+  .signin-btn{width:100%; background:#7a1f2b; color:#fff; margin-top:6px; padding:14px; font-weight:600; letter-spacing:.01em; border-radius:4px;}
+  .signin-btn:hover{background:#661a24;}
+  .signin-error{color:#b4433a; font-size:13px; margin:-4px 0 12px; text-align:left;}
+  body.signin-page{background:#f5f1e6;}
+  body.signin-page #app{padding:0 16px;}
+  body.signin-page main{padding:0;}
+  @media (prefers-color-scheme: dark){
+    :root[data-theme="dark"] body.signin-page{background:#12161f;}
+  }
+  :root[data-theme="dark"] body.signin-page{background:#12161f;}
+  @media (prefers-color-scheme: dark){
+    :root[data-theme="dark"] .signin-card{background:#1b1f2e; border-color:#2f3650;}
+    :root[data-theme="dark"] .signin-brand,:root[data-theme="dark"] .signin-title{color:#e7ebf3;}
+    :root[data-theme="dark"] .signin-card .field{background:#141a2b; border-color:#2f3650; color:#e7ebf3;}
+  }
+  :root[data-theme="dark"] .signin-card{background:#1b1f2e; border-color:#2f3650;}
+  :root[data-theme="dark"] .signin-brand,:root[data-theme="dark"] .signin-title{color:#e7ebf3;}
+  :root[data-theme="dark"] .signin-card .field{background:#141a2b; border-color:#2f3650; color:#e7ebf3;}
 
-.brandmark{display:flex;align-items:baseline;gap:10px;margin-bottom:36px;}
-.brandmark .crest{
-  font-family:'Source Serif 4',serif;font-weight:700;font-size:22px;color:var(--burgundy);
-  border:1px solid var(--burgundy);border-radius:50%;width:38px;height:38px;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.brandmark .crest img{width:100%;height:100%;object-fit:contain;}
-.login-crest{width:76px;height:auto;margin:0 auto 6px;display:block;}
-.brandmark .name{font-size:14px;color:var(--ink-soft);}
-.brandmark .name b{color:var(--ink);font-weight:600;}
-
-.login-wrap{min-height:80vh;display:flex;align-items:center;justify-content:center;}
-.login-card{
-  max-width:420px;width:100%;background:var(--white);border:1px solid var(--rule);
-  padding:44px 40px;text-align:center;
-}
-.login-card .rule{width:46px;height:2px;background:var(--brass);margin:18px auto 22px;}
-.login-card p{color:var(--ink-soft);font-size:14.5px;margin-bottom:26px;}
-input[type=password]{
-  width:100%;padding:12px 14px;border:1px solid var(--rule);background:var(--paper);
-  font-size:15px;color:var(--ink);margin-bottom:14px;font-family:'Inter',sans-serif;
-}
-.error-text{color:var(--danger);font-size:13px;min-height:18px;margin-bottom:6px;}
-
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  border:1px solid var(--ink);background:var(--ink);color:var(--white);
-  padding:12px 22px;font-size:14.5px;font-weight:600;text-decoration:none;
-}
-.btn:hover{background:var(--burgundy-dark);border-color:var(--burgundy-dark);}
-.btn.primary{background:var(--burgundy);border-color:var(--burgundy);}
-.btn.primary:hover{background:var(--burgundy-dark);border-color:var(--burgundy-dark);}
-.btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule);}
-.btn.ghost:hover{border-color:var(--ink);background:transparent;}
-.btn.block{width:100%;}
-
-.pagehead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.back-link{background:none;border:none;color:var(--ink-soft);font-size:14px;padding:4px 0;font-family:'Inter',sans-serif;cursor:pointer;}
-.back-link:hover{color:var(--burgundy);}
-.eyebrow{color:var(--brass);font-size:13px;margin-bottom:6px;}
-.lede{color:var(--ink-soft);margin-bottom:30px;max-width:62ch;}
-
-.ledger{border-top:1px solid var(--rule);}
-.ledger-item{
-  display:flex;align-items:center;justify-content:space-between;gap:18px;
-  padding:20px 4px;border-bottom:1px solid var(--rule);
-  background:none;border-left:none;border-right:none;border-top:none;
-  width:100%;text-align:left;color:inherit;
-}
-.ledger-item:hover:not(.disabled){background:var(--paper-alt);}
-.ledger-item.disabled{opacity:.5;cursor:default;}
-.ledger-item .li-left{display:flex;align-items:center;gap:16px;}
-.ledger-item .li-icon{font-size:22px;width:30px;text-align:center;flex-shrink:0;}
-.ledger-item .li-title{font-family:'Source Serif 4',serif;font-size:18px;color:var(--ink);font-weight:600;}
-.ledger-item .li-sub{font-size:13px;color:var(--ink-soft);margin-top:3px;}
-.ledger-item .li-arrow{color:var(--brass);font-size:18px;flex-shrink:0;}
-.tag-soon{font-size:11px;border:1px solid var(--rule);color:var(--ink-soft);padding:2px 8px;border-radius:2px;margin-left:10px;flex-shrink:0;}
-.tag-diff{font-size:11px;border:1px solid var(--brass);color:var(--brass);padding:2px 8px;border-radius:2px;margin-left:10px;flex-shrink:0;white-space:nowrap;}
-.tag-diff.hard{border-color:var(--burgundy);color:var(--burgundy);}
-
-.note-box{
-  background:var(--paper-alt);border:1px solid var(--rule);padding:14px 18px;font-size:13px;
-  color:var(--ink-soft);margin-bottom:26px;
-}
-
-footer.credit{
-  text-align:center;color:var(--ink-soft);font-size:12.5px;margin-top:70px;padding-top:20px;
-  border-top:1px solid var(--rule);
-}
+  /* ---- GRE page additions (same design tokens as the SAT platform) ---- */
+  .screen{display:none;}
+  .screen.active{display:block;}
+  a.tile, a.tile-col{text-decoration:none; color:inherit;}
+  .tile .body strong, .tile-col strong{color:var(--ink);}
+  .tile.disabled, .tile-col.disabled{opacity:.55; cursor:default; box-shadow:none;}
+  .tile.disabled:hover, .tile-col.disabled:hover{transform:none;}
+  .soon{display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); background:var(--paper); border:1px solid var(--line); border-radius:999px; padding:2px 8px; margin-top:2px;}
+  .badge.mock{background:var(--full-soft); color:var(--full);}
+  .tile .badge{flex-shrink:0;}
+  .note{font-size:13px; color:var(--muted); background:var(--accent-soft); border-radius:12px; padding:12px 14px; margin:0 0 14px; line-height:1.5;}
+  .list-head p.desc{font-size:14px; color:var(--muted); margin:0; line-height:1.55;}
+  .welcome-links{max-width:260px; margin:12px auto 0;}
 </style>
 </head>
-<body>
+<body class="signin-page">
+<div id="app">
 
-<div class="app">
-
-  <!-- ============ LOGIN ============ -->
-  <section class="screen active" id="screen-login">
-    <div class="login-wrap">
-      <div class="login-card">
-        <img src="clc-logo.png" alt="CLC crest" class="login-crest">
-        <div class="name" style="margin-bottom:4px;"><b>CLC</b> GRE Practice</div>
-        <div class="rule"></div>
-        <h2>Sign in to continue</h2>
-        <p>GRE prep program — Verbal Reasoning, Quantitative Reasoning &amp; Analytical Writing.</p>
-        <input type="text" id="login-name" placeholder="First and last name (e.g. Maria Papadopoulou)" autocomplete="off">
-        <input type="text" id="login-section" placeholder="Class / Τμήμα" autocomplete="off">
-        <input type="password" id="login-pass" placeholder="Password" autocomplete="off">
-        <div class="error-text" id="login-error"></div>
-        <button class="btn primary block" onclick="handleLogin()">Sign In</button>
+  <!-- ============ SIGN IN ============ -->
+  <section class="screen active" id="screen-login"><main style="padding:20px 0 48px;">
+    <div class="signin-card">
+      <img src="clc-logo.png" alt="CLC" class="signin-logo">
+      <h2 class="signin-brand"><b>CLC</b> GRE Practice</h2>
+      <div class="signin-divider"></div>
+      <h1 class="display signin-title">Sign in to continue</h1>
+      <p class="signin-sub">GRE prep program — Verbal Reasoning, Quantitative Reasoning &amp; Analytical Writing.</p>
+      <div class="signin-row2">
+        <input class="field" id="login-name" placeholder="Όνομα Επώνυμο" maxlength="60" autocomplete="name">
+        <input class="field" id="login-section" placeholder="Class / Τμήμα" maxlength="24" autocomplete="off">
       </div>
+      <input class="field" id="login-pass" type="password" placeholder="Password" autocomplete="off">
+      <p class="signin-error" id="login-error" role="alert"></p>
+      <button class="btn signin-btn" onclick="handleLogin()">Sign In</button>
     </div>
-  </section>
+  </main></section>
 
   <!-- ============ WELCOME ============ -->
   <section class="screen" id="screen-welcome">
-    <div class="brandmark"><div class="crest"><img src="clc-logo.png" alt="CLC crest"></div><div class="name"><b>CLC</b> GRE Practice</div></div>
-    <div class="login-wrap" style="min-height:65vh;">
-      <div style="text-align:center;max-width:480px;">
-        <h1 style="font-size:30px;">Welcome!</h1>
-        <p style="margin:14px 0 30px;">Ready to do some GRE practice? Let's get started.</p>
-        <button class="btn primary" onclick="go('screen-subject')">Get Started →</button>
-        <div style="margin-top:18px;">
-          <button class="back-link" onclick="go('screen-progress')">📄 Progress &amp; Report</button>
-        </div>
+    <div class="topbar"><img class="topbar-logo" src="clc-logo.png" alt="CLC"><h1>Welcome</h1></div>
+    <main>
+      <div style="text-align:center; padding:24px 8px;">
+        <div style="font-size:40px; margin-bottom:10px;">🎓</div>
+        <h1 class="display" style="font-size:24px; margin:0 0 8px;">Welcome, <span id="welcome-name"></span>!</h1>
+        <p style="color:var(--muted); font-size:15px; max-width:340px; margin:0 auto 26px;">Ready to do some GRE practice? Let's get started.</p>
+        <button class="btn gold" style="max-width:260px; margin:0 auto;" onclick="go('screen-subject')">Get Started →</button>
+        <div class="welcome-links"><button class="btn ghost" onclick="go('screen-progress')">📄 Progress &amp; Report</button></div>
       </div>
-    </div>
+      <footer class="foot">CLC GRE Practice — independent study tool, not affiliated with ETS.</footer>
+    </main>
   </section>
 
-  <!-- ============ PROGRESS (placeholder) ============ -->
+  <!-- ============ PROGRESS ============ -->
   <section class="screen" id="screen-progress">
-    <div class="pagehead"><button class="back-link" onclick="go('screen-welcome')">← Back</button></div>
-    <h2>Progress &amp; Report</h2>
-    <p class="lede">Your detailed progress report updates after you complete each test. Start practicing to see your results here.</p>
-    <div class="ledger">
-      <div class="ledger-item disabled"><div class="li-left"><div class="li-icon">📊</div><div><div class="li-title">Performance history</div><div class="li-sub">Will appear after your first attempt</div></div></div></div>
-    </div>
+    <div class="topbar"><button class="backbtn" onclick="back()" aria-label="Back">←</button><img class="topbar-logo" src="clc-logo.png" alt="CLC"><h1>Progress &amp; Report</h1></div>
+    <main>
+      <div class="card list-head" style="position:relative;"><div class="subject-strip" style="background:var(--accent);"></div><p class="eyebrow" style="color:var(--accent);">📄 Progress &amp; Report</p><p class="desc">Your detailed progress report updates after you complete each test. Start practicing to see your results here.</p></div>
+      <div class="card empty"><div class="big">📊</div>Performance history will appear after your first attempt.</div>
+    </main>
   </section>
 
-  <!-- ============ SUBJECT SELECT ============ -->
+  <!-- ============ HOME: CHOOSE A SECTION ============ -->
   <section class="screen" id="screen-subject">
-    <div class="pagehead"><button class="back-link" onclick="go('screen-welcome')">← Back</button></div>
-    <div class="eyebrow">Choose a subject</div>
-    <h2>What would you like to practice today?</h2>
-    <div class="ledger">
-      <button class="ledger-item" onclick="go('screen-verbal')">
-        <div class="li-left"><div class="li-icon">📖</div><div><div class="li-title">Verbal Reasoning</div><div class="li-sub">Vocabulary word bank &amp; section-adaptive practice tests — Text Completion, Sentence Equivalence, Reading Comprehension</div></div></div>
-        <div class="li-arrow">→</div>
-      </button>
-      <button class="ledger-item" onclick="go('screen-tests')">
-        <div class="li-left"><div class="li-icon">📐</div><div><div class="li-title">Quantitative Reasoning</div><div class="li-sub">Study guides &amp; section-adaptive practice tests — Algebra, Functions, Geometry, Counting, Data Interpretation &amp; more</div></div></div>
-        <div class="li-arrow">→</div>
-      </button>
-      <div class="ledger-item disabled">
-        <div class="li-left"><div class="li-icon">✍️</div><div><div class="li-title">Analytical Writing</div><div class="li-sub">Issue &amp; Argument tasks</div></div></div>
-        <span class="tag-soon">Coming Soon</span>
+    <div class="topbar"><button class="backbtn" onclick="back()" aria-label="Back">←</button><img class="topbar-logo" src="clc-logo.png" alt="CLC"><h1>CLC GRE Practice</h1></div>
+    <main>
+      <p class="eyebrow">Choose a section</p>
+      <div class="section-grid grid-4">
+        <button class="tile-col" onclick="go('screen-verbal')"><div class="icon" style="background:var(--english-soft); color:var(--english);">📖</div><strong>Verbal Reasoning</strong><span>Word bank · 6 adaptive tests</span></button>
+        <button class="tile-col" onclick="go('screen-quant')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">📐</div><strong>Quantitative Reasoning</strong><span>Units · study guides · 10 adaptive tests</span></button>
+        <div class="tile-col disabled" aria-disabled="true"><div class="icon" style="background:var(--accent-soft); color:var(--accent);">✍️</div><strong>Analytical Writing</strong><span>Issue &amp; Argument tasks</span><span class="soon">Coming soon</span></div>
+        <div class="tile-col disabled" aria-disabled="true"><div class="icon" style="background:var(--full-soft); color:var(--full);">🎯</div><strong>Full Practice Test</strong><span>Verbal + Quant, timed</span><span class="soon">Coming soon</span></div>
       </div>
-      <div class="ledger-item disabled">
-        <div class="li-left"><div class="li-icon">🎯</div><div><div class="li-title">Full Practice Test</div><div class="li-sub">Verbal + Quant sections, with a timer</div></div></div>
-        <span class="tag-soon">Coming Soon</span>
-      </div>
-    </div>
+      <footer class="foot">CLC GRE Practice — independent study tool, not affiliated with ETS.</footer>
+    </main>
   </section>
 
-  <!-- ============ VERBAL REASONING ============ -->
+  <!-- ============ VERBAL: SUBCATEGORIES ============ -->
   <section class="screen" id="screen-verbal">
-    <div class="pagehead"><button class="back-link" onclick="go('screen-subject')">← Back</button></div>
-    <div class="eyebrow">📖 Verbal Reasoning</div>
-    <h2>Vocabulary Word Bank</h2>
-    <p class="lede">Build the vocabulary you need for Text Completion and Sentence Equivalence questions. 1,305 words sorted into 88 study sets — work through the word list, then practice with flashcards, matching, and fill-in-the-blank drills.</p>
-    <div class="note-box">Opens in a new tab as its own complete study tool — pick any set and choose word list, flashcards, matching, or fill-in-the-blank.</div>
-    <div class="ledger" style="margin-bottom:40px;">
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-vocabulary.html')">
-        <div class="li-left"><div class="li-icon">📚</div><div><div class="li-title">CLC GRE Word Bank — Interactive Glossary</div><div class="li-sub">1,305 words · 88 study sets · word list, flashcards, matching &amp; fill-in-the-blank</div></div></div>
-        <div class="li-arrow">→</div>
-      </a>
-
-    </div>
-
-    <h3>📝 Practice Tests</h3>
-    <p class="lede" style="margin-bottom:16px;">Each test is section-adaptive: Module 1 is fixed, and Module 2 automatically becomes Harder or Easier based on your Module 1 score — the same adaptive routing used on the real GRE.</p>
-    <div class="note-box">Each test opens in a new tab as its own complete testing environment — your timer and answers stay there until you finish.</div>
-    <div class="ledger">
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-verbal-adaptive-1.html')">
-        <div class="li-left"><div class="li-icon">📖</div><div><div class="li-title">Verbal Adaptive Test 1</div><div class="li-sub">Text Completion · Sentence Equivalence · Reading Comprehension · 12 + 15 questions</div></div></div>
-        <div class="li-arrow">→</div>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-verbal-adaptive-2.html')">
-        <div class="li-left"><div class="li-icon">📖</div><div><div class="li-title">Verbal Adaptive Test 2</div><div class="li-sub">Text Completion · Sentence Equivalence · Reading Comprehension · 12 + 15 questions</div></div></div>
-        <div class="li-arrow">→</div>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-verbal-adaptive-3.html')">
-        <div class="li-left"><div class="li-icon">📖</div><div><div class="li-title">Verbal Adaptive Test 3</div><div class="li-sub">Text Completion · Sentence Equivalence · Reading Comprehension · 12 + 15 questions</div></div></div>
-        <div class="li-arrow">→</div>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-verbal-adaptive-4.html')">
-        <div class="li-left"><div class="li-icon">📖</div><div><div class="li-title">Verbal Adaptive Test 4</div><div class="li-sub">Text Completion · Sentence Equivalence · Reading Comprehension · 12 + 15 questions</div></div></div>
-        <div class="li-arrow">→</div>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-verbal-adaptive-5.html')">
-        <div class="li-left"><div class="li-icon">📖</div><div><div class="li-title">Verbal Adaptive Test 5</div><div class="li-sub">Text Completion · Sentence Equivalence · Reading Comprehension · 12 + 15 questions</div></div></div>
-        <div class="li-arrow">→</div>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-verbal-adaptive-6.html')">
-        <div class="li-left"><div class="li-icon">📖</div><div><div class="li-title">Verbal Adaptive Test 6</div><div class="li-sub">Text Completion · Sentence Equivalence · Reading Comprehension · 12 + 15 questions</div></div></div>
-        <div class="li-arrow">→</div>
-      </a>
-
-    </div>
+    <div class="topbar"><button class="backbtn" onclick="back()" aria-label="Back">←</button><img class="topbar-logo" src="clc-logo.png" alt="CLC"><h1>Verbal Reasoning</h1></div>
+    <main>
+      <p class="eyebrow">Choose a subcategory</p>
+      <div class="section-grid">
+        <button class="tile-col" onclick="openTest('clc-gre-vocabulary.html')"><div class="icon" style="background:var(--english-soft); color:var(--english);">🔤</div><strong>Vocabulary</strong><span>CLC GRE Word Bank — 1,305 words in 88 study sets: word list, flashcards, matching &amp; fill-in-the-blank.</span></button>
+        <button class="tile-col" onclick="go('screen-verbal-tests')"><div class="icon" style="background:var(--english-soft); color:var(--english);">✏️</div><strong>Practice Tests</strong><span>6 section-adaptive tests — Text Completion, Sentence Equivalence, Reading Comprehension.</span></button>
+      </div>
+    </main>
   </section>
 
-  <!-- ============ QUANT TEST LIST ============ -->
+  <section class="screen" id="screen-verbal-tests">
+    <div class="topbar"><button class="backbtn" onclick="back()" aria-label="Back">←</button><img class="topbar-logo" src="clc-logo.png" alt="CLC"><h1>Verbal Practice Tests</h1></div>
+    <main>
+      <div class="card list-head" style="position:relative;"><div class="subject-strip" style="background:var(--english);"></div><p class="eyebrow" style="color:var(--english);">✏️ Practice Tests</p><p class="desc">Each test is section-adaptive: Module 1 is fixed, and Module 2 automatically becomes Harder or Easier based on your Module 1 score — the same adaptive routing used on the real GRE.</p></div>
+      <p class="note">Each test opens in a new tab as its own complete testing environment — your timer and answers stay there until you finish.</p>
+      <button class="tile" onclick="openTest('clc-gre-verbal-adaptive-1.html')"><div class="icon" style="background:var(--english-soft); color:var(--english);">📖</div><div class="body"><strong>Verbal Adaptive Test 1</strong><span>Text Completion · Sentence Equivalence · Reading Comprehension · 12 + 15 questions</span></div><span class="chev">›</span></button><button class="tile" onclick="openTest('clc-gre-verbal-adaptive-2.html')"><div class="icon" style="background:var(--english-soft); color:var(--english);">📖</div><div class="body"><strong>Verbal Adaptive Test 2</strong><span>Text Completion · Sentence Equivalence · Reading Comprehension · 12 + 15 questions</span></div><span class="chev">›</span></button><button class="tile" onclick="openTest('clc-gre-verbal-adaptive-3.html')"><div class="icon" style="background:var(--english-soft); color:var(--english);">📖</div><div class="body"><strong>Verbal Adaptive Test 3</strong><span>Text Completion · Sentence Equivalence · Reading Comprehension · 12 + 15 questions</span></div><span class="chev">›</span></button><button class="tile" onclick="openTest('clc-gre-verbal-adaptive-4.html')"><div class="icon" style="background:var(--english-soft); color:var(--english);">📖</div><div class="body"><strong>Verbal Adaptive Test 4</strong><span>Text Completion · Sentence Equivalence · Reading Comprehension · 12 + 15 questions</span></div><span class="chev">›</span></button><button class="tile" onclick="openTest('clc-gre-verbal-adaptive-5.html')"><div class="icon" style="background:var(--english-soft); color:var(--english);">📖</div><div class="body"><strong>Verbal Adaptive Test 5</strong><span>Text Completion · Sentence Equivalence · Reading Comprehension · 12 + 15 questions</span></div><span class="chev">›</span></button><button class="tile" onclick="openTest('clc-gre-verbal-adaptive-6.html')"><div class="icon" style="background:var(--english-soft); color:var(--english);">📖</div><div class="body"><strong>Verbal Adaptive Test 6</strong><span>Text Completion · Sentence Equivalence · Reading Comprehension · 12 + 15 questions</span></div><span class="chev">›</span></button>
+    </main>
+  </section>
+
+  <!-- ============ QUANT: SUBCATEGORIES ============ -->
+  <section class="screen" id="screen-quant">
+    <div class="topbar"><button class="backbtn" onclick="back()" aria-label="Back">←</button><img class="topbar-logo" src="clc-logo.png" alt="CLC"><h1>Quantitative Reasoning</h1></div>
+    <main>
+      <p class="eyebrow">Choose a subcategory</p>
+      <div class="section-grid">
+        <button class="tile-col" onclick="go('screen-units')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">📦</div><strong>Units</strong><span>4 units — Arithmetic, Algebra, Geometry, Data Analysis: theory, formula leaflet, flashcards &amp; 4 timed tests each.</span></button>
+        <button class="tile-col" onclick="go('screen-guides')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">📚</div><strong>Study Guides</strong><span>Theory guides (PDF) — Coordinate Geometry, Counting, Data Interpretation, Statistics &amp; Probability.</span></button>
+        <button class="tile-col" onclick="go('screen-tests')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">🎯</div><strong>Practice Tests</strong><span>2 full mock exams + 8 section-adaptive topic tests, with calculator and full review.</span></button>
+      </div>
+    </main>
+  </section>
+
+  <section class="screen" id="screen-units">
+    <div class="topbar"><button class="backbtn" onclick="back()" aria-label="Back">←</button><img class="topbar-logo" src="clc-logo.png" alt="CLC"><h1>Units</h1></div>
+    <main>
+      <div class="card list-head" style="position:relative;"><div class="subject-strip" style="background:var(--practice);"></div><p class="eyebrow" style="color:var(--practice);">📦 Units — Theory, Tests &amp; Flashcards</p><p class="desc">Each unit is a self-contained toolkit: theory pages, a printable formula leaflet, flashcards, and several timed practice tests with full explanations.</p></div>
+      <button class="tile" onclick="openTest('clc-gre-unit1-arithmetic.html')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">🔢</div><div class="body"><strong>Unit 1: Arithmetic</strong><span>Fractions, decimals, percents, ratios, proportions · theory + 4 tests + flashcards</span></div><span class="chev">›</span></button><button class="tile" onclick="openTest('clc-gre-unit2-algebra.html')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">✳️</div><div class="body"><strong>Unit 2: Algebra</strong><span>Theory + practice tests + flashcards</span></div><span class="chev">›</span></button><button class="tile" onclick="openTest('clc-gre-unit3-geometry.html')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">📐</div><div class="body"><strong>Unit 3: Geometry</strong><span>Theory + practice tests + flashcards</span></div><span class="chev">›</span></button><button class="tile" onclick="openTest('clc-gre-unit4-dataanalysis.html')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">📊</div><div class="body"><strong>Unit 4: Data Analysis</strong><span>Theory + practice tests + flashcards</span></div><span class="chev">›</span></button>
+    </main>
+  </section>
+
+  <section class="screen" id="screen-guides">
+    <div class="topbar"><button class="backbtn" onclick="back()" aria-label="Back">←</button><img class="topbar-logo" src="clc-logo.png" alt="CLC"><h1>Study Guides</h1></div>
+    <main>
+      <div class="card list-head" style="position:relative;"><div class="subject-strip" style="background:var(--practice);"></div><p class="eyebrow" style="color:var(--practice);">📚 Study Guides</p><p class="desc">Notes, worked examples, and practice problems — opens as a PDF you can read at your own pace.</p></div>
+      <a class="tile" href="clc-gre-theory-coordinate-geometry.pdf" target="_blank" rel="noopener"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">📈</div><div class="body"><strong>Coordinate Geometry</strong><span>The coordinate plane, slope, intercepts, distance, reflections, parabolas</span></div><span class="chev">›</span></a><a class="tile" href="clc-gre-theory-counting-probability.pdf" target="_blank" rel="noopener"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">🎲</div><div class="body"><strong>Counting Theory</strong><span>Fundamental Counting Principle, factorials, permutations, combinations</span></div><span class="chev">›</span></a><a class="tile" href="clc-gre-theory-data-interpretation.pdf" target="_blank" rel="noopener"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">📊</div><div class="body"><strong>Data Interpretation</strong><span>Pie charts, line &amp; bar graphs, scatter plots, correlation</span></div><span class="chev">›</span></a><a class="tile" href="clc-gre-theory-probability.pdf" target="_blank" rel="noopener"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">🎲</div><div class="body"><strong>Statistics &amp; Probability</strong><span>Set theory, conditional probability, tree diagrams, binomial &amp; normal distributions</span></div><span class="chev">›</span></a>
+    </main>
+  </section>
+
   <section class="screen" id="screen-tests">
-    <div class="pagehead"><button class="back-link" onclick="go('screen-subject')">← Back</button></div>
-    <div class="eyebrow">📐 Quantitative Reasoning</div>
-    <h2>Study Guides &amp; Practice Tests</h2>
-    <p class="lede">Start with the theory notes if you want to review a topic, then test yourself with the adaptive practice tests below.</p>
-
-    <h3 style="margin-top:10px;">📦 Units — Theory, Tests &amp; Flashcards</h3>
-    <p class="lede" style="margin-bottom:16px;">Each unit is a self-contained toolkit: theory pages, a printable formula leaflet, flashcards, and several timed practice tests with full explanations.</p>
-    <div class="ledger" style="margin-bottom:40px;">
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-unit1-arithmetic.html')">
-        <div class="li-left"><div class="li-icon">🔢</div><div><div class="li-title">Unit 1: Arithmetic</div><div class="li-sub">Fractions, decimals, percents, ratios, proportions · theory + 4 tests + flashcards</div></div></div>
-        <div class="li-arrow">→</div>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-unit2-algebra.html')">
-        <div class="li-left"><div class="li-icon">✳️</div><div><div class="li-title">Unit 2: Algebra</div><div class="li-sub">Theory + practice tests + flashcards</div></div></div>
-        <div class="li-arrow">→</div>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-unit3-geometry.html')">
-        <div class="li-left"><div class="li-icon">📐</div><div><div class="li-title">Unit 3: Geometry</div><div class="li-sub">Theory + practice tests + flashcards</div></div></div>
-        <div class="li-arrow">→</div>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-unit4-dataanalysis.html')">
-        <div class="li-left"><div class="li-icon">📊</div><div><div class="li-title">Unit 4: Data Analysis</div><div class="li-sub">Theory + practice tests + flashcards</div></div></div>
-        <div class="li-arrow">→</div>
-      </a>
-
-    </div>
-
-    <h3 style="margin-top:10px;">📘 Study Guides</h3>
-    <p class="lede" style="margin-bottom:16px;">Notes, worked examples, and practice problems — opens as a PDF you can read at your own pace.</p>
-    <div class="ledger" style="margin-bottom:40px;">
-
-      <a class="ledger-item" href="clc-gre-theory-coordinate-geometry.pdf" target="_blank" rel="noopener">
-        <div class="li-left"><div class="li-icon">📈</div><div><div class="li-title">Coordinate Geometry</div><div class="li-sub">The coordinate plane, slope, intercepts, distance, reflections, parabolas</div></div></div>
-        <div class="li-arrow">→</div>
-      </a>
-
-      <a class="ledger-item" href="clc-gre-theory-counting-probability.pdf" target="_blank" rel="noopener">
-        <div class="li-left"><div class="li-icon">🎲</div><div><div class="li-title">Counting Theory</div><div class="li-sub">Fundamental Counting Principle, factorials, permutations, combinations</div></div></div>
-        <div class="li-arrow">→</div>
-      </a>
-
-      <a class="ledger-item" href="clc-gre-theory-data-interpretation.pdf" target="_blank" rel="noopener">
-        <div class="li-left"><div class="li-icon">📊</div><div><div class="li-title">Data Interpretation</div><div class="li-sub">Pie charts, line &amp; bar graphs, scatter plots, correlation</div></div></div>
-        <div class="li-arrow">→</div>
-      </a>
-
-      <a class="ledger-item" href="clc-gre-theory-probability.pdf" target="_blank" rel="noopener">
-        <div class="li-left"><div class="li-icon">🎲</div><div><div class="li-title">Statistics &amp; Probability</div><div class="li-sub">Set theory, conditional probability, tree diagrams, binomial &amp; normal distributions</div></div></div>
-        <div class="li-arrow">→</div>
-      </a>
-
-    </div>
-
-    <h3>📝 Practice Tests</h3>
-    <p class="lede" style="margin-bottom:16px;">Each test is section-adaptive with two timed sections, an on-screen calculator, and a full answer review afterward.</p>
-    <div class="note-box">Each test opens in a new tab as its own complete testing environment — your timer and answers stay there until you finish.</div>
-    <div class="ledger">
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-mock-test-1.html')">
-        <div class="li-left"><div class="li-icon">🎯</div><div><div class="li-title">Full Mock Test 1</div><div class="li-sub">Full section-adaptive quant mock exam · complete timed simulation</div></div></div>
-        <span class="tag-diff hard">Mock Exam</span>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-mock-test-2.html')">
-        <div class="li-left"><div class="li-icon">🎯</div><div><div class="li-title">Full Mock Test 2</div><div class="li-sub">Full section-adaptive quant mock exam · complete timed simulation</div></div></div>
-        <span class="tag-diff hard">Mock Exam</span>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-quantative-test-medium.html')">
-        <div class="li-left"><div class="li-icon">📐</div><div><div class="li-title">Mixed Quant Adaptive Test</div><div class="li-sub">Number Properties · Combinatorics · Advanced Algebra · Functions · Geometry · 12 + 15 questions</div></div></div>
-        <span class="tag-diff">Medium</span>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-quantative-test-hard.html')">
-        <div class="li-left"><div class="li-icon">📐</div><div><div class="li-title">Mixed Quant Adaptive Test</div><div class="li-sub">High-rigor mixed topics · 12 + 15 questions</div></div></div>
-        <span class="tag-diff hard">Hard</span>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-ratios_rates.html')">
-        <div class="li-left"><div class="li-icon">⚖️</div><div><div class="li-title">Ratios &amp; Rates</div><div class="li-sub">Section-adaptive practice · 12 + 15 questions</div></div></div>
-        <span class="tag-diff">Medium</span>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-functions_-medium-1.html')">
-        <div class="li-left"><div class="li-icon">📈</div><div><div class="li-title">Functions</div><div class="li-sub">Section-adaptive practice · 12 + 15 questions</div></div></div>
-        <span class="tag-diff">Medium</span>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-functions-hard-1.html')">
-        <div class="li-left"><div class="li-icon">📈</div><div><div class="li-title">Functions</div><div class="li-sub">Section-adaptive practice · 12 + 15 questions</div></div></div>
-        <span class="tag-diff hard">Hard</span>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-counting.html')">
-        <div class="li-left"><div class="li-icon">🎲</div><div><div class="li-title">Counting &amp; Combinatorics</div><div class="li-sub">Section-adaptive practice · 12 + 15 questions</div></div></div>
-        <span class="tag-diff hard">Hard</span>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-mixed-test-medium-2.html')">
-        <div class="li-left"><div class="li-icon">📊</div><div><div class="li-title">Data Interpretation, Counting &amp; Number Properties</div><div class="li-sub">Section-adaptive practice · 12 + 15 questions</div></div></div>
-        <span class="tag-diff">Medium</span>
-      </a>
-
-      <a class="ledger-item" href="javascript:void(0)" onclick="openTest('clc-gre-hard-test.html')">
-        <div class="li-left"><div class="li-icon">📊</div><div><div class="li-title">Data Interpretation, Counting &amp; Coordinate Geometry</div><div class="li-sub">Section-adaptive practice · 12 + 15 questions</div></div></div>
-        <span class="tag-diff hard">Hard</span>
-      </a>
-
-    </div>
+    <div class="topbar"><button class="backbtn" onclick="back()" aria-label="Back">←</button><img class="topbar-logo" src="clc-logo.png" alt="CLC"><h1>Quant Practice Tests</h1></div>
+    <main>
+      <div class="card list-head" style="position:relative;"><div class="subject-strip" style="background:var(--practice);"></div><p class="eyebrow" style="color:var(--practice);">🎯 Practice Tests</p><p class="desc">Each test is section-adaptive with two timed sections, an on-screen calculator, and a full answer review afterward.</p></div>
+      <p class="note">Each test opens in a new tab as its own complete testing environment — your timer and answers stay there until you finish.</p>
+      <button class="tile" onclick="openTest('clc-gre-mock-test-1.html')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">🎯</div><div class="body"><strong>Full Mock Test 1</strong><span>Full section-adaptive quant mock exam · complete timed simulation</span></div><span class="badge mock">Mock Exam</span></button><button class="tile" onclick="openTest('clc-gre-mock-test-2.html')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">🎯</div><div class="body"><strong>Full Mock Test 2</strong><span>Full section-adaptive quant mock exam · complete timed simulation</span></div><span class="badge mock">Mock Exam</span></button><button class="tile" onclick="openTest('clc-gre-quantative-test-medium.html')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">📐</div><div class="body"><strong>Mixed Quant Adaptive Test</strong><span>Number Properties · Combinatorics · Advanced Algebra · Functions · Geometry · 12 + 15 questions</span></div><span class="badge medium">Medium</span></button><button class="tile" onclick="openTest('clc-gre-quantative-test-hard.html')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">📐</div><div class="body"><strong>Mixed Quant Adaptive Test</strong><span>High-rigor mixed topics · 12 + 15 questions</span></div><span class="badge hard">Hard</span></button><button class="tile" onclick="openTest('clc-gre-ratios_rates.html')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">⚖️</div><div class="body"><strong>Ratios &amp; Rates</strong><span>Section-adaptive practice · 12 + 15 questions</span></div><span class="badge medium">Medium</span></button><button class="tile" onclick="openTest('clc-gre-functions_-medium-1.html')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">📈</div><div class="body"><strong>Functions</strong><span>Section-adaptive practice · 12 + 15 questions</span></div><span class="badge medium">Medium</span></button><button class="tile" onclick="openTest('clc-gre-functions-hard-1.html')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">📈</div><div class="body"><strong>Functions</strong><span>Section-adaptive practice · 12 + 15 questions</span></div><span class="badge hard">Hard</span></button><button class="tile" onclick="openTest('clc-gre-counting.html')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">🎲</div><div class="body"><strong>Counting &amp; Combinatorics</strong><span>Section-adaptive practice · 12 + 15 questions</span></div><span class="badge hard">Hard</span></button><button class="tile" onclick="openTest('clc-gre-mixed-test-medium-2.html')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">📊</div><div class="body"><strong>Data Interpretation, Counting &amp; Number Properties</strong><span>Section-adaptive practice · 12 + 15 questions</span></div><span class="badge medium">Medium</span></button><button class="tile" onclick="openTest('clc-gre-hard-test.html')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">📊</div><div class="body"><strong>Data Interpretation, Counting &amp; Coordinate Geometry</strong><span>Section-adaptive practice · 12 + 15 questions</span></div><span class="badge hard">Hard</span></button>
+    </main>
   </section>
 
-  <footer class="credit">CLC GRE Practice — developed for CLC, in collaboration with Stavros Tsalapatis.</footer>
 </div>
+<!--CLC-CREDIT-START-->
+<div class="clc-credit" style="max-width:960px;margin:28px auto 18px;padding:12px 16px;text-align:center;font:400 13px/1.6 system-ui,-apple-system,'Segoe UI',sans-serif;color:#9a958d;border-top:1px solid rgba(0,0,0,.06)">
+<div>Developed by Athanasios Paraskevopoulos &amp; Stavros Tsalapatis</div>
+<div>© 2026 CLC Educational Institute. All rights reserved. Unauthorized reproduction or distribution is prohibited.</div>
+</div>
+<style>@media print{.clc-credit{display:none!important}}</style>
+<!--CLC-CREDIT-END-->
 
 <script>
-function go(id){
+const PARENT = {'screen-welcome':null,'screen-progress':'screen-welcome','screen-subject':'screen-welcome',
+  'screen-verbal':'screen-subject','screen-verbal-tests':'screen-verbal',
+  'screen-quant':'screen-subject','screen-units':'screen-quant','screen-guides':'screen-quant','screen-tests':'screen-quant'};
+function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  document.body.classList.toggle('signin-page', id === 'screen-login');
   window.scrollTo(0,0);
 }
+function go(id){                       // forward navigation: also a real browser-history step
+  show(id);
+  if(id !== 'screen-login'){ try{ history.pushState({clcScreen:id}, ''); }catch(e){} }
+}
+function back(){                       // ← button: browser back if possible, else the parent screen
+  const cur = document.querySelector('.screen.active');
+  if(history.state && history.state.clcScreen && history.length > 1){ history.back(); return; }
+  show(PARENT[cur.id] || 'screen-welcome');
+}
+window.addEventListener('popstate', e=>{
+  const id = e.state && e.state.clcScreen;
+  if(id && currentStudentName) show(id);
+});
 /* ===== Weekly rotating password =====
    The password changes automatically every Monday at 00:00 (Athens time) and cycles through
    the 12 passwords on the teacher's schedule. Only SHA-256 fingerprints are stored here,
@@ -492,7 +473,9 @@ function handleLogin(){
   document.getElementById('login-name').value = nameCheck.name;
   currentStudentSection = section;
   document.getElementById('login-error').textContent = '';
-  go('screen-welcome');
+  document.getElementById('welcome-name').textContent = nameCheck.name;
+  show('screen-welcome');
+  try{ history.replaceState({clcScreen:'screen-welcome'}, ''); }catch(e){}
 }
 document.getElementById('login-pass').addEventListener('keydown', e=>{ if(e.key==='Enter') handleLogin(); });
 
