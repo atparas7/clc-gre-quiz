@@ -1209,7 +1209,7 @@ function calcCmd(btn){
         });
         sections.push({label: m.sec.label, rows: rows});
       });
-      return {title: DATA.testName || document.title, sections: sections};
+      return {title: has("TEST_NAME") ? TEST_NAME : (DATA.testName || document.title), sections: sections};
     }
     if (has("SEC1_QUESTIONS") && has("answersSec1")){                               // Quant section-adaptive tests
       var r1 = SEC1_QUESTIONS.map(function(q, i){ return practiceRow(q, answersSec1[i], i + 1, "Section 1"); });
@@ -1220,7 +1220,7 @@ function calcCmd(btn){
         if (has("SEC2_HARD") && s2 === SEC2_HARD) pool = " (Hard pool)"; else if (has("SEC2_EASY") && s2 === SEC2_EASY) pool = " (Easy pool)"; else if (has("SEC2_MEDIUM") && s2 === SEC2_MEDIUM) pool = " (Medium pool)";
         sections.push({label: "Section 2" + pool, rows: s2.map(function(q, i){ return practiceRow(q, a2[i], i + 1, "Section 2" + pool); })});
       }
-      return {title: document.title, sections: sections};
+      return {title: has("TEST_NAME") ? TEST_NAME : document.title, sections: sections};
     }
     return null;
   }
@@ -1357,17 +1357,47 @@ function calcCmd(btn){
   }
 
   /* ---------- hook: runs whenever the page reports a finished test ---------- */
+  /* The answers travel to the teacher's Google Sheet together with the score, in the SAME request the page already sends
+     (extra fields "percent", "level" and "answers"; an older Apps Script simply ignores them). */
+  var pendingExtra = null;
+  if (window.fetch && !window.__clcFetchWrapped){
+    window.__clcFetchWrapped = true;
+    var realFetch = window.fetch;
+    window.fetch = function(url, opts){
+      try{
+        if (pendingExtra && typeof REPORT_WEBHOOK_URL !== "undefined" && String(url) === REPORT_WEBHOOK_URL && opts && opts.body instanceof URLSearchParams){
+          Object.keys(pendingExtra).forEach(function(k){ opts.body.append(k, pendingExtra[k]); });
+          pendingExtra = null;
+        }
+      }catch(e){}
+      return realFetch.apply(this, arguments);
+    };
+  }
+  function makeRecord(data, score, max, id){
+    return {id: id || (Date.now() + "-" + Math.random().toString(36).slice(2, 7)), file: FILE, title: data.title, sections: data.sections,
+            score: Number(score), max: Number(max), when: new Date().toISOString(),
+            name: has("studentName") ? studentName : "", section: has("studentSection") ? studentSection : ""};
+  }
+  function sheetExtra(r){
+    var level = r.sections.length > 1 ? r.sections[r.sections.length - 1].label : "";
+    var rows = [];
+    r.sections.forEach(function(s){ s.rows.forEach(function(x){
+      rows.push({s: s.label, n: x.n, q: x.question.slice(0, 160), y: x.yours, c: x.correct, ok: x.ok ? 1 : 0});
+    }); });
+    return {percent: r.max ? Math.round(100 * r.score / r.max) : 0, level: level, answers: JSON.stringify(rows)};
+  }
+
   var original = window.submitResultToSheet;
   window.submitResultToSheet = function(){
     var args = Array.prototype.slice.call(arguments);
-    try{ if (typeof original === "function") original.apply(this, args); }catch(e){}
     var score = args.length >= 3 ? args[1] : args[0], max = args.length >= 3 ? args[2] : args[1];
+    var r = null;
+    try{ var data = collect(); if (data){ r = makeRecord(data, score, max); pendingExtra = sheetExtra(r); } }catch(e){ if (window.console) console.error("CLC export:", e); }
+    try{ if (typeof original === "function") original.apply(this, args); }catch(e){}
+    pendingExtra = null;
+    if (!r) return;
     setTimeout(function(){
       try{
-        var data = collect(); if (!data) return;
-        var r = {id: Date.now() + "-" + Math.random().toString(36).slice(2, 7), file: FILE, title: data.title, sections: data.sections,
-                 score: Number(score), max: Number(max), when: new Date().toISOString(),
-                 name: has("studentName") ? studentName : "", section: has("studentSection") ? studentSection : ""};
         var list = load(); list.push(r); var ok = save(list);
         window.CLCExport.last = r;
         showBar(r, ok);
@@ -1384,7 +1414,7 @@ function calcCmd(btn){
       }catch(e){ if (window.console) console.error("CLC export:", e); }
     }, 0);
   }
-  window.CLCExport = {collect: collect, reportHTML: reportHTML, reportCSV: reportCSV, list: load, last: null, showOnly: showOnly};
+  window.CLCExport = {collect: collect, reportHTML: reportHTML, reportCSV: reportCSV, list: load, last: null, showOnly: showOnly, actions: ACT, athens: athens};
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", refreshFab); else refreshFab();
 })();
 </script>
