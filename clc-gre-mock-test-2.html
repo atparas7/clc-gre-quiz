@@ -1281,7 +1281,8 @@ function calcCmd(btn){
         '<b>How this is scored (as on the official GRE):</b> every correct answer is worth 1 raw point; wrong or blank answers cost nothing, so never leave a question blank. ' +
         'Your raw score is converted to the 130–170 scale with an adjustment for the difficulty of your ' + (g.measure.indexOf('Verbal') === 0 ? 'Module 2' : 'Section 2') + ' — a harder second part earns more points for the same number of correct answers.' +
         (cap ? ' Possible scores: ' + cap + '.' : '') +
-        ' ETS does not publish its exact conversion, so treat this as an estimate (about ±2–3 points).</div>' +
+        ' ETS does not publish its exact conversion, so treat this as an estimate (about ±2–3 points).' +
+        '<div style="margin-top:6px;"><b>Sources:</b> percentiles — ETS, <i>GRE Interpretive Data, Table 1A</i> (test takers July 2022 – June 2025); scoring rules — ETS, <i>Understanding Your GRE Scores</i> and <i>GRE General Test Structure</i>. Full explanation with links: “How GRE Scoring Works” on the CLC home page.</div></div>' +
       '</div>';
   }
   window.CLCGre = {score: score, boxHTML: boxHTML, routeRange: routeRange, table: TABLE, percentiles: PCT, percentilesVerbal: PCT_V, ordinal: ord};

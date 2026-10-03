@@ -232,6 +232,15 @@
   .sc-routes{display:grid; gap:6px;}
   .sc-arrow{font-size:22px; color:var(--muted);}
   .sc-src a{color:var(--accent);}
+  .cite{font-size:11px; font-weight:700; color:var(--accent); vertical-align:super; margin-left:2px; cursor:pointer; text-decoration:none; white-space:nowrap;}
+  .cite:hover{text-decoration:underline;}
+  .sc-refs{margin:6px 0 0; padding-left:0; list-style:none; counter-reset:none;}
+  .sc-refs li{display:grid; grid-template-columns:30px 1fr; gap:4px; padding:10px 0; border-top:1px solid var(--line); font-size:13.5px; line-height:1.5;}
+  .sc-refs li:first-child{border-top:0;}
+  .sc-refs .n{font-weight:700; color:var(--accent);}
+  .sc-refs a{color:var(--ink); font-weight:600; text-decoration:underline; text-decoration-color:var(--accent); word-break:break-word;}
+  .sc-refs .what{display:block; color:var(--muted); font-size:12.5px; margin-top:2px;}
+  .sc-refs li.flash{background:var(--accent-soft); border-radius:8px;}
   @media (max-width:560px){ .sc-facts{grid-template-columns:repeat(2,1fr);} .sc-flow{grid-template-columns:1fr;} .sc-arrow{transform:rotate(90deg); text-align:center;} }
 </style>
 </head>
@@ -277,7 +286,7 @@
     <main>
       <div class="card list-head" style="position:relative;"><div class="subject-strip" style="background:var(--accent);"></div>
         <p class="eyebrow" style="color:var(--accent);">📏 GRE® General Test — scoring explained</p>
-        <p class="desc">How ETS turns your answers into a score, what the percentile means, what counts as a good score — and exactly how the CLC mock exams calculate the score you see at the end of each test.</p></div>
+        <p class="desc">How ETS turns your answers into a score, what the percentile means, what counts as a good score — and exactly how the CLC mock exams calculate the score you see at the end of each test. Every fact is linked to its source: tap a number such as <span class="cite" style="vertical-align:baseline;">[1]</span> to see it in the <b>Sources</b> list at the bottom.</p></div>
 
       <div class="sc-facts">
         <div class="stat"><div class="v">130–170</div><div class="k">Verbal &amp; Quant, 1-point steps</div></div>
@@ -285,10 +294,11 @@
         <div class="stat"><div class="v">0–6</div><div class="k">Writing, half-point steps</div></div>
         <div class="stat"><div class="v">0</div><div class="k">Penalty for a wrong answer</div></div>
       </div>
+      <p class="muted" style="font-size:12.5px;margin:-6px 0 14px;">Scales and increments: ETS <a class="cite" role="button" tabindex="0" onclick="scRef(3)" title="Source 3">[3]</a> · total 260–340 and no penalty: Magoosh <a class="cite" role="button" tabindex="0" onclick="scRef(5)" title="Source 5">[5]</a></p>
 
       <div class="card">
         <span class="sc-step">The test</span>
-        <h2 class="sc-h">What you take on test day</h2>
+        <h2 class="sc-h">What you take on test day <a class="cite" role="button" tabindex="0" onclick="scRef(1)" title="Source 1">[1]</a></h2>
         <div class="sc-wrap"><table class="sc-table">
           <tr><th>Measure</th><th>Section 1</th><th>Section 2</th><th>Score</th></tr>
           <tr><td>Analytical Writing</td><td colspan="2">1 task — “Analyze an Issue” · 30 min</td><td>0–6</td></tr>
@@ -302,17 +312,17 @@
         <span class="sc-step">Step 1</span>
         <h2 class="sc-h">Your raw score = the number of questions you got right</h2>
         <ul>
-          <li>Every question is worth exactly <b>1 raw point</b>, whether it is easy or hard.</li>
-          <li><b>No penalty</b> for a wrong or blank answer — never leave a question empty; guess if you must.</li>
-          <li>Questions with several answers (“select all that apply”, two- or three-blank Text Completion, Sentence Equivalence) count as correct <b>only if every part is right</b>. There is no partial credit.</li>
-          <li>Numeric Entry: any equivalent value is correct (on the CLC tests, 35/2, 70/4 and 17.5 are all accepted).</li>
-          <li>Verbal and Quant each have 12 + 15 = <b>27 questions</b>, so each raw score is from 0 to 27.</li>
+          <li>Every question is worth exactly <b>1 raw point</b>, whether it is easy or hard — ETS: “the raw score is the number of questions you answered correctly.” <a class="cite" role="button" tabindex="0" onclick="scRef(2)" title="Source 2">[2]</a></li>
+          <li><b>No penalty</b> for a wrong or blank answer — never leave a question empty; guess if you must. <a class="cite" role="button" tabindex="0" onclick="scRef(5)" title="Source 5">[5]</a></li>
+          <li>Questions with several answers (“select all that apply”, two- or three-blank Text Completion, Sentence Equivalence) count as correct <b>only if every part is right</b> — ETS: “there is no credit for partially correct answers.” <a class="cite" role="button" tabindex="0" onclick="scRef(6)" title="Source 6">[6]</a></li>
+          <li>Numeric Entry: on the CLC tests any equivalent value is accepted (35/2, 70/4 and 17.5).</li>
+          <li>Verbal and Quant each have 12 + 15 = <b>27 questions</b>, so each raw score is from 0 to 27. <a class="cite" role="button" tabindex="0" onclick="scRef(1)" title="Source 1">[1]</a></li>
         </ul>
       </div>
 
       <div class="card">
         <span class="sc-step">Step 2</span>
-        <h2 class="sc-h">The test is section-level adaptive</h2>
+        <h2 class="sc-h">The test is section-level adaptive <a class="cite" role="button" tabindex="0" onclick="scRef(1)" title="Source 1">[1]</a><a class="cite" role="button" tabindex="0" onclick="scRef(2)" title="Source 2">[2]</a></h2>
         <p>The first section of each measure is the same difficulty for everyone. How well you do on it decides how hard your <b>second</b> section will be.</p>
         <div class="sc-flow">
           <div class="sc-box"><b>Section 1</b>12 questions · medium difficulty</div>
@@ -323,13 +333,13 @@
             <div class="sc-box"><b>Easy Section 2</b>weak Section 1 · lower ceiling</div>
           </div>
         </div>
-        <p>A harder second section is worth more: ETS adjusts the conversion (“equating”) so that the same number of correct answers gives a <b>higher</b> score on the hard section than on the easy one. That is why Section 1 matters so much — it decides how high you can go.</p>
+        <p>A harder second section is worth more: ETS adjusts the conversion (“equating”) so that the same number of correct answers gives a <b>higher</b> score on the hard section than on the easy one. That is why Section 1 matters so much — it decides how high you can go. ETS: equating “accounts for … the differences in difficulty introduced by the section-level adaptation.” <a class="cite" role="button" tabindex="0" onclick="scRef(2)" title="Source 2">[2]</a></p>
       </div>
 
       <div class="card">
         <span class="sc-step">Step 3</span>
         <h2 class="sc-h">Raw score → 130–170 scaled score</h2>
-        <p>ETS converts the raw score to the 130–170 scale using your second-section level. ETS does not publish its exact tables, so the CLC tests use the calibrated tables below — the score you see is an <b>estimate, accurate to about ±2–3 points</b>.</p>
+        <p>ETS converts the raw score to the 130–170 scale using your second-section level. ETS does not publish its exact tables, so the CLC tests use the calibrated tables below — the score you see is an <b>estimate, accurate to about ±2–3 points</b>. The tables are CLC’s own calibration, not an ETS document <a class="cite" role="button" tabindex="0" onclick="scRef(2)" title="Source 2">[2]</a>; the percentiles in Step 4 are official ETS figures <a class="cite" role="button" tabindex="0" onclick="scRef(4)" title="Source 4">[4]</a>.</p>
         <p class="muted"><b>How CLC routes you:</b> Full Mock Tests 2–5 — Section 1 score 0–5 → Easy, 6–9 → Medium, 10–12 → Hard. Full Mock Test 1 — 8–12 → Hard, otherwise Medium. Verbal Adaptive Tests — Module 1 score 8–12 → Harder, otherwise Easier (scored with the Medium column). Grey cells are scores that cannot occur on that route in Full Mock Tests 2–5.</p>
         <div class="sc-wrap" id="sc-convert"></div>
         <p class="muted">Example: 20 correct out of 27 gives 152 after an Easy Section 2, 157 after a Medium one and 160 after a Hard one.</p>
@@ -338,21 +348,21 @@
       <div class="card">
         <span class="sc-step">Step 4</span>
         <h2 class="sc-h">Percentile rank — how you compare</h2>
-        <p>Your score report also shows a <b>percentile</b>: the percentage of test takers who scored <b>lower</b> than you. Official ETS data for everyone who tested from July 2022 to June 2025 (mean scores: Verbal 151.4, Quant 157.6):</p>
+        <p>Your score report also shows a <b>percentile</b>: the percentage of test takers who scored <b>lower</b> than you. Official ETS data for everyone who tested from July 2022 to June 2025 (mean scores: Verbal 151.4, Quant 157.6) <a class="cite" role="button" tabindex="0" onclick="scRef(4)" title="Source 4">[4]</a>:</p>
         <div class="sc-wrap" id="sc-pct"></div>
         <p class="muted">Notice the difference between the two measures: 160 is the 82nd percentile in Verbal but only the 50th in Quant, and even a perfect 170 in Quant is the 89th percentile, because so many test takers score high in Quant.</p>
       </div>
 
       <div class="card">
         <span class="sc-step">What’s a good score?</span>
-        <h2 class="sc-h">Targets</h2>
+        <h2 class="sc-h">Targets <a class="cite" role="button" tabindex="0" onclick="scRef(4)" title="Source 4">[4]</a><a class="cite" role="button" tabindex="0" onclick="scRef(5)" title="Source 5">[5]</a></h2>
         <div class="sc-wrap"><table class="sc-table">
           <tr><th>Level</th><th>Verbal</th><th>Quant</th></tr>
           <tr><td>Average (≈ 50th percentile)</td><td>152–153</td><td>160</td></tr>
-          <tr class="hl"><td>Competitive for most programs (75th percentile)</td><td>158+</td><td>167+</td></tr>
+          <tr class="hl"><td>Competitive for most programs (75th percentile — Magoosh’s benchmark <a class="cite" role="button" tabindex="0" onclick="scRef(5)" title="Source 5">[5]</a>)</td><td>158+</td><td>167+</td></tr>
           <tr><td>Top 10%</td><td>163+</td><td>170 (89th)</td></tr>
         </table></div>
-        <p class="muted">Always check the scores your target programs report — engineering and quantitative programs usually expect a higher Quant score, humanities programs a higher Verbal score.</p>
+        <p class="muted">Percentiles from ETS <a class="cite" role="button" tabindex="0" onclick="scRef(4)" title="Source 4">[4]</a>. Always check the scores your target programs report — engineering and quantitative programs usually expect a higher Quant score, humanities programs a higher Verbal score.</p>
       </div>
 
       <div class="card">
@@ -368,11 +378,17 @@
       <div class="card">
         <span class="sc-step">Good to know</span>
         <ul>
-          <li>GRE scores are valid for <b>5 years</b>.</li>
-          <li>With <b>ScoreSelect</b> you choose which test dates to send to schools.</li>
-          <li>Analytical Writing is scored by a trained human rater and the e-rater® scoring engine.</li>
+          <li>GRE scores are reportable for <b>5 years</b> after the test date. <a class="cite" role="button" tabindex="0" onclick="scRef(3)" title="Source 3">[3]</a></li>
+          <li>With <b>ScoreSelect®</b> you decide which scores from the last 5 years to send to schools. <a class="cite" role="button" tabindex="0" onclick="scRef(3)" title="Source 3">[3]</a></li>
+          <li>Analytical Writing is scored on a 6-point holistic scale, including a score from ETS’s e-rater® scoring engine. <a class="cite" role="button" tabindex="0" onclick="scRef(2)" title="Source 2">[2]</a></li>
         </ul>
-        <p class="sc-src muted" style="margin-top:10px;">Sources: <a href="https://www.in.ets.org/gre-score/understand-scores.html">ETS — Understanding your GRE scores</a> · <a href="https://www.ets.org/pdfs/gre/gre-guide-table-1a.pdf">ETS — Percentile ranks, Table 1A (2022–2025)</a> · <a href="https://magoosh.com/gre/gre-score-range-good-gre-score/">Magoosh — GRE score range &amp; good scores</a></p>
+
+      </div>
+      <div class="card" id="sc-sources">
+        <span class="sc-step">Sources</span>
+        <h2 class="sc-h">Where this information comes from</h2>
+        <ol class="sc-refs"><li id="sc-ref-1"><span class="n">[1]</span><span><a href="https://www.ets.org/gre/test-takers/general-test/prepare/test-structure.html">ETS — GRE General Test Structure</a><span class="what">Official format since 22 Sept 2023: sections, number of questions, timing; Verbal and Quant are section-level adaptive.</span></span></li><li id="sc-ref-2"><span class="n">[2]</span><span><a href="https://www.in.ets.org/gre-score/understand-scores.html">ETS — Understanding Your GRE Scores</a><span class="what">Raw score = number of correct answers; section-level adaptive; raw score converted to the scaled score through equating; Analytical Writing scoring.</span></span></li><li id="sc-ref-3"><span class="n">[3]</span><span><a href="https://www.ets.org/gre/score-users/about/general-test/scoring.html">ETS — GRE General Test Scores (for score users)</a><span class="what">Score scales: 130–170 in 1-point steps (Verbal, Quant), 0–6 in half-point steps (Writing); scores reportable for 5 years; ScoreSelect®.</span></span></li><li id="sc-ref-4"><span class="n">[4]</span><span><a href="https://www.ets.org/pdfs/gre/gre-guide-table-1a.pdf">ETS — GRE Interpretive Data, Table 1A (PDF)</a><span class="what">Percentile ranks for every Verbal and Quant score and mean scores; test takers 1 July 2022 – 30 June 2025.</span></span></li><li id="sc-ref-5"><span class="n">[5]</span><span><a href="https://magoosh.com/gre/gre-score-range-good-gre-score/">Magoosh — GRE Score Range: What’s a Good GRE Score?</a><span class="what">Total score 260–340; no penalty for wrong answers; competitive target = 75th percentile (Verbal 158+, Quant 167+). Checked against ETS — it agrees.</span></span></li><li id="sc-ref-6"><span class="n">[6]</span><span><a href="https://www.ets.org/gre/test-takers/general-test/prepare/content/verbal-reasoning.html">ETS — GRE Verbal Reasoning question types</a><span class="what">Text Completion, Sentence Equivalence and “select one or more” Reading Comprehension: “there is no credit for partially correct answers.”</span></span></li></ol>
+        <p class="muted" style="margin-top:8px;">The raw-to-scaled tables in Step 3 and the routing thresholds are CLC’s own estimate, because ETS does not publish its conversion tables. Sources checked on 3 October 2026.</p>
       </div>
       <footer class="foot">CLC GRE Practice — independent study tool, not affiliated with ETS. GRE® is a registered trademark of ETS.</footer>
     </main>
@@ -660,6 +676,12 @@ function progressArea(r){ return /verbal/i.test(r.file) ? 'Verbal Reasoning' : '
 function pctOf(r){ return r.max ? Math.round(100 * r.score / r.max) : 0; }
 function pctColor(p){ return p >= 70 ? '#2f7d5a' : (p >= 50 ? 'var(--accent)' : '#b4433a'); }
 function escP(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function scRef(n){
+  const el = document.getElementById('sc-ref-' + n); if(!el) return;
+  el.scrollIntoView({behavior:'smooth', block:'center'});
+  el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'), 1600);
+}
+document.addEventListener('keydown', e=>{ if((e.key==='Enter'||e.key===' ') && e.target.classList && e.target.classList.contains('cite')){ e.preventDefault(); e.target.click(); } });
 function renderScoring(){
   if(!window.CLCGre || document.getElementById('sc-convert').childElementCount) return;
   const T = CLCGre.table, range = {Easy:[0,20], Medium:[6,24], Hard:[10,27]};
@@ -779,7 +801,8 @@ function downloadAllProgress(){
         '<b>How this is scored (as on the official GRE):</b> every correct answer is worth 1 raw point; wrong or blank answers cost nothing, so never leave a question blank. ' +
         'Your raw score is converted to the 130–170 scale with an adjustment for the difficulty of your ' + (g.measure.indexOf('Verbal') === 0 ? 'Module 2' : 'Section 2') + ' — a harder second part earns more points for the same number of correct answers.' +
         (cap ? ' Possible scores: ' + cap + '.' : '') +
-        ' ETS does not publish its exact conversion, so treat this as an estimate (about ±2–3 points).</div>' +
+        ' ETS does not publish its exact conversion, so treat this as an estimate (about ±2–3 points).' +
+        '<div style="margin-top:6px;"><b>Sources:</b> percentiles — ETS, <i>GRE Interpretive Data, Table 1A</i> (test takers July 2022 – June 2025); scoring rules — ETS, <i>Understanding Your GRE Scores</i> and <i>GRE General Test Structure</i>. Full explanation with links: “How GRE Scoring Works” on the CLC home page.</div></div>' +
       '</div>';
   }
   window.CLCGre = {score: score, boxHTML: boxHTML, routeRange: routeRange, table: TABLE, percentiles: PCT, percentilesVerbal: PCT_V, ordinal: ord};
