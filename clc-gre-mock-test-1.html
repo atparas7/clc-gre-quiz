@@ -521,27 +521,14 @@ function showFinalResults(){
   const score2 = sec2Attempted ? calculateScore(activeQuestions, answersSec2) : 0;
   const totalRaw = score1 + score2;
   const totalMax = SEC1_QUESTIONS.length + (sec2Attempted ? activeQuestions.length : 0);
+  const gre = CLCGre.score(isSec2Hard ? 'Hard' : 'Medium', totalRaw, 27);
+  window.CLC_GRE_SCORE = gre;
   submitResultToSheet(totalRaw, totalMax);
 
   let html = `
-    <div class="scorebox">
-      <div style="font-size:14px;color:#666;text-transform:uppercase;letter-spacing:1px;">Final GRE Quant Performance</div>
-      <div class="big">` + totalRaw + ` / ` + totalMax + `</div>
-      <div class="sec-breakdown">
-        <div class="sec-card">
-          <div style="font-size:12px;color:#666;">SECTION 1</div>
-          <div style="font-size:22px;font-weight:bold;color:var(--crimson);">` + score1 + ` / ` + SEC1_QUESTIONS.length + `</div>
-        </div>
-        ` + (sec2Attempted ? `
-        <div class="sec-card">
-          <div style="font-size:12px;color:#666;">SECTION 2</div>
-          <div style="font-size:22px;font-weight:bold;color:var(--crimson);">` + score2 + ` / ` + activeQuestions.length + `</div>
-        </div>` : `
-        <div class="sec-card">
-          <div style="font-size:12px;color:#666;">SECTION 2</div>
-          <div style="font-size:14px;color:#a56a00;">Not attempted</div>
-        </div>`) + `
-      </div>
+    <div class="scorebox">` + CLCGre.boxHTML(gre, score1, SEC1_QUESTIONS.length, score2, (sec2Attempted ? activeQuestions.length : 15),
+        [['Medium'].concat(CLCGre.routeRange('Medium', 0, HARD_THRESHOLD - 1, 15)), ['Hard'].concat(CLCGre.routeRange('Hard', HARD_THRESHOLD, 12, 15))]) + `
+      ` + (sec2Attempted ? '' : '<div style="font-size:13px;color:#a56a00;margin-top:6px;">Section 2 was not attempted — it counts as 0 correct.</div>') + `
     </div>
     <button class="pdf-btn no-print" onclick="window.print()">🖨️ Save Results as PDF</button>
     <h3 style="color:var(--crimson);margin:25px 0 15px;">Detailed Question Solutions & Breakdown</h3>
@@ -649,6 +636,60 @@ function calcCmd(btn){
   });
 })();
 </script>
+<!--CLC-GRE-SCORE-START-->
+<script>
+/* CLC: official-style GRE scoring for the full mock exams.
+   Like the real GRE: 1 raw point per correct answer, no penalty for wrong or blank answers, every question counts the same.
+   The raw score (out of 27) is converted to the 130–170 scale with an adjustment for the difficulty of the Section 2 module
+   (ETS calls this "equating"). ETS does not publish its conversion tables, so the tables below are a calibrated estimate.
+   Percentile ranks: ETS, GRE Quantitative Reasoning test takers July 1, 2022 – June 30, 2025 (Table 1A). */
+(function(){
+  //            raw:  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27
+  var TABLE = {
+    Easy:   [130,130,131,132,133,134,135,136,137,138,139,140,141,142,143,145,146,147,149,150,152,153,154,155,156,157,158,159],
+    Medium: [130,132,133,135,136,138,140,141,142,143,144,145,146,147,148,150,151,152,154,155,157,158,160,161,163,164,165,166],
+    Hard:   [130,133,135,137,139,141,143,144,145,146,147,148,149,150,151,153,154,155,157,158,160,161,163,164,166,167,169,170]
+  };
+  var PCT = {170:89,169:85,168:80,167:75,166:72,165:67,164:63,163:60,162:57,161:53,160:50,159:47,158:45,157:42,156:39,155:37,
+             154:34,153:31,152:29,151:26,150:23,149:21,148:19,147:16,146:14,145:12,144:10,143:9,142:7,141:6,140:5,139:4,138:3,
+             137:2,136:2,135:1,134:1,133:1,132:1,131:1,130:0};
+  function norm(level){ level = String(level || "").toLowerCase(); return level.indexOf("hard") !== -1 ? "Hard" : level.indexOf("easy") !== -1 ? "Easy" : "Medium"; }
+  function score(level, raw, total){
+    var lv = norm(level), r = Number(raw) || 0, t = Number(total) || 27;
+    var r27 = Math.max(0, Math.min(27, Math.round(t === 27 ? r : r * 27 / t)));
+    var s = TABLE[lv][r27];
+    return {measure: "Quantitative Reasoning", scaled: s, percentile: PCT[s], level: lv, raw: r, total: t};
+  }
+  function ord(n){ return n === 0 ? "below 1st" : n + (n % 10 === 1 && n !== 11 ? "st" : n % 10 === 2 && n !== 12 ? "nd" : n % 10 === 3 && n !== 13 ? "rd" : "th"); }
+  function routeRange(lv, s1min, s1max, s2max){ return [TABLE[lv][s1min], TABLE[lv][Math.min(27, s1max + s2max)]]; }
+  function boxHTML(g, s1, s1max, s2, s2max, ranges){
+    var pos = Math.round(100 * (g.scaled - 130) / 40);
+    var card = function(k, v){ return '<div style="flex:1 1 130px;background:#fff;border:1px solid #e6dcc6;border-radius:10px;padding:10px 8px;text-align:center;">' +
+      '<div style="font-size:11.5px;color:#666;letter-spacing:.5px;">' + k + '</div><div style="font-size:21px;font-weight:bold;color:var(--crimson,#7a1f2b);">' + v + '</div></div>'; };
+    var cap = ranges ? ranges.map(function(x){ return x[0] + ' Section 2: ' + x[1] + '–' + x[2]; }).join(' · ') : '';
+    return '<div class="clc-gre-score" style="text-align:center;">' +
+      '<div style="font-size:13px;color:#666;text-transform:uppercase;letter-spacing:1.2px;">GRE® Quantitative Reasoning — Estimated Score</div>' +
+      '<div class="big" style="line-height:1.05;margin-top:4px;">' + g.scaled + '</div>' +
+      '<div style="font-size:13px;color:#666;">on the official 130–170 scale</div>' +
+      '<div style="max-width:420px;margin:14px auto 4px;position:relative;height:10px;border-radius:5px;background:linear-gradient(90deg,#e9e2d3,#d9b46a,#7a1f2b);">' +
+        '<span style="position:absolute;top:-5px;left:calc(' + pos + '% - 10px);width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--crimson,#7a1f2b);box-sizing:border-box;"></span></div>' +
+      '<div style="max-width:420px;margin:0 auto;display:flex;justify-content:space-between;font-size:11px;color:#888;"><span>130</span><span>150</span><span>170</span></div>' +
+      '<div style="margin:12px 0 4px;font-size:15px;"><b>Percentile rank: ' + ord(g.percentile) + '</b></div>' +
+      '<div style="font-size:12.5px;color:#666;">' + (g.percentile > 0 ? 'You scored higher than about ' + g.percentile + '% of GRE test takers' : 'Fewer than 1% of GRE test takers score this low') + ' (ETS data, 2022–2025).</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 10px;">' +
+        card('SECTION 1', s1 + ' / ' + s1max) + card('SECTION 2 · ' + g.level.toUpperCase(), s2 + ' / ' + s2max) + card('RAW SCORE', g.raw + ' / ' + (s1max + s2max)) +
+      '</div>' +
+      '<div class="est-note" style="font-size:12px;color:#666;line-height:1.55;text-align:left;background:#fbf8f1;border-radius:8px;padding:10px 12px;">' +
+        '<b>How this is scored (as on the official GRE):</b> every correct answer is worth 1 raw point; wrong or blank answers cost nothing, so never leave a question blank. ' +
+        'Your raw score is converted to the 130–170 scale with an adjustment for the difficulty of your Section 2 module — a harder Section 2 earns more points for the same number of correct answers.' +
+        (cap ? ' Possible scores by Section 2 module: ' + cap + '.' : '') +
+        ' ETS does not publish its exact conversion, so treat this as an estimate (about ±2–3 points).</div>' +
+      '</div>';
+  }
+  window.CLCGre = {score: score, boxHTML: boxHTML, routeRange: routeRange, table: TABLE, percentiles: PCT, ordinal: ord};
+})();
+</script>
+<!--CLC-GRE-SCORE-END-->
 <!--CLC-EXPORT-START-->
 <script>
 /* ===== CLC results export =====
@@ -798,14 +839,17 @@ function calcCmd(btn){
       "</style></head><body><div class='wrap'><header><div class='brand'>CLC EDUCATIONAL INSTITUTE · GRE PRACTICE</div>" +
       "<h1>" + esc(r.title) + "</h1><div class='meta'><div>Student: <b>" + esc(r.name) + "</b></div><div>Class / Τμήμα: <b>" + esc(r.section || "—") +
       "</b></div><div>Date: <b>" + esc(athens(r.when)) + "</b></div></div></header>" +
-      "<div class='score'><div class='num'>" + r.score + " / " + r.max + "</div><div>" + pct + "% correct</div></div>" + secs +
+      (r.gre ? "<div class='score'><div style='font-size:12px;letter-spacing:.08em;color:#5b6472;'>GRE® " + esc(r.gre.measure || "").toUpperCase() + " — ESTIMATED SCORE (130–170)</div>" +
+        "<div class='num' style='font-size:44px;'>" + r.gre.scaled + "</div><div>Percentile rank: <b>" + (r.gre.percentile > 0 ? r.gre.percentile : "<1") + "</b> · Raw score " + r.score + " / " + r.max +
+        " (" + pct + "% correct) · Section 2: " + esc(r.gre.level) + "</div></div>"
+        : "<div class='score'><div class='num'>" + r.score + " / " + r.max + "</div><div>" + pct + "% correct</div></div>") + secs +
       "<footer>© 2026 CLC Educational Institute — results report generated by the test page.</footer></div>" +
       (autoPrint ? "<script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>" : "") + "</body></html>";
   }
   function reportCSV(r){
     function c(v){ v = String(v == null ? "" : v); return /[",\n;]/.test(v) ? "\"" + v.replace(/"/g, "\"\"") + "\"" : v; }
-    var lines = [["Test", r.title], ["Student", r.name], ["Class", r.section || ""], ["Date", athens(r.when)], ["Score", r.score + " / " + r.max], [],
-                 ["Section", "Question #", "Question", "Your answer", "Correct answer", "Result"]];
+    var lines = [["Test", r.title], ["Student", r.name], ["Class", r.section || ""], ["Date", athens(r.when)], ["Score", r.score + " / " + r.max]].concat(r.gre ? [["GRE score (estimated 130-170)", r.gre.scaled], ["Percentile rank", r.gre.percentile]] : []).concat([[],
+                 ["Section", "Question #", "Question", "Your answer", "Correct answer", "Result"]]);
     r.sections.forEach(function(s){ s.rows.forEach(function(x){ lines.push([s.label, x.n, x.question, x.yours, x.correct, x.ok ? "Correct" : "Wrong"]); }); });
     return "﻿" + lines.map(function(l){ return l.map(c).join(","); }).join("\r\n");
   }
@@ -908,7 +952,8 @@ function calcCmd(btn){
   function makeRecord(data, score, max, id){
     return {id: id || (Date.now() + "-" + Math.random().toString(36).slice(2, 7)), file: FILE, title: data.title, sections: data.sections,
             score: Number(score), max: Number(max), when: new Date().toISOString(),
-            name: has("studentName") ? studentName : "", section: has("studentSection") ? studentSection : ""};
+            name: has("studentName") ? studentName : "", section: has("studentSection") ? studentSection : "",
+            gre: window.CLC_GRE_SCORE ? {scaled: window.CLC_GRE_SCORE.scaled, percentile: window.CLC_GRE_SCORE.percentile, level: window.CLC_GRE_SCORE.level, measure: window.CLC_GRE_SCORE.measure} : undefined};
   }
   function sheetExtra(r){
     var level = r.sections.length > 1 ? r.sections[r.sections.length - 1].label : "";
@@ -916,7 +961,9 @@ function calcCmd(btn){
     r.sections.forEach(function(s){ s.rows.forEach(function(x){
       rows.push({s: s.label, n: x.n, q: x.question.slice(0, 160), y: x.yours, c: x.correct, ok: x.ok ? 1 : 0});
     }); });
-    return {percent: r.max ? Math.round(100 * r.score / r.max) : 0, level: level, answers: JSON.stringify(rows)};
+    var x = {percent: r.max ? Math.round(100 * r.score / r.max) : 0, level: level, answers: JSON.stringify(rows)};
+    if (r.gre){ x.greScore = r.gre.scaled; x.percentile = r.gre.percentile; }
+    return x;
   }
 
   var original = window.submitResultToSheet;

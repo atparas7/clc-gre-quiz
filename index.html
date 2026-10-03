@@ -539,9 +539,11 @@ function renderProgress(){
     return;
   }
   const avg = Math.round(list.reduce((s,r)=>s+pctOf(r),0) / list.length), best = Math.max.apply(null, list.map(pctOf));
+  const greList = list.filter(r=>r.gre && r.gre.scaled);
   h += '<div class="stats"><div class="stat"><div class="v">' + list.length + '</div><div class="k">Tests taken</div></div>' +
        '<div class="stat"><div class="v">' + avg + '%</div><div class="k">Average</div></div>' +
-       '<div class="stat"><div class="v">' + best + '%</div><div class="k">Best</div></div></div>';
+       '<div class="stat"><div class="v">' + best + '%</div><div class="k">Best</div></div>' +
+       (greList.length ? '<div class="stat"><div class="v">' + Math.max.apply(null, greList.map(r=>r.gre.scaled)) + '</div><div class="k">Best GRE Quant</div></div>' : '') + '</div>';
   h += '<button class="btn ghost" style="margin-bottom:4px;" onclick="downloadAllProgress()">⬇ Download all my results (Excel / CSV)</button>';
   ['Verbal Reasoning','Quantitative Reasoning'].forEach(area=>{
     const rows = list.filter(r=>progressArea(r)===area); if(!rows.length) return;
@@ -550,7 +552,8 @@ function renderProgress(){
       const p = pctOf(r);
       h += '<div class="attempt" data-id="' + escP(r.id) + '"><div class="top"><div><div class="t">' + escP(r.title) + '</div>' +
         '<div class="d">' + escP(CLCExport.athens(r.when)) + (r.sections.length>1 ? ' · ' + escP(r.sections[r.sections.length-1].label) : '') + '</div></div>' +
-        '<div class="sc" style="color:' + pctColor(p) + ';">' + r.score + ' / ' + r.max + ' <span style="font-size:13px;">(' + p + '%)</span></div></div>' +
+        (r.gre ? '<div class="sc" style="color:' + pctColor(p) + ';text-align:right;">GRE ' + r.gre.scaled + '<div style="font-size:12px;font-weight:500;color:var(--muted);">' + r.score + ' / ' + r.max + ' · ' + (r.gre.percentile > 0 ? CLCGreOrd(r.gre.percentile) : '<1st') + ' pct.</div></div></div>'
+               : '<div class="sc" style="color:' + pctColor(p) + ';">' + r.score + ' / ' + r.max + ' <span style="font-size:13px;">(' + p + '%)</span></div></div>') +
         '<div class="bar"><span style="width:' + p + '%; background:' + pctColor(p) + ';"></span></div>' +
         '<div class="clcx-btns"><button class="clcx-btn main" data-act="pdf">📄 PDF</button><button class="clcx-btn" data-act="html">⬇ Web page</button><button class="clcx-btn" data-act="csv">⬇ Excel</button></div></div>';
     });
@@ -562,13 +565,14 @@ function renderProgress(){
     el.querySelectorAll('[data-act]').forEach(b=> b.onclick = ()=> CLCExport.actions[b.dataset.act](r));
   });
 }
+function CLCGreOrd(n){ return n + (n % 10 === 1 && n !== 11 ? 'st' : n % 10 === 2 && n !== 12 ? 'nd' : n % 10 === 3 && n !== 13 ? 'rd' : 'th'); }
 function downloadAllProgress(){
   const list = progressAttempts(); if(!list.length) return;
   const c = v => { v = String(v==null?'':v); return /[",\n;]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; };
   const lines = [['Student', currentStudentName], ['Class', currentStudentSection || ''], [],
-                 ['Date','Area','Test','Score','Max','Percent','Section','Question #','Question','Your answer','Correct answer','Result']];
+                 ['Date','Area','Test','Score','Max','Percent','GRE score (est.)','Section','Question #','Question','Your answer','Correct answer','Result']];
   list.slice().reverse().forEach(r=> r.sections.forEach(s=> s.rows.forEach(x=>
-    lines.push([CLCExport.athens(r.when), progressArea(r), r.title, r.score, r.max, pctOf(r) + '%', s.label, x.n, x.question, x.yours, x.correct, x.ok ? 'Correct' : 'Wrong']))));
+    lines.push([CLCExport.athens(r.when), progressArea(r), r.title, r.score, r.max, pctOf(r) + '%', r.gre ? r.gre.scaled : '', s.label, x.n, x.question, x.yours, x.correct, x.ok ? 'Correct' : 'Wrong']))));
   const blob = new Blob(['\ufeff' + lines.map(l=>l.map(c).join(',')).join('\r\n')], {type:'text/csv;charset=utf-8'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
   a.download = 'CLC-GRE_Progress_' + currentStudentName.replace(/\s+/g,'-') + '.csv'; document.body.appendChild(a); a.click();
@@ -724,14 +728,17 @@ function downloadAllProgress(){
       "</style></head><body><div class='wrap'><header><div class='brand'>CLC EDUCATIONAL INSTITUTE · GRE PRACTICE</div>" +
       "<h1>" + esc(r.title) + "</h1><div class='meta'><div>Student: <b>" + esc(r.name) + "</b></div><div>Class / Τμήμα: <b>" + esc(r.section || "—") +
       "</b></div><div>Date: <b>" + esc(athens(r.when)) + "</b></div></div></header>" +
-      "<div class='score'><div class='num'>" + r.score + " / " + r.max + "</div><div>" + pct + "% correct</div></div>" + secs +
+      (r.gre ? "<div class='score'><div style='font-size:12px;letter-spacing:.08em;color:#5b6472;'>GRE® " + esc(r.gre.measure || "").toUpperCase() + " — ESTIMATED SCORE (130–170)</div>" +
+        "<div class='num' style='font-size:44px;'>" + r.gre.scaled + "</div><div>Percentile rank: <b>" + (r.gre.percentile > 0 ? r.gre.percentile : "<1") + "</b> · Raw score " + r.score + " / " + r.max +
+        " (" + pct + "% correct) · Section 2: " + esc(r.gre.level) + "</div></div>"
+        : "<div class='score'><div class='num'>" + r.score + " / " + r.max + "</div><div>" + pct + "% correct</div></div>") + secs +
       "<footer>© 2026 CLC Educational Institute — results report generated by the test page.</footer></div>" +
       (autoPrint ? "<script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>" : "") + "</body></html>";
   }
   function reportCSV(r){
     function c(v){ v = String(v == null ? "" : v); return /[",\n;]/.test(v) ? "\"" + v.replace(/"/g, "\"\"") + "\"" : v; }
-    var lines = [["Test", r.title], ["Student", r.name], ["Class", r.section || ""], ["Date", athens(r.when)], ["Score", r.score + " / " + r.max], [],
-                 ["Section", "Question #", "Question", "Your answer", "Correct answer", "Result"]];
+    var lines = [["Test", r.title], ["Student", r.name], ["Class", r.section || ""], ["Date", athens(r.when)], ["Score", r.score + " / " + r.max]].concat(r.gre ? [["GRE score (estimated 130-170)", r.gre.scaled], ["Percentile rank", r.gre.percentile]] : []).concat([[],
+                 ["Section", "Question #", "Question", "Your answer", "Correct answer", "Result"]]);
     r.sections.forEach(function(s){ s.rows.forEach(function(x){ lines.push([s.label, x.n, x.question, x.yours, x.correct, x.ok ? "Correct" : "Wrong"]); }); });
     return "﻿" + lines.map(function(l){ return l.map(c).join(","); }).join("\r\n");
   }
@@ -834,7 +841,8 @@ function downloadAllProgress(){
   function makeRecord(data, score, max, id){
     return {id: id || (Date.now() + "-" + Math.random().toString(36).slice(2, 7)), file: FILE, title: data.title, sections: data.sections,
             score: Number(score), max: Number(max), when: new Date().toISOString(),
-            name: has("studentName") ? studentName : "", section: has("studentSection") ? studentSection : ""};
+            name: has("studentName") ? studentName : "", section: has("studentSection") ? studentSection : "",
+            gre: window.CLC_GRE_SCORE ? {scaled: window.CLC_GRE_SCORE.scaled, percentile: window.CLC_GRE_SCORE.percentile, level: window.CLC_GRE_SCORE.level, measure: window.CLC_GRE_SCORE.measure} : undefined};
   }
   function sheetExtra(r){
     var level = r.sections.length > 1 ? r.sections[r.sections.length - 1].label : "";
@@ -842,7 +850,9 @@ function downloadAllProgress(){
     r.sections.forEach(function(s){ s.rows.forEach(function(x){
       rows.push({s: s.label, n: x.n, q: x.question.slice(0, 160), y: x.yours, c: x.correct, ok: x.ok ? 1 : 0});
     }); });
-    return {percent: r.max ? Math.round(100 * r.score / r.max) : 0, level: level, answers: JSON.stringify(rows)};
+    var x = {percent: r.max ? Math.round(100 * r.score / r.max) : 0, level: level, answers: JSON.stringify(rows)};
+    if (r.gre){ x.greScore = r.gre.scaled; x.percentile = r.gre.percentile; }
+    return x;
   }
 
   var original = window.submitResultToSheet;
