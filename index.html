@@ -210,6 +210,29 @@
   .attempt .clcx-btns{gap:6px;} .attempt .clcx-btn{padding:7px 11px; font-size:12.5px;}
   .group-title{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:700; margin:18px 0 8px;}
   @media (max-width:420px){ .stat .v{font-size:21px;} }
+
+  /* ---- How GRE scoring works ---- */
+  .sc-facts{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:0 0 14px;}
+  .sc-facts .stat .v{font-size:22px;}
+  .sc-h{font-family:'Fraunces',Georgia,serif; font-size:18px; margin:0 0 8px; color:var(--ink);}
+  .sc-step{display:inline-block; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); background:var(--accent-soft); border-radius:999px; padding:3px 10px; margin-bottom:8px;}
+  .card p, .card li{font-size:14px; line-height:1.6; color:var(--ink);}
+  .card ul{margin:6px 0 0; padding-left:20px;} .card li{margin-bottom:4px;}
+  .card .muted{color:var(--muted); font-size:13px;}
+  .sc-wrap{overflow-x:auto; margin:10px 0 4px; -webkit-overflow-scrolling:touch;}
+  .sc-table{width:100%; border-collapse:collapse; font-size:13px; min-width:300px;}
+  .sc-table th, .sc-table td{border:1px solid var(--line); padding:6px 8px; text-align:center;}
+  .sc-table th{background:var(--accent-soft); font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink);}
+  .sc-table td:first-child, .sc-table th:first-child{font-weight:700;}
+  .sc-table td.na{color:var(--muted); opacity:.35;}
+  .sc-table tr.hl td{background:var(--practice-soft);}
+  .sc-flow{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:10px; margin:12px 0 6px;}
+  .sc-box{border:1px solid var(--line); border-radius:12px; padding:10px; text-align:center; background:var(--paper); font-size:13px;}
+  .sc-box b{display:block; font-size:14px;}
+  .sc-routes{display:grid; gap:6px;}
+  .sc-arrow{font-size:22px; color:var(--muted);}
+  .sc-src a{color:var(--accent);}
+  @media (max-width:560px){ .sc-facts{grid-template-columns:repeat(2,1fr);} .sc-flow{grid-template-columns:1fr;} .sc-arrow{transform:rotate(90deg); text-align:center;} }
 </style>
 </head>
 <body class="signin-page">
@@ -248,6 +271,113 @@
     </main>
   </section>
 
+  <!-- ============ HOW GRE SCORING WORKS ============ -->
+  <section class="screen" id="screen-scoring">
+    <div class="topbar"><button class="backbtn" onclick="back()" aria-label="Back">←</button><img class="topbar-logo" src="clc-logo.png" alt="CLC"><h1>How GRE Scoring Works</h1></div>
+    <main>
+      <div class="card list-head" style="position:relative;"><div class="subject-strip" style="background:var(--accent);"></div>
+        <p class="eyebrow" style="color:var(--accent);">📏 GRE® General Test — scoring explained</p>
+        <p class="desc">How ETS turns your answers into a score, what the percentile means, what counts as a good score — and exactly how the CLC mock exams calculate the score you see at the end of each test.</p></div>
+
+      <div class="sc-facts">
+        <div class="stat"><div class="v">130–170</div><div class="k">Verbal &amp; Quant, 1-point steps</div></div>
+        <div class="stat"><div class="v">260–340</div><div class="k">Total (V + Q)</div></div>
+        <div class="stat"><div class="v">0–6</div><div class="k">Writing, half-point steps</div></div>
+        <div class="stat"><div class="v">0</div><div class="k">Penalty for a wrong answer</div></div>
+      </div>
+
+      <div class="card">
+        <span class="sc-step">The test</span>
+        <h2 class="sc-h">What you take on test day</h2>
+        <div class="sc-wrap"><table class="sc-table">
+          <tr><th>Measure</th><th>Section 1</th><th>Section 2</th><th>Score</th></tr>
+          <tr><td>Analytical Writing</td><td colspan="2">1 task — “Analyze an Issue” · 30 min</td><td>0–6</td></tr>
+          <tr><td>Verbal Reasoning</td><td>12 questions · 18 min</td><td>15 questions · 23 min</td><td>130–170</td></tr>
+          <tr><td>Quantitative Reasoning</td><td>12 questions · 21 min</td><td>15 questions · 26 min</td><td>130–170</td></tr>
+        </table></div>
+        <p class="muted">Total testing time is about 1 hour 58 minutes. The Verbal and Quant scores are reported separately; added together they give the total of 260–340 that many programs quote.</p>
+      </div>
+
+      <div class="card">
+        <span class="sc-step">Step 1</span>
+        <h2 class="sc-h">Your raw score = the number of questions you got right</h2>
+        <ul>
+          <li>Every question is worth exactly <b>1 raw point</b>, whether it is easy or hard.</li>
+          <li><b>No penalty</b> for a wrong or blank answer — never leave a question empty; guess if you must.</li>
+          <li>Questions with several answers (“select all that apply”, two- or three-blank Text Completion, Sentence Equivalence) count as correct <b>only if every part is right</b>. There is no partial credit.</li>
+          <li>Numeric Entry: any equivalent value is correct (on the CLC tests, 35/2, 70/4 and 17.5 are all accepted).</li>
+          <li>Verbal and Quant each have 12 + 15 = <b>27 questions</b>, so each raw score is from 0 to 27.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="sc-step">Step 2</span>
+        <h2 class="sc-h">The test is section-level adaptive</h2>
+        <p>The first section of each measure is the same difficulty for everyone. How well you do on it decides how hard your <b>second</b> section will be.</p>
+        <div class="sc-flow">
+          <div class="sc-box"><b>Section 1</b>12 questions · medium difficulty</div>
+          <div class="sc-arrow">→</div>
+          <div class="sc-routes">
+            <div class="sc-box"><b>Hard Section 2</b>strong Section 1 · scores up to 170</div>
+            <div class="sc-box"><b>Medium Section 2</b>average Section 1</div>
+            <div class="sc-box"><b>Easy Section 2</b>weak Section 1 · lower ceiling</div>
+          </div>
+        </div>
+        <p>A harder second section is worth more: ETS adjusts the conversion (“equating”) so that the same number of correct answers gives a <b>higher</b> score on the hard section than on the easy one. That is why Section 1 matters so much — it decides how high you can go.</p>
+      </div>
+
+      <div class="card">
+        <span class="sc-step">Step 3</span>
+        <h2 class="sc-h">Raw score → 130–170 scaled score</h2>
+        <p>ETS converts the raw score to the 130–170 scale using your second-section level. ETS does not publish its exact tables, so the CLC tests use the calibrated tables below — the score you see is an <b>estimate, accurate to about ±2–3 points</b>.</p>
+        <p class="muted"><b>How CLC routes you:</b> Full Mock Tests 2–5 — Section 1 score 0–5 → Easy, 6–9 → Medium, 10–12 → Hard. Full Mock Test 1 — 8–12 → Hard, otherwise Medium. Verbal Adaptive Tests — Module 1 score 8–12 → Harder, otherwise Easier (scored with the Medium column). Grey cells are scores that cannot occur on that route in Full Mock Tests 2–5.</p>
+        <div class="sc-wrap" id="sc-convert"></div>
+        <p class="muted">Example: 20 correct out of 27 gives 152 after an Easy Section 2, 157 after a Medium one and 160 after a Hard one.</p>
+      </div>
+
+      <div class="card">
+        <span class="sc-step">Step 4</span>
+        <h2 class="sc-h">Percentile rank — how you compare</h2>
+        <p>Your score report also shows a <b>percentile</b>: the percentage of test takers who scored <b>lower</b> than you. Official ETS data for everyone who tested from July 2022 to June 2025 (mean scores: Verbal 151.4, Quant 157.6):</p>
+        <div class="sc-wrap" id="sc-pct"></div>
+        <p class="muted">Notice the difference between the two measures: 160 is the 82nd percentile in Verbal but only the 50th in Quant, and even a perfect 170 in Quant is the 89th percentile, because so many test takers score high in Quant.</p>
+      </div>
+
+      <div class="card">
+        <span class="sc-step">What’s a good score?</span>
+        <h2 class="sc-h">Targets</h2>
+        <div class="sc-wrap"><table class="sc-table">
+          <tr><th>Level</th><th>Verbal</th><th>Quant</th></tr>
+          <tr><td>Average (≈ 50th percentile)</td><td>152–153</td><td>160</td></tr>
+          <tr class="hl"><td>Competitive for most programs (75th percentile)</td><td>158+</td><td>167+</td></tr>
+          <tr><td>Top 10%</td><td>163+</td><td>170 (89th)</td></tr>
+        </table></div>
+        <p class="muted">Always check the scores your target programs report — engineering and quantitative programs usually expect a higher Quant score, humanities programs a higher Verbal score.</p>
+      </div>
+
+      <div class="card">
+        <span class="sc-step">On this platform</span>
+        <h2 class="sc-h">Which CLC tests give you a GRE score</h2>
+        <ul>
+          <li><b>Full Mock Tests 1–5</b> (Quant) and <b>Verbal Adaptive Tests 1–6</b>: full GRE-style score report — 130–170 score, percentile, raw score per section.</li>
+          <li>Topic tests and Units: raw score and percent correct (they practise one topic, so a GRE score would not be meaningful).</li>
+          <li>Every result is saved on the <b>Progress &amp; Report</b> page (best GRE Quant and best GRE Verbal) and sent to your teacher.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="sc-step">Good to know</span>
+        <ul>
+          <li>GRE scores are valid for <b>5 years</b>.</li>
+          <li>With <b>ScoreSelect</b> you choose which test dates to send to schools.</li>
+          <li>Analytical Writing is scored by a trained human rater and the e-rater® scoring engine.</li>
+        </ul>
+        <p class="sc-src muted" style="margin-top:10px;">Sources: <a href="https://www.in.ets.org/gre-score/understand-scores.html">ETS — Understanding your GRE scores</a> · <a href="https://www.ets.org/pdfs/gre/gre-guide-table-1a.pdf">ETS — Percentile ranks, Table 1A (2022–2025)</a> · <a href="https://magoosh.com/gre/gre-score-range-good-gre-score/">Magoosh — GRE score range &amp; good scores</a></p>
+      </div>
+      <footer class="foot">CLC GRE Practice — independent study tool, not affiliated with ETS. GRE® is a registered trademark of ETS.</footer>
+    </main>
+  </section>
+
   <!-- ============ PROGRESS ============ -->
   <section class="screen" id="screen-progress">
     <div class="topbar"><button class="backbtn" onclick="back()" aria-label="Back">←</button><img class="topbar-logo" src="clc-logo.png" alt="CLC"><h1>Progress &amp; Report</h1></div>
@@ -261,10 +391,11 @@
       <p class="eyebrow">Choose a section</p>
       <div class="section-grid grid-4">
         <button class="tile-col" onclick="go('screen-verbal')"><div class="icon" style="background:var(--english-soft); color:var(--english);">📖</div><strong>Verbal Reasoning</strong><span>Word bank · 6 adaptive tests</span></button>
-        <button class="tile-col" onclick="go('screen-quant')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">📐</div><strong>Quantitative Reasoning</strong><span>Units · study guides · 10 adaptive tests</span></button>
+        <button class="tile-col" onclick="go('screen-quant')"><div class="icon" style="background:var(--practice-soft); color:var(--practice);">📐</div><strong>Quantitative Reasoning</strong><span>Units · study guides · 13 adaptive tests</span></button>
         <div class="tile-col disabled" aria-disabled="true"><div class="icon" style="background:var(--accent-soft); color:var(--accent);">✍️</div><strong>Analytical Writing</strong><span>Issue &amp; Argument tasks</span><span class="soon">Coming soon</span></div>
         <div class="tile-col disabled" aria-disabled="true"><div class="icon" style="background:var(--full-soft); color:var(--full);">🎯</div><strong>Full Practice Test</strong><span>Verbal + Quant, timed</span><span class="soon">Coming soon</span></div>
       </div>
+      <button class="tile" style="margin-top:14px;" onclick="go('screen-scoring')"><div class="icon" style="background:var(--accent-soft); color:var(--accent);">📏</div><div class="body"><strong>How GRE Scoring Works</strong><span>130–170 scale · adaptive sections · raw-to-scaled tables · percentiles · what counts as a good score</span></div><span class="chev">›</span></button>
       <footer class="foot">CLC GRE Practice — independent study tool, not affiliated with ETS.</footer>
     </main>
   </section>
@@ -340,12 +471,13 @@
 <script>
 const PARENT = {'screen-welcome':null,'screen-progress':'screen-welcome','screen-subject':'screen-welcome',
   'screen-verbal':'screen-subject','screen-verbal-tests':'screen-verbal',
-  'screen-quant':'screen-subject','screen-units':'screen-quant','screen-guides':'screen-quant','screen-tests':'screen-quant'};
+  'screen-quant':'screen-subject','screen-scoring':'screen-subject','screen-units':'screen-quant','screen-guides':'screen-quant','screen-tests':'screen-quant'};
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.body.classList.toggle('signin-page', id === 'screen-login');
   if(id === 'screen-progress') renderProgress();
+  if(id === 'screen-scoring') renderScoring();
   window.scrollTo(0,0);
 }
 function go(id){                       // forward navigation: also a real browser-history step
@@ -528,6 +660,20 @@ function progressArea(r){ return /verbal/i.test(r.file) ? 'Verbal Reasoning' : '
 function pctOf(r){ return r.max ? Math.round(100 * r.score / r.max) : 0; }
 function pctColor(p){ return p >= 70 ? '#2f7d5a' : (p >= 50 ? 'var(--accent)' : '#b4433a'); }
 function escP(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function renderScoring(){
+  if(!window.CLCGre || document.getElementById('sc-convert').childElementCount) return;
+  const T = CLCGre.table, range = {Easy:[0,20], Medium:[6,24], Hard:[10,27]};
+  let h = '<table class="sc-table"><tr><th>Correct (of 27)</th><th>Easy Section 2</th><th>Medium Section 2</th><th>Hard Section 2</th></tr>';
+  for(let r=27; r>=0; r--){
+    h += '<tr' + (r===20 ? ' class="hl"' : '') + '><td>' + r + '</td>' + ['Easy','Medium','Hard'].map(k=>{
+      const ok = r>=range[k][0] && r<=range[k][1]; return '<td' + (ok ? '' : ' class="na"') + '>' + T[k][r] + '</td>'; }).join('') + '</tr>';
+  }
+  document.getElementById('sc-convert').innerHTML = h + '</table>';
+  const Q = CLCGre.percentiles, V = CLCGre.percentilesVerbal, p = v => v > 0 ? v : '&lt;1';
+  let g = '<table class="sc-table"><tr><th>Score</th><th>Verbal percentile</th><th>Quant percentile</th></tr>';
+  for(let s=170; s>=130; s--) g += '<tr' + (s===160 ? ' class="hl"' : '') + '><td>' + s + '</td><td>' + p(V[s]) + '</td><td>' + p(Q[s]) + '</td></tr>';
+  document.getElementById('sc-pct').innerHTML = g + '</table>';
+}
 function renderProgress(){
   if(!window.CLCExport){ setTimeout(renderProgress, 50); return; }   // report builders load at the end of the page
   const box = document.getElementById('progress-body'), list = progressAttempts();
@@ -580,6 +726,66 @@ function downloadAllProgress(){
   setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 1500);
 }
 </script>
+<!--CLC-GRE-SCORE-START-->
+<script>
+/* CLC: official-style GRE scoring for the full mock exams (Quantitative) and the Verbal adaptive tests.
+   Like the real GRE: 1 raw point per correct answer, no penalty for wrong or blank answers, every question counts the same.
+   The raw score (out of 27) is converted to the 130–170 scale with an adjustment for the difficulty of the Section 2 module
+   (ETS calls this "equating"). ETS does not publish its conversion tables, so the tables below are a calibrated estimate.
+   Percentile ranks: ETS, GRE test takers July 1, 2022 – June 30, 2025 (Table 1A), separately for Quantitative and Verbal.
+   The Verbal tests have two Module-2 levels (Harder / Easier, split at 8 of 12 in Module 1); their Easier module plays the
+   role of the middle table, because a Module-1 score of 7 is not a weak performance. */
+(function(){
+  //            raw:  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27
+  var TABLE = {
+    Easy:   [130,130,131,132,133,134,135,136,137,138,139,140,141,142,143,145,146,147,149,150,152,153,154,155,156,157,158,159],
+    Medium: [130,132,133,135,136,138,140,141,142,143,144,145,146,147,148,150,151,152,154,155,157,158,160,161,163,164,165,166],
+    Hard:   [130,133,135,137,139,141,143,144,145,146,147,148,149,150,151,153,154,155,157,158,160,161,163,164,166,167,169,170]
+  };
+  var PCT_V = {170:99,169:99,168:98,167:97,166:96,165:95,164:93,163:90,162:88,161:85,160:82,159:79,158:76,157:72,156:68,155:64,
+               154:59,153:54,152:48,151:43,150:39,149:34,148:30,147:27,146:24,145:21,144:18,143:16,142:14,141:11,140:10,139:8,138:6,
+               137:5,136:4,135:3,134:2,133:2,132:1,131:1,130:0};
+  var PCT = {170:89,169:85,168:80,167:75,166:72,165:67,164:63,163:60,162:57,161:53,160:50,159:47,158:45,157:42,156:39,155:37,
+             154:34,153:31,152:29,151:26,150:23,149:21,148:19,147:16,146:14,145:12,144:10,143:9,142:7,141:6,140:5,139:4,138:3,
+             137:2,136:2,135:1,134:1,133:1,132:1,131:1,130:0};
+  function norm(level){ level = String(level || "").toLowerCase(); return level.indexOf("hard") !== -1 ? "Hard" : level.indexOf("easy") !== -1 ? "Easy" : "Medium"; }
+  function score(level, raw, total, measure){
+    var verbal = /verbal/i.test(measure || ""), lv = norm(level), r = Number(raw) || 0, t = Number(total) || 27;
+    var r27 = Math.max(0, Math.min(27, Math.round(t === 27 ? r : r * 27 / t)));
+    var s = TABLE[verbal && lv === "Easy" ? "Medium" : lv][r27];
+    return {measure: verbal ? "Verbal Reasoning" : "Quantitative Reasoning", scaled: s, percentile: (verbal ? PCT_V : PCT)[s], level: verbal ? (lv === "Hard" ? "Harder" : "Easier") : lv, raw: r, total: t};
+  }
+  function ord(n){ return n === 0 ? "below 1st" : n + (n % 10 === 1 && n !== 11 ? "st" : n % 10 === 2 && n !== 12 ? "nd" : n % 10 === 3 && n !== 13 ? "rd" : "th"); }
+  function routeRange(lv, s1min, s1max, s2max){ return [TABLE[lv][s1min], TABLE[lv][Math.min(27, s1max + s2max)]]; }
+  var C = 'var(--crimson,var(--maroon,#7a1f2b))';
+  function boxHTML(g, s1, s1max, s2, s2max, ranges){
+    var pos = Math.round(100 * (g.scaled - 130) / 40);
+    var card = function(k, v){ return '<div style="flex:1 1 130px;background:#fff;border:1px solid #e6dcc6;border-radius:10px;padding:10px 8px;text-align:center;">' +
+      '<div style="font-size:11.5px;color:#666;letter-spacing:.5px;">' + k + '</div><div style="font-size:21px;font-weight:bold;color:' + C + ';">' + v + '</div></div>'; };
+    var cap = ranges ? ranges.map(function(x){ return x[0] + ' ' + (g.measure.indexOf('Verbal') === 0 ? 'Module 2' : 'Section 2') + ': ' + x[1] + '–' + x[2]; }).join(' · ') : '';
+    return '<div class="clc-gre-score" style="text-align:center;">' +
+      '<div style="font-size:13px;color:#666;text-transform:uppercase;letter-spacing:1.2px;">GRE® ' + g.measure + ' — Estimated Score</div>' +
+      '<div class="big" style="line-height:1.05;margin-top:4px;font-family:\'Cormorant Garamond\',Georgia,serif;font-size:56px;font-weight:700;color:' + C + ';">' + g.scaled + '</div>' +
+      '<div style="font-size:13px;color:#666;">on the official 130–170 scale</div>' +
+      '<div style="max-width:420px;margin:14px auto 4px;position:relative;height:10px;border-radius:5px;background:linear-gradient(90deg,#e9e2d3,#d9b46a,#7a1f2b);">' +
+        '<span style="position:absolute;top:-5px;left:calc(' + pos + '% - 10px);width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid ' + C + ';box-sizing:border-box;"></span></div>' +
+      '<div style="max-width:420px;margin:0 auto;display:flex;justify-content:space-between;font-size:11px;color:#888;"><span>130</span><span>150</span><span>170</span></div>' +
+      '<div style="margin:12px 0 4px;font-size:15px;"><b>Percentile rank: ' + ord(g.percentile) + '</b></div>' +
+      '<div style="font-size:12.5px;color:#666;">' + (g.percentile > 0 ? 'You scored higher than about ' + g.percentile + '% of GRE test takers' : 'Fewer than 1% of GRE test takers score this low') + ' (ETS data, 2022–2025).</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 10px;">' +
+        card(g.measure.indexOf('Verbal') === 0 ? 'MODULE 1' : 'SECTION 1', s1 + ' / ' + s1max) + card((g.measure.indexOf('Verbal') === 0 ? 'MODULE 2 · ' : 'SECTION 2 · ') + g.level.toUpperCase(), s2 + ' / ' + s2max) + card('RAW SCORE', g.raw + ' / ' + (s1max + s2max)) +
+      '</div>' +
+      '<div class="est-note" style="font-size:12px;color:#666;line-height:1.55;text-align:left;background:#fbf8f1;border-radius:8px;padding:10px 12px;">' +
+        '<b>How this is scored (as on the official GRE):</b> every correct answer is worth 1 raw point; wrong or blank answers cost nothing, so never leave a question blank. ' +
+        'Your raw score is converted to the 130–170 scale with an adjustment for the difficulty of your ' + (g.measure.indexOf('Verbal') === 0 ? 'Module 2' : 'Section 2') + ' — a harder second part earns more points for the same number of correct answers.' +
+        (cap ? ' Possible scores: ' + cap + '.' : '') +
+        ' ETS does not publish its exact conversion, so treat this as an estimate (about ±2–3 points).</div>' +
+      '</div>';
+  }
+  window.CLCGre = {score: score, boxHTML: boxHTML, routeRange: routeRange, table: TABLE, percentiles: PCT, percentilesVerbal: PCT_V, ordinal: ord};
+})();
+</script>
+<!--CLC-GRE-SCORE-END-->
 <!--CLC-EXPORT-START-->
 <script>
 /* ===== CLC results export =====
