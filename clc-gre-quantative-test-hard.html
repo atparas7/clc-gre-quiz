@@ -1073,7 +1073,7 @@ function calcCmd(btn){
       rows.push({s: s.label, n: x.n, q: x.question.slice(0, 160), y: x.yours, c: x.correct, ok: x.ok ? 1 : 0});
     }); });
     var x = {percent: r.max ? Math.round(100 * r.score / r.max) : 0, level: level, answers: JSON.stringify(rows)};
-    if (r.gre){ x.greScore = r.gre.scaled; x.percentile = r.gre.percentile; }
+    if (r.gre){ x.greScore = r.gre.scaled; x.percentile = r.gre.percentile; x.greMeasure = /verbal/i.test(r.gre.measure || "") ? "Verbal" : "Quant"; }
     return x;
   }
 

@@ -543,7 +543,8 @@ function renderProgress(){
   h += '<div class="stats"><div class="stat"><div class="v">' + list.length + '</div><div class="k">Tests taken</div></div>' +
        '<div class="stat"><div class="v">' + avg + '%</div><div class="k">Average</div></div>' +
        '<div class="stat"><div class="v">' + best + '%</div><div class="k">Best</div></div>' +
-       (greList.length ? '<div class="stat"><div class="v">' + Math.max.apply(null, greList.map(r=>r.gre.scaled)) + '</div><div class="k">Best GRE Quant</div></div>' : '') + '</div>';
+       [['Quantitative','Best GRE Quant'],['Verbal','Best GRE Verbal']].map(([m,k])=>{ const g = greList.filter(r=>String(r.gre.measure||'Quantitative').indexOf(m)===0);
+         return g.length ? '<div class="stat"><div class="v">' + Math.max.apply(null, g.map(r=>r.gre.scaled)) + '</div><div class="k">' + k + '</div></div>' : ''; }).join('') + '</div>';
   h += '<button class="btn ghost" style="margin-bottom:4px;" onclick="downloadAllProgress()">⬇ Download all my results (Excel / CSV)</button>';
   ['Verbal Reasoning','Quantitative Reasoning'].forEach(area=>{
     const rows = list.filter(r=>progressArea(r)===area); if(!rows.length) return;
@@ -851,7 +852,7 @@ function downloadAllProgress(){
       rows.push({s: s.label, n: x.n, q: x.question.slice(0, 160), y: x.yours, c: x.correct, ok: x.ok ? 1 : 0});
     }); });
     var x = {percent: r.max ? Math.round(100 * r.score / r.max) : 0, level: level, answers: JSON.stringify(rows)};
-    if (r.gre){ x.greScore = r.gre.scaled; x.percentile = r.gre.percentile; }
+    if (r.gre){ x.greScore = r.gre.scaled; x.percentile = r.gre.percentile; x.greMeasure = /verbal/i.test(r.gre.measure || "") ? "Verbal" : "Quant"; }
     return x;
   }
 

@@ -1,12 +1,12 @@
 /**
- * CLC GRE Practice — Results Logger (v3: scores + GRE 130–170 score + every answer + per-student progress)
+ * CLC GRE Practice — Results Logger (v3: scores + GRE 130–170 scores + every answer + per-student progress)
  *
  * WHAT YOU GET IN THE GOOGLE SHEET
  *   • "Results"  — one row per finished test: time, student, class, test, score, max, %, Section 2 level,
- *                  and for the full mock exams the estimated GRE score (130–170) and its percentile rank.
+ *                  and for the full mock exams and Verbal adaptive tests the estimated GRE score (130–170) and percentile.
  *   • "Answers"  — one row per question of every finished test: student, test, question, the student's answer,
  *                  the correct answer, Correct/Wrong. Filter by student or test to see exactly what went wrong.
- *   • "Progress" — updates by itself: for every student, tests taken, average %, best %, last test date, best GRE score.
+ *   • "Progress" — updates by itself: for every student, tests taken, average %, best %, last test date, best GRE Quant and best GRE Verbal score.
  *
  * FIRST-TIME SETUP
  *   1. Create a Google Sheet (sheets.google.com -> Blank).
@@ -24,7 +24,7 @@
  *   Your existing rows stay where they are; the first sheet keeps being the "Results" sheet.
  */
 
-var RESULTS_HEADER = ["Timestamp", "Student Name", "Section", "Test", "Score", "Max Score", "Client time", "Percent", "Section 2 level", "GRE score (130-170)", "Percentile"];
+var RESULTS_HEADER = ["Timestamp", "Student Name", "Section", "Test", "Score", "Max Score", "Client time", "Percent", "Section 2 level", "GRE Quant (130-170)", "GRE Verbal (130-170)", "Percentile"];
 var ANSWERS_HEADER = ["Timestamp", "Student Name", "Section", "Test", "Part", "Question #", "Question", "Student answer", "Correct answer", "Result"];
 
 function doPost(e) {
@@ -41,7 +41,7 @@ function doPost(e) {
             : (Number(data.maxScore) ? Number(data.score) / Number(data.maxScore) : "");
     results.appendRow([now, data.name || "", data.section || "", data.test || "",
                        num(data.score), num(data.maxScore), data.when || "", pct, data.level || "",
-                       num(data.greScore), num(data.percentile)]);
+                       data.greMeasure === "Verbal" ? "" : num(data.greScore), data.greMeasure === "Verbal" ? num(data.greScore) : "", num(data.percentile)]);
     results.getRange(results.getLastRow(), 8).setNumberFormat("0%");
 
     if (data.answers) {
@@ -82,13 +82,13 @@ function ensureHeader(sheet, header) {
   sheet.setFrozenRows(1);
 }
 
-var PROGRESS_QUERY = "select B, C, count(H), avg(H), max(H), max(J), max(A) where B is not null and H is not null group by B, C order by B " +
-  "label B 'Student', C 'Class', count(H) 'Tests taken', avg(H) 'Average %', max(H) 'Best %', max(J) 'Best GRE score', max(A) 'Last test'";
+var PROGRESS_QUERY = "select B, C, count(H), avg(H), max(H), max(J), max(K), max(A) where B is not null and H is not null group by B, C order by B " +
+  "label B 'Student', C 'Class', count(H) 'Tests taken', avg(H) 'Average %', max(H) 'Best %', max(J) 'Best GRE Quant', max(K) 'Best GRE Verbal', max(A) 'Last test'";
 
 function ensureProgressSheet(ss, results) {
   var existing = ss.getSheetByName("Progress");
-  if (existing) {                              // upgrade a v2 Progress sheet so it also shows the best GRE score
-    if (String(existing.getRange("A1").getFormula()).indexOf("max(J)") === -1) setProgressFormula(existing, results);
+  if (existing) {                              // upgrade a v2 Progress sheet so it also shows the best GRE scores
+    if (String(existing.getRange("A1").getFormula()).indexOf("max(K)") === -1) setProgressFormula(existing, results);
     return;
   }
   // one time: give rows saved by the old version a Percent too, so they count in the summary
@@ -102,10 +102,10 @@ function ensureProgressSheet(ss, results) {
 }
 
 function setProgressFormula(p, results) {
-  var src = "'" + results.getName().replace(/'/g, "''") + "'!A:J";
+  var src = "'" + results.getName().replace(/'/g, "''") + "'!A:K";
   p.getRange("A1").setFormula("=QUERY(" + src + ", \"" + PROGRESS_QUERY + "\", 1)");
   p.getRange("D:E").setNumberFormat("0%");
-  p.getRange("F:F").setNumberFormat("0");
-  p.getRange("G:G").setNumberFormat("dd/mm/yyyy hh:mm");
+  p.getRange("F:G").setNumberFormat("0");
+  p.getRange("H:H").setNumberFormat("dd/mm/yyyy hh:mm");
   p.setFrozenRows(1);
 }
